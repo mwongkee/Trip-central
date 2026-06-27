@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import maplibregl, { type Map as MlMap, type Marker, type Popup } from 'maplibre-gl';
+import maplibregl, { type Map as MlMap, type Marker } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Item, Presence } from '@tripboard/shared';
 import { colorForName, initials } from '../lib/avatar.js';
@@ -7,10 +7,8 @@ import { colorForName, initials } from '../lib/avatar.js';
 interface MapViewProps {
   items: Item[];
   selectedId: string | null;
-  /** Highlight a pin (no scroll/jump) — used when a marker is tapped. */
+  /** Highlight a pin (no scroll/jump) — the Board shows a bottom detail card. */
   onSelect: (itemId: string) => void;
-  /** Jump to the item's full details in the list — used by the popup button. */
-  onOpenDetails: (itemId: string) => void;
   /** The user's shared location, shown as a "you are here" dot. */
   userLocation?: { lat: number; lng: number } | null;
   /** Family members currently sharing their location. */
@@ -42,17 +40,19 @@ function iconFor(item: Item): string {
   return item.type === 'MEAL' ? '🍽' : '📍';
 }
 
-export function MapView({ items, selectedId, onSelect, onOpenDetails, userLocation, presences }: MapViewProps) {
+export function MapView({ items, selectedId, onSelect, userLocation, presences }: MapViewProps) {
   const styleUrl = (import.meta.env.VITE_MAP_STYLE as string | undefined) || DEFAULT_STYLE;
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
   const userMarkerRef = useRef<Marker | null>(null);
   const personMarkersRef = useRef<Marker[]>([]);
-  const popupRef = useRef<Popup | null>(null);
   const loadedRef = useRef(false);
 
   const located = items.filter((i) => typeof i.lat === 'number' && typeof i.lng === 'number');
+  // Stable signature of the visible set so effects don't re-run on every render
+  // (located is a fresh array each render). Fit-bounds keys off this, not selection.
+  const ids = located.map((i) => i.itemId).join('|');
 
   // Init once.
   useEffect(() => {
@@ -70,7 +70,6 @@ export function MapView({ items, selectedId, onSelect, onOpenDetails, userLocati
       loadedRef.current = true;
     });
     mapRef.current = map;
-    popupRef.current = new maplibregl.Popup({ offset: 18, closeButton: true, maxWidth: '260px' });
     return () => {
       map.remove();
       mapRef.current = null;
@@ -92,12 +91,12 @@ export function MapView({ items, selectedId, onSelect, onOpenDetails, userLocati
       el.textContent = iconFor(item);
       el.addEventListener('click', (e) => {
         e.stopPropagation();
-        onSelect(item.itemId); // highlight only — stay on the map
-        openPopup(map, item); // show the text popup
+        onSelect(item.itemId); // highlight + Board shows a bottom detail card — map stays put
       });
       return new maplibregl.Marker({ element: el }).setLngLat([item.lng!, item.lat!]).addTo(map);
     });
-  }, [located, selectedId, onSelect, onOpenDetails]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ids, selectedId, onSelect]);
 
   // Fit the map to the visible set only when that set changes (not on selection),
   // so tapping a pin keeps the map exactly where it is.
@@ -108,7 +107,7 @@ export function MapView({ items, selectedId, onSelect, onOpenDetails, userLocati
     located.forEach((i) => bounds.extend([i.lng!, i.lat!]));
     map.fitBounds(bounds, { padding: 56, maxZoom: 14, duration: 400 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [located]);
+  }, [ids]);
 
   // "You are here" marker + recenter when location is first shared.
   useEffect(() => {
@@ -145,37 +144,5 @@ export function MapView({ items, selectedId, onSelect, onOpenDetails, userLocati
     });
   }, [presences]);
 
-  function openPopup(map: MlMap, item: Item) {
-    const popup = popupRef.current;
-    if (!popup) return;
-    const el = document.createElement('div');
-    el.className = 'mappop';
-    const img = item.imageUrl
-      ? `<img class="mappop__img" src="${item.imageUrl}" alt="" loading="lazy" onerror="this.style.display='none'"/>`
-      : '';
-    const cat = item.isAnchor ? item.anchorRole : item.type === 'MEAL' ? item.mealType : item.category;
-    el.innerHTML = `
-      ${img}
-      <div class="mappop__body">
-        <strong class="mappop__title">${escapeHtml(item.title)}</strong>
-        <div class="mappop__meta">${escapeHtml(String(cat ?? ''))} · ★ ${item.voteScore}</div>
-        ${item.address ? `<div class="mappop__addr">📌 ${escapeHtml(item.address)}</div>` : ''}
-      </div>`;
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'mappop__btn';
-    btn.textContent = 'Open details ›';
-    btn.addEventListener('click', () => {
-      onOpenDetails(item.itemId);
-      popup.remove();
-    });
-    el.appendChild(btn);
-    popup.setLngLat([item.lng!, item.lat!]).setDOMContent(el).addTo(map);
-  }
-
   return <div className="map" ref={containerRef} aria-label="Trip map" />;
-}
-
-function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 }

@@ -8,6 +8,7 @@ import { AddItemForm } from './AddItemForm.js';
 import { Itinerary } from './Itinerary.js';
 import { usePresence } from '../hooks/queries.js';
 import { useLocationShare } from '../hooks/useLocationShare.js';
+import { mapsLink } from '../lib/links.js';
 
 type StatusFilter = 'all' | 'suggested' | 'scheduled' | 'done';
 type TypeFilter = 'all' | ItemType;
@@ -252,7 +253,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       {adding && <AddItemForm onDone={() => setAdding(false)} />}
 
       <aside className="board__map" aria-label="Map">
-        <MapView items={filtered} selectedId={selectedId} userLocation={userLoc} presences={presences} onSelect={highlight} onOpenDetails={select} />
+        <MapView items={filtered} selectedId={selectedId} userLocation={userLoc} presences={presences} onSelect={highlight} />
         <p className="board__maphint">
           {filtered.length} place{filtered.length === 1 ? '' : 's'} shown · tap a pin for details
           {presences.length > 0 && ` · ${presences.length} sharing location`}
@@ -279,6 +280,29 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         })}
         {filtered.length === 0 && <p className="board__empty">Nothing matches. Try a different search or suggest something.</p>}
       </section>
+
+      {centerItem && (
+        <div className="peek" role="dialog" aria-label={centerItem.title}>
+          {centerItem.imageUrl && (
+            <img className="peek__thumb" src={centerItem.imageUrl} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+          )}
+          <div className="peek__body">
+            <strong className="peek__title">{centerItem.title}</strong>
+            <div className="peek__meta">
+              {centerItem.isAnchor ? centerItem.anchorRole : centerItem.type === 'MEAL' ? centerItem.mealType : centerItem.category} · ★ {centerItem.voteScore}
+            </div>
+            {centerItem.address && <div className="peek__addr">📌 {centerItem.address}</div>}
+            <div className="peek__actions">
+              <a className="btn btn--link" href={mapsLink(centerItem)} target="_blank" rel="noreferrer noopener">🗺 Maps</a>
+              {centerItem.website && (
+                <a className="btn btn--link" href={centerItem.website} target="_blank" rel="noreferrer noopener">🔗 Site</a>
+              )}
+              <button type="button" className="btn btn--primary" onClick={() => select(centerItem.itemId)}>Details ›</button>
+            </div>
+          </div>
+          <button type="button" className="peek__close" aria-label="Close" onClick={() => setSelectedId(null)}>✕</button>
+        </div>
+      )}
 
       {filtersOpen && (
         <div className="sheet" role="dialog" aria-modal="true" aria-label="Filters" onClick={() => setFiltersOpen(false)}>
