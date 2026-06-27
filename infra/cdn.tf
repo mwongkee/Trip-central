@@ -84,19 +84,12 @@ resource "aws_cloudfront_distribution" "this" {
     compress                 = true
   }
 
-  # SPA deep links: serve index.html for client-side routes / missing keys.
-  custom_error_response {
-    error_code            = 403
-    response_code         = 200
-    response_page_path    = "/index.html"
-    error_caching_min_ttl = 10
-  }
-  custom_error_response {
-    error_code            = 404
-    response_code         = 200
-    response_page_path    = "/index.html"
-    error_caching_min_ttl = 10
-  }
+  # NOTE: no distribution-wide custom_error_response here. CloudFront error
+  # responses apply to ALL behaviors, so mapping 403/404 → index.html would
+  # turn the API's JSON errors into HTML. The SPA has no client-side deep
+  # routes (single page), so it doesn't need the fallback. If deep links are
+  # added later, handle them with a CloudFront Function on the default behavior
+  # only — not a global custom_error_response.
 
   restrictions {
     geo_restriction {
