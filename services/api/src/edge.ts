@@ -2,7 +2,7 @@ import { timingSafeEqual } from 'node:crypto';
 
 /**
  * Verify the CloudFront-injected origin secret. CloudFront adds a fixed
- * `x-edge-secret` header to every `/api/*` request, so traffic that reaches the
+ * `x-origin-verify` header to every `/api/*` request, so traffic that reaches the
  * Lambda *directly* (bypassing CloudFront) lacks it and is rejected.
  *
  * - If `expected` is unset (local dev, tests, or guard disabled), allow — the

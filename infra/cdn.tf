@@ -57,8 +57,9 @@ resource "aws_cloudfront_distribution" "this" {
       origin_ssl_protocols   = ["TLSv1.2"]
     }
     # Proves the request came through CloudFront; the Lambda rejects requests without it.
+    # (CloudFront reserves the `x-edge-*` prefix, so use `x-origin-verify`.)
     custom_header {
-      name  = "x-edge-secret"
+      name  = "x-origin-verify"
       value = random_password.edge_secret.result
     }
   }

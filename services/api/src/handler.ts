@@ -52,7 +52,7 @@ export const handler = async (
 
   // Reject anything that didn't come through CloudFront (no/!matching edge secret).
   const edgeHeaders = event.headers ?? {};
-  if (!edgeSecretOk(edgeHeaders['x-edge-secret'] ?? edgeHeaders['X-Edge-Secret'], EDGE_SECRET)) {
+  if (!edgeSecretOk(edgeHeaders['x-origin-verify'] ?? edgeHeaders['X-Origin-Verify'], EDGE_SECRET)) {
     return respond(403, { error: { code: 'FORBIDDEN', message: 'direct API access is not allowed' } });
   }
 

@@ -25,7 +25,7 @@ authorizer and drop the header fallback.
 
 To stop the (authorizer-less) HTTP API from being called directly, Terraform generates
 a random secret (`infra/edge_secret.tf`) and injects it two ways: as a CloudFront origin
-header `x-edge-secret` on the `/api/*` behavior, and as the Lambda's `EDGE_SECRET` env
+header `x-origin-verify` on the `/api/*` behavior, and as the Lambda's `EDGE_SECRET` env
 var. The handler rejects any request whose header doesn't match (`services/api/src/edge.ts`,
 constant-time compare). So requests must come through CloudFront; direct API Gateway hits
 get `403`. The browser never sees the secret — CloudFront adds it server-side. When

@@ -202,7 +202,7 @@ curl https://<cloudfront-domain>/api/health     # → {"ok":true}
 - **Region**: default `ca-central-1`; set `AWS_REGION` to anything (nothing is
   region-pinned in code). `infra/variables.tf` holds other defaults.
 - **API access**: the HTTP API has no JWT authorizer (device-join model), but it is **not
-  open** — Terraform generates a secret that CloudFront injects as the `x-edge-secret`
+  open** — Terraform generates a secret that CloudFront injects as the `x-origin-verify`
   origin header, and the Lambda rejects requests that lack it. So the API only accepts
   traffic coming through CloudFront; direct API Gateway calls get `403`. The secret lives
   only in Terraform state and the function/CloudFront config (never output). See
