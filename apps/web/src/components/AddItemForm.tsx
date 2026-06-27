@@ -11,6 +11,8 @@ interface FormValues {
   address: string;
   lat: string;
   lng: string;
+  website: string;
+  imageUrl: string;
 }
 
 const CATEGORIES: Category[] = ['outdoor', 'museum', 'beach', 'playground', 'viewpoint', 'restaurant', 'lodging', 'other'];
@@ -20,7 +22,7 @@ const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 export function AddItemForm({ onDone }: { onDone: () => void }) {
   const create = useCreateItem();
   const { register, handleSubmit, watch, reset, formState } = useForm<FormValues>({
-    defaultValues: { type: 'PLACE', title: '', description: '', category: '', mealType: '', address: '', lat: '', lng: '' },
+    defaultValues: { type: 'PLACE', title: '', description: '', category: '', mealType: '', address: '', lat: '', lng: '', website: '', imageUrl: '' },
   });
   const type = watch('type');
 
@@ -36,6 +38,8 @@ export function AddItemForm({ onDone }: { onDone: () => void }) {
       address: v.address.trim() || undefined,
       lat: Number.isFinite(lat) ? lat : undefined,
       lng: Number.isFinite(lng) ? lng : undefined,
+      website: v.website.trim() || undefined,
+      imageUrl: v.imageUrl.trim() || undefined,
     };
     const parsed = CreateItemInput.safeParse(candidate);
     if (!parsed.success) return;
@@ -88,7 +92,14 @@ export function AddItemForm({ onDone }: { onDone: () => void }) {
       )}
 
       <label htmlFor="af-addr">Address (optional)</label>
-      <input id="af-addr" {...register('address')} placeholder="Search coming soon — type for now" />
+      <input id="af-addr" {...register('address')} placeholder="e.g. 1675 Lower Water St, Halifax" />
+      <p className="addform__hint">Title + address power the “Open in Maps” link automatically.</p>
+
+      <label htmlFor="af-web">Website (optional)</label>
+      <input id="af-web" {...register('website')} inputMode="url" placeholder="https://…" />
+
+      <label htmlFor="af-img">Photo URL (optional)</label>
+      <input id="af-img" {...register('imageUrl')} inputMode="url" placeholder="https://… (leave blank for a placeholder)" />
 
       <div className="addform__row">
         <div>

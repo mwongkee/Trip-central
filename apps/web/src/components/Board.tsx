@@ -19,6 +19,22 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [view, setView] = useState<'board' | 'itinerary'>('board');
+  const [cats, setCats] = useState<Set<string>>(new Set());
+  const [tagFilter, setTagFilter] = useState<Set<string>>(new Set());
+
+  // Categories present in the trip, for the map/list filter chips.
+  const categoryList = useMemo(() => {
+    const s = new Set<string>();
+    for (const i of bundle.items) if (i.category) s.add(i.category);
+    return [...s].sort();
+  }, [bundle.items]);
+
+  function toggle(set: Set<string>, setter: (s: Set<string>) => void, key: string) {
+    const next = new Set(set);
+    if (next.has(key)) next.delete(key);
+    else next.add(key);
+    setter(next);
+  }
 
   const family = useMemo(
     () => (identity ? familyVoters(identity.familyId, bundle.members, bundle.children) : []),
@@ -39,16 +55,20 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     let items: Item[] = query.trim() ? fuse.search(query.trim()).map((r) => r.item) : bundle.items;
     if (typeFilter !== 'all') items = items.filter((i) => i.type === typeFilter);
     if (statusFilter !== 'all') items = items.filter((i) => i.status === statusFilter);
+    if (cats.size > 0) items = items.filter((i) => i.category && cats.has(i.category));
+    if (tagFilter.size > 0) items = items.filter((i) => [...tagFilter].every((t) => i.tags.includes(t)));
     // Anchors pinned to the top, then highest score first.
     return items.slice().sort((a, b) => {
       if (a.isAnchor !== b.isAnchor) return a.isAnchor ? -1 : 1;
       return b.voteScore - a.voteScore;
     });
-  }, [query, fuse, bundle.items, typeFilter, statusFilter]);
+  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter]);
 
   function select(itemId: string) {
     setSelectedId(itemId);
     setExpandedId(itemId);
+    // Bring the matching list card into view below the map.
+    setTimeout(() => document.getElementById(`card-${itemId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
   }
 
   return (
@@ -112,27 +132,42 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         </button>
       </div>
 
+      <div className="board__filters" role="group" aria-label="Filters">
+        <button type="button" className={`fchip ${tagFilter.has('tonight') ? 'fchip--on' : ''}`} aria-pressed={tagFilter.has('tonight')} onClick={() => toggle(tagFilter, setTagFilter, 'tonight')}>🌙 Tonight</button>
+        <button type="button" className={`fchip ${tagFilter.has('walkable') ? 'fchip--on' : ''}`} aria-pressed={tagFilter.has('walkable')} onClick={() => toggle(tagFilter, setTagFilter, 'walkable')}>🚶 Walkable</button>
+        <span className="board__filtersep" aria-hidden="true" />
+        {categoryList.map((c) => (
+          <button key={c} type="button" className={`fchip ${cats.has(c) ? 'fchip--on' : ''}`} aria-pressed={cats.has(c)} onClick={() => toggle(cats, setCats, c)}>
+            {c}
+          </button>
+        ))}
+        {(cats.size > 0 || tagFilter.size > 0) && (
+          <button type="button" className="fchip fchip--clear" onClick={() => { setCats(new Set()); setTagFilter(new Set()); }}>
+            clear ✕
+          </button>
+        )}
+      </div>
+
       {adding && <AddItemForm onDone={() => setAdding(false)} />}
 
-      <div className="board__split">
-        <section className="board__list" aria-label="Trip items">
-          {filtered.map((item) => (
-            <ItemCard
-              key={item.itemId}
-              item={item}
-              family={family}
-              expanded={expandedId === item.itemId}
-              selected={selectedId === item.itemId}
-              onToggle={() => setExpandedId((cur) => (cur === item.itemId ? null : item.itemId))}
-            />
-          ))}
-          {filtered.length === 0 && <p className="board__empty">Nothing matches. Try a different search or suggest something.</p>}
-        </section>
+      <aside className="board__map" aria-label="Map">
+        <MapView items={filtered} selectedId={selectedId} onSelect={select} />
+        <p className="board__maphint">{filtered.length} place{filtered.length === 1 ? '' : 's'} shown · tap a pin for details</p>
+      </aside>
 
-        <aside className="board__map" aria-label="Map">
-          <MapView items={filtered} selectedId={selectedId} onSelect={select} />
-        </aside>
-      </div>
+      <section className="board__list" aria-label="Trip items">
+        {filtered.map((item) => (
+          <ItemCard
+            key={item.itemId}
+            item={item}
+            family={family}
+            expanded={expandedId === item.itemId}
+            selected={selectedId === item.itemId}
+            onToggle={() => setExpandedId((cur) => (cur === item.itemId ? null : item.itemId))}
+          />
+        ))}
+        {filtered.length === 0 && <p className="board__empty">Nothing matches. Try a different search or suggest something.</p>}
+      </section>
       </>
     );
   }

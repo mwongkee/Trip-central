@@ -129,6 +129,8 @@ export class LocalStore {
       lat: input.lat,
       lng: input.lng,
       address: input.address,
+      imageUrl: input.imageUrl,
+      website: input.website,
       isAnchor: input.isAnchor ?? false,
       anchorRole: input.anchorRole,
       status: 'suggested',
@@ -245,6 +247,8 @@ export function applyLocalUpdate(current: Item, input: UpdateItemInput, ts: stri
   if (input.lat !== undefined) next.lat = input.lat;
   if (input.lng !== undefined) next.lng = input.lng;
   if (input.address !== undefined) next.address = input.address;
+  if (input.imageUrl !== undefined) next.imageUrl = input.imageUrl;
+  if (input.website !== undefined) next.website = input.website;
   if (input.isAnchor !== undefined) next.isAnchor = input.isAnchor;
   if (input.anchorRole !== undefined) next.anchorRole = input.anchorRole;
   if (input.estCost !== undefined) next.estCost = input.estCost;

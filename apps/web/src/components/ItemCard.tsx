@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Item, Slot, Voter } from '@tripboard/shared';
 import { VoteControl } from './VoteControl.js';
 import { Comments } from './Comments.js';
+import { mapsLink } from '../lib/links.js';
 import {
   useItemDetail,
   useVote,
@@ -40,24 +41,74 @@ export function ItemCard({ item, family, expanded, selected, onToggle }: ItemCar
   const bucket = item.type === 'MEAL' ? item.mealType : item.category;
 
   return (
-    <article className={`card ${selected ? 'card--sel' : ''} status-${item.status}`}>
-      <button type="button" className="card__head" aria-expanded={expanded} onClick={onToggle}>
-        <span className="card__title">
-          {item.isAnchor && <span className="badge badge--anchor" title={`Anchor: ${item.anchorRole}`}>★ {item.anchorRole}</span>}
-          {item.title}
-        </span>
-        <span className="card__meta">
-          <span className={`badge badge--${item.type.toLowerCase()}`}>{item.type === 'MEAL' ? '🍽' : '📍'} {bucket}</span>
-          <span className={`badge badge--status`}>{item.status}</span>
-          <span className="card__score" aria-label={`Score ${liveItem.voteScore}`}>★ {liveItem.voteScore}</span>
-        </span>
-      </button>
-
-      {item.description && <p className="card__desc">{item.description}</p>}
-      {item.address && <p className="card__addr">📌 {item.address}</p>}
+    <article
+      id={`card-${item.itemId}`}
+      className={`card ${selected ? 'card--sel' : ''} status-${item.status}`}
+      role="button"
+      tabIndex={0}
+      aria-expanded={expanded}
+      onClick={onToggle}
+      onKeyDown={(e) => {
+        if ((e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget) {
+          e.preventDefault();
+          onToggle();
+        }
+      }}
+    >
+      <div className="card__head">
+        {item.imageUrl && (
+          <img
+            className="card__thumb"
+            src={item.imageUrl}
+            alt=""
+            loading="lazy"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+        )}
+        <div className="card__headtext">
+          <span className="card__title">
+            {item.isAnchor && <span className="badge badge--anchor" title={`Anchor: ${item.anchorRole}`}>★ {item.anchorRole}</span>}
+            {item.title}
+          </span>
+          <span className="card__meta">
+            <span className={`badge badge--${item.type.toLowerCase()}`}>{item.type === 'MEAL' ? '🍽' : '📍'} {bucket}</span>
+            <span className="badge badge--status">{item.status}</span>
+            <span className="card__score" aria-label={`Score ${liveItem.voteScore}`}>★ {liveItem.voteScore}</span>
+          </span>
+          {item.description && <p className="card__desc">{item.description}</p>}
+          {item.address && <p className="card__addr">📌 {item.address}</p>}
+        </div>
+      </div>
 
       {expanded && (
-        <div className="card__body">
+        <div
+          className="card__body"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
+          {item.imageUrl && (
+            <img
+              className="card__photo"
+              src={item.imageUrl}
+              alt={item.title}
+              loading="lazy"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          )}
+          <div className="card__links">
+            <a className="btn btn--link" href={mapsLink(item)} target="_blank" rel="noreferrer noopener">
+              🗺 Open in Maps
+            </a>
+            {item.website && (
+              <a className="btn btn--link" href={item.website} target="_blank" rel="noreferrer noopener">
+                🔗 Website
+              </a>
+            )}
+          </div>
           {detail.isLoading ? (
             <p>Loading…</p>
           ) : (

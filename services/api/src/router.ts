@@ -264,6 +264,8 @@ export function applyItemUpdate(current: Item, input: import('@tripboard/shared'
   if (input.lat !== undefined) next.lat = input.lat;
   if (input.lng !== undefined) next.lng = input.lng;
   if (input.address !== undefined) next.address = input.address;
+  if (input.imageUrl !== undefined) next.imageUrl = input.imageUrl;
+  if (input.website !== undefined) next.website = input.website;
   if (input.isAnchor !== undefined) next.isAnchor = input.isAnchor;
   if (input.anchorRole !== undefined) next.anchorRole = input.anchorRole;
   if (input.estCost !== undefined) next.estCost = input.estCost;

@@ -88,17 +88,29 @@ input, select, textarea {
 .board__controls { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0; }
 .board__search { flex: 1 1 220px; }
 .board__controls select { width: auto; }
-.board__split { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-@media (min-width: 900px) { .board__split { grid-template-columns: 1.3fr 1fr; align-items: start; } }
-.board__list { display: grid; gap: 0.6rem; }
-.board__map { position: sticky; top: 1rem; }
+/* Map-primary layout: filters → map (large) → list */
+.board__filters { display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.3rem; margin-top: 0.6rem; -webkit-overflow-scrolling: touch; }
+.board__filtersep { border-left: 1px solid var(--border); margin: 0 0.15rem; flex: 0 0 auto; }
+.fchip { white-space: nowrap; background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px; padding: 0.4rem 0.75rem; color: var(--text); text-transform: capitalize; flex: 0 0 auto; }
+.fchip--on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.fchip--clear { color: var(--muted); text-transform: none; }
+.board__map { margin-top: 0.75rem; }
+.board__maphint { color: var(--muted); font-size: 0.8rem; margin: 0.35rem 0 0; text-align: center; }
+.board__list { display: grid; gap: 0.6rem; margin-top: 1rem; }
 .board__empty { color: var(--muted); }
 
 /* ---- Card ---- */
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem; }
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem; cursor: pointer; }
+.card:hover { border-color: #444c56; }
 .card--sel { border-color: var(--accent); }
 .card.status-done { opacity: 0.7; }
-.card__head { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; background: none; border: 0; color: var(--text); text-align: left; padding: 0; }
+.card__head { display: flex; gap: 0.6rem; align-items: flex-start; }
+.card__thumb { width: 64px; height: 64px; border-radius: 8px; object-fit: cover; flex: 0 0 auto; background: var(--panel-2); }
+.card__headtext { flex: 1 1 auto; min-width: 0; display: grid; gap: 0.2rem; }
+.card__photo { width: 100%; max-height: 220px; object-fit: cover; border-radius: 8px; }
+.card__links { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.btn--link { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 0.45rem 0.8rem; color: var(--text); text-decoration: none; display: inline-block; }
+.btn--link:hover { border-color: var(--accent); }
 .card__title { font-weight: 600; display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; }
 .card__meta { display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap; }
 .card__score { font-variant-numeric: tabular-nums; color: #f0c000; }
@@ -144,20 +156,28 @@ input, select, textarea {
 /* ---- Add form ---- */
 .addform { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; display: grid; gap: 0.4rem; margin-bottom: 1rem; }
 .addform label { font-size: 0.8rem; color: var(--muted); }
+.addform__hint { font-size: 0.75rem; color: var(--muted); margin: -0.1rem 0 0.3rem; }
 .addform__row { display: flex; gap: 1rem; align-items: end; }
 .addform__row > div { flex: 1; }
 .addform__actions { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem; }
 
 /* ---- Map ---- */
-.map { height: 420px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
-.map--fallback { background: var(--panel); padding: 0.8rem; height: auto; }
-.map__note { color: var(--muted); font-size: 0.85rem; margin-top: 0; }
-.map__list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.3rem; }
-.map__pin { width: 100%; text-align: left; background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem 0.6rem; color: var(--text); }
-.map__pin--sel { border-color: var(--accent); }
-.marker { background: #fff; border: 2px solid var(--accent); border-radius: 50%; width: 28px; height: 28px; font-size: 14px; line-height: 1; display: grid; place-items: center; }
-.marker--anchor { border-color: #ffd866; }
-.marker--sel { transform: scale(1.25); }
+.map { height: 58vh; min-height: 340px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+.marker { background: var(--marker-color, var(--accent)); color: #fff; border: 2px solid #fff; border-radius: 50%; width: 30px; height: 30px; font-size: 15px; line-height: 1; display: grid; place-items: center; cursor: pointer; box-shadow: 0 1px 5px rgba(0, 0, 0, 0.45); padding: 0; }
+.marker--sel { outline: 3px solid #fff; transform: scale(1.2); z-index: 1; }
+
+/* Map popup (dark themed) */
+.maplibregl-popup-content { background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 0; overflow: hidden; }
+.maplibregl-popup-anchor-top .maplibregl-popup-tip { border-bottom-color: var(--panel); }
+.maplibregl-popup-anchor-bottom .maplibregl-popup-tip { border-top-color: var(--panel); }
+.maplibregl-popup-close-button { color: var(--muted); font-size: 1.1rem; }
+.mappop { width: 240px; }
+.mappop__img { width: 100%; height: 120px; object-fit: cover; display: block; }
+.mappop__body { padding: 0.5rem 0.6rem 0; }
+.mappop__title { display: block; }
+.mappop__meta { color: var(--muted); font-size: 0.8rem; text-transform: capitalize; }
+.mappop__addr { color: var(--muted); font-size: 0.78rem; margin-top: 0.2rem; }
+.mappop__btn { width: 100%; margin-top: 0.5rem; background: var(--accent); color: #fff; border: 0; padding: 0.5rem; cursor: pointer; }
 
 /* ---- Avatars ---- */
 .avatar {
