@@ -112,6 +112,9 @@ input, select, textarea {
 }
 .board__bar .board__search { flex: 1 1 auto; min-width: 0; }
 .board__bar .btn { white-space: nowrap; }
+.board__results { color: var(--muted); font-size: 0.8rem; margin: 0.1rem 0 0.3rem; }
+.board__results strong { color: var(--text); }
+.linkbtn { background: none; border: 0; color: #58a6ff; cursor: pointer; padding: 0 0.3rem; font: inherit; }
 .board__presets { display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.3rem; -webkit-overflow-scrolling: touch; }
 .fchip { min-height: 40px; }
 

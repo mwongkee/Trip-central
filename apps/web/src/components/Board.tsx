@@ -226,6 +226,18 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         </button>
       </div>
 
+      {(query.trim() || activeFilterCount > 0) && (
+        <p className="board__results" aria-live="polite">
+          <strong>{filtered.length}</strong> result{filtered.length === 1 ? '' : 's'}
+          {query.trim() ? ` for “${query.trim()}”` : ''} · shown on the map
+          {filtered.length > 0 && filtered.filter((i) => i.lat != null).length < filtered.length &&
+            ` (${filtered.filter((i) => i.lat != null).length} on map)`}
+          {query.trim() && (
+            <button type="button" className="linkbtn" onClick={() => setQuery('')}>clear</button>
+          )}
+        </p>
+      )}
+
       <div className="board__presets" role="group" aria-label="Quick filters">
         <button type="button" className={`fchip ${nearMe ? 'fchip--on' : ''}`} aria-pressed={nearMe} onClick={useMyLocation}>📍 Near me</button>
         <button type="button" className="fchip" onClick={nearFerry}>⛴ Near ferry</button>
