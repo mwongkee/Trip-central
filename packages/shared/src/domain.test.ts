@@ -7,6 +7,7 @@ import {
   buildItinerary,
   familyVoters,
   haversineKm,
+  travelMinutes,
 } from './domain.js';
 import type { Expense, Item, Member, ChildProfile, Vote } from './schemas.js';
 
@@ -72,6 +73,23 @@ describe('haversineKm', () => {
     const a = haversineKm(44.64, -63.57, 44.67, -63.57);
     const b = haversineKm(44.67, -63.57, 44.64, -63.57);
     expect(a).toBeCloseTo(b, 6);
+  });
+});
+
+describe('travelMinutes', () => {
+  it('is 0 at the same point', () => {
+    expect(travelMinutes(44.65, -63.57, 44.65, -63.57, 'walk')).toBe(0);
+  });
+  it('walking is slower than driving for the same distance', () => {
+    const a = travelMinutes(44.64, -63.57, 44.67, -63.57, 'walk');
+    const b = travelMinutes(44.64, -63.57, 44.67, -63.57, 'drive');
+    expect(a).toBeGreaterThan(b);
+  });
+  it('~1km is roughly a 16-min walk', () => {
+    // 0.009 deg lat ≈ 1km
+    const mins = travelMinutes(44.65, -63.57, 44.659, -63.57, 'walk');
+    expect(mins).toBeGreaterThan(12);
+    expect(mins).toBeLessThan(20);
   });
 });
 

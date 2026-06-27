@@ -18,13 +18,13 @@ interface ItemCardProps {
   expanded: boolean;
   selected: boolean;
   onToggle: () => void;
-  /** Distance from the active "near pin" center, in km (null when not filtering by distance). */
-  distanceKm?: number | null;
+  /** Travel-time label from the active distance centre (null when not filtering by distance). */
+  distanceLabel?: string | null;
 }
 
 const SLOTS: Slot[] = ['morning', 'afternoon', 'evening', 'breakfast', 'lunch', 'dinner', 'snack'];
 
-export function ItemCard({ item, family, expanded, selected, onToggle, distanceKm }: ItemCardProps) {
+export function ItemCard({ item, family, expanded, selected, onToggle, distanceLabel }: ItemCardProps) {
   const detail = useItemDetail(expanded ? item.itemId : null);
   const vote = useVote();
   const removeVote = useRemoveVote();
@@ -78,9 +78,7 @@ export function ItemCard({ item, family, expanded, selected, onToggle, distanceK
             <span className={`badge badge--${item.type.toLowerCase()}`}>{item.type === 'MEAL' ? '🍽' : '📍'} {bucket}</span>
             <span className="badge badge--status">{item.status}</span>
             <span className="card__score" aria-label={`Score ${liveItem.voteScore}`}>★ {liveItem.voteScore}</span>
-            {distanceKm != null && (
-              <span className="badge badge--dist">📍 {distanceKm < 1 ? `${Math.round(distanceKm * 1000)} m` : `${distanceKm.toFixed(1)} km`}</span>
-            )}
+            {distanceLabel && <span className="badge badge--dist">{distanceLabel}</span>}
           </span>
           {item.description && <p className="card__desc">{item.description}</p>}
           {item.address && <p className="card__addr">📌 {item.address}</p>}

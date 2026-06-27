@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import Fuse from 'fuse.js';
-import { familyVoters, haversineKm, type Item, type ItemType, type TripBundle } from '@tripboard/shared';
+import { familyVoters, travelMinutes, type Item, type ItemType, type TripBundle, type TravelMode } from '@tripboard/shared';
 import { useApp } from '../lib/context.js';
 import { ItemCard } from './ItemCard.js';
 import { MapView } from './MapView.js';
@@ -29,10 +29,13 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   const [maxPrice, setMaxPrice] = useState<number | null>(null); // cents; null = any
   const [cats, setCats] = useState<Set<string>>(new Set());
   const [tagFilter, setTagFilter] = useState<Set<string>>(new Set());
-  const [radiusKm, setRadiusKm] = useState<number | null>(null);
+  const [radiusMin, setRadiusMin] = useState<number | null>(null); // minutes of travel; null = off
+  const [travelMode, setTravelMode] = useState<TravelMode>('walk');
   const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
   const [nearMe, setNearMe] = useState(false);
   const [geoError, setGeoError] = useState<string | null>(null);
+  const [focus, setFocus] = useState<{ lat: number; lng: number; nonce: number } | null>(null);
+  const focusOn = (lat: number, lng: number) => setFocus({ lat, lng, nonce: Date.now() });
 
   // The distance-search centre is either your location ("Near me") or the selected pin.
   const centerItem = useMemo(
@@ -57,7 +60,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       (pos) => {
         setUserLoc({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         setNearMe(true);
-        setRadiusKm((r) => r ?? 2);
+        setRadiusMin((r) => r ?? 15);
         setGeoError(null);
       },
       () => setGeoError('Could not get your location — check location permissions.'),
@@ -125,9 +128,9 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       );
     if (foodMode) items = items.filter((i) => i.type === 'MEAL' || i.category === 'restaurant');
     if (maxPrice != null) items = items.filter((i) => (i.estCost ?? 0) <= maxPrice);
-    if (radiusKm && center) {
+    if (radiusMin && center) {
       items = items.filter(
-        (i) => i.lat != null && i.lng != null && haversineKm(center.lat, center.lng, i.lat, i.lng) <= radiusKm,
+        (i) => i.lat != null && i.lng != null && travelMinutes(center.lat, center.lng, i.lat, i.lng, travelMode) <= radiusMin,
       );
     }
     // Anchors pinned to the top, then highest score first.
@@ -135,7 +138,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       if (a.isAnchor !== b.isAnchor) return a.isAnchor ? -1 : 1;
       return b.voteScore - a.voteScore;
     });
-  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, kidMode, foodMode, maxPrice, radiusKm, center]);
+  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, kidMode, foodMode, maxPrice, radiusMin, travelMode, center]);
 
   const activeFilterCount =
     (typeFilter !== 'all' ? 1 : 0) +
@@ -145,7 +148,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     (kidMode ? 1 : 0) +
     (foodMode ? 1 : 0) +
     (maxPrice != null ? 1 : 0) +
-    (radiusKm ? 1 : 0);
+    (radiusMin ? 1 : 0);
 
   function clearAllFilters() {
     setTypeFilter('all');
@@ -155,7 +158,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     setKidMode(false);
     setFoodMode(false);
     setMaxPrice(null);
-    setRadiusKm(null);
+    setRadiusMin(null);
     setNearMe(false);
   }
 
@@ -167,7 +170,8 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     if (!ferry) return;
     setNearMe(false);
     setSelectedId(ferry.itemId);
-    setRadiusKm((r) => r ?? 2);
+    setRadiusMin((r) => r ?? 15);
+    if (ferry.lat != null && ferry.lng != null) focusOn(ferry.lat, ferry.lng);
   }
 
   // Tapping a pin just highlights it (and sets the distance centre) — stays on the map.
@@ -250,7 +254,14 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         <ul className="searchresults" aria-label="Search results">
           {filtered.slice(0, 8).map((item) => (
             <li key={item.itemId}>
-              <button type="button" className="searchresults__item" onClick={() => highlight(item.itemId)}>
+              <button
+                type="button"
+                className="searchresults__item"
+                onClick={() => {
+                  highlight(item.itemId);
+                  if (item.lat != null && item.lng != null) focusOn(item.lat, item.lng);
+                }}
+              >
                 <span className="searchresults__name">{item.title}</span>
                 <span className="searchresults__meta">
                   {item.type === 'MEAL' ? '🍽' : '📍'} {item.category ?? item.mealType ?? ''}
@@ -279,11 +290,19 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       </div>
 
       {canRadius && (
-        <div className="board__radius" role="group" aria-label="Distance">
+        <div className="board__radius" role="group" aria-label="Travel-time distance">
+          <button
+            type="button"
+            className="fchip"
+            onClick={() => setTravelMode(travelMode === 'walk' ? 'drive' : 'walk')}
+            aria-label={`Switch to ${travelMode === 'walk' ? 'driving' : 'walking'}`}
+          >
+            {travelMode === 'walk' ? '🚶 walk' : '🚗 drive'}
+          </button>
           <span className="board__radiuslabel">within</span>
-          {[1, 2, 5, 10].map((km) => (
-            <button key={km} type="button" className={`fchip ${radiusKm === km ? 'fchip--on' : ''}`} aria-pressed={radiusKm === km} onClick={() => setRadiusKm(radiusKm === km ? null : km)}>
-              {km} km
+          {[5, 10, 15, 30].map((m) => (
+            <button key={m} type="button" className={`fchip ${radiusMin === m ? 'fchip--on' : ''}`} aria-pressed={radiusMin === m} onClick={() => setRadiusMin(radiusMin === m ? null : m)}>
+              {m} min
             </button>
           ))}
           <span className="board__radiuslabel">of <strong>{center!.label}</strong></span>
@@ -294,7 +313,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       {adding && <AddItemForm onDone={() => setAdding(false)} />}
 
       <aside className="board__map" aria-label="Map">
-        <MapView items={filtered} selectedId={selectedId} userLocation={userLoc} presences={presences} onSelect={highlight} />
+        <MapView items={filtered} selectedId={selectedId} userLocation={userLoc} presences={presences} focus={focus} onSelect={highlight} />
         <p className="board__maphint">
           {filtered.length} place{filtered.length === 1 ? '' : 's'} shown · tap a pin for details
           {presences.length > 0 && ` · ${presences.length} sharing location`}
@@ -303,16 +322,16 @@ export function Board({ bundle }: { bundle: TripBundle }) {
 
       <section className="board__list" aria-label="Trip items">
         {filtered.map((item) => {
-          const distanceKm =
-            radiusKm && center && item.lat != null && item.lng != null
-              ? haversineKm(center.lat, center.lng, item.lat, item.lng)
+          const distanceLabel =
+            radiusMin && center && item.lat != null && item.lng != null
+              ? `~${Math.max(1, Math.round(travelMinutes(center.lat, center.lng, item.lat, item.lng, travelMode)))} min ${travelMode === 'walk' ? '🚶' : '🚗'}`
               : null;
           return (
             <ItemCard
               key={item.itemId}
               item={item}
               family={family}
-              distanceKm={distanceKm}
+              distanceLabel={distanceLabel}
               expanded={expandedId === item.itemId}
               selected={selectedId === item.itemId}
               onToggle={() => setExpandedId((cur) => (cur === item.itemId ? null : item.itemId))}

@@ -13,6 +13,8 @@ interface MapViewProps {
   userLocation?: { lat: number; lng: number } | null;
   /** Family members currently sharing their location. */
   presences?: Presence[];
+  /** Recenter the map here when this changes (e.g. tapping a search result). */
+  focus?: { lat: number; lng: number; nonce: number } | null;
 }
 
 /** Free, no-key vector basemap. Override with VITE_MAP_STYLE (e.g. Amazon Location). */
@@ -40,7 +42,7 @@ function iconFor(item: Item): string {
   return item.type === 'MEAL' ? '🍽' : '📍';
 }
 
-export function MapView({ items, selectedId, onSelect, userLocation, presences }: MapViewProps) {
+export function MapView({ items, selectedId, onSelect, userLocation, presences, focus }: MapViewProps) {
   const styleUrl = (import.meta.env.VITE_MAP_STYLE as string | undefined) || DEFAULT_STYLE;
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
@@ -48,6 +50,7 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences }
   const userMarkerRef = useRef<Marker | null>(null);
   const personMarkersRef = useRef<Marker[]>([]);
   const loadedRef = useRef(false);
+  const didFitRef = useRef(false);
 
   const located = items.filter((i) => typeof i.lat === 'number' && typeof i.lng === 'number');
   // Two stable signatures (located is a fresh array each render):
@@ -92,12 +95,6 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences }
       el.style.setProperty('--marker-color', colorFor(item));
       el.setAttribute('aria-label', voted ? `${item.title} — ${item.voteScore} votes` : item.title);
       el.textContent = iconFor(item);
-      if (voted) {
-        const badge = document.createElement('span');
-        badge.className = 'marker__badge';
-        badge.textContent = String(item.voteScore);
-        el.appendChild(badge);
-      }
       el.addEventListener('click', (e) => {
         e.stopPropagation();
         onSelect(item.itemId); // highlight + Board shows a bottom detail card — map stays put
@@ -107,16 +104,25 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markersKey, selectedId, onSelect]);
 
-  // Fit the map to the visible set only when that set changes (not on selection),
-  // so tapping a pin keeps the map exactly where it is.
+  // Fit to all pins ONCE on first load. After that we never auto-move the camera
+  // on filter/search changes — the user keeps their view (use focus/Near-me to recenter).
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || located.length === 0) return;
+    if (!map || didFitRef.current || located.length === 0) return;
     const bounds = new maplibregl.LngLatBounds();
     located.forEach((i) => bounds.extend([i.lng!, i.lat!]));
-    map.fitBounds(bounds, { padding: 56, maxZoom: 14, duration: 400 });
+    map.fitBounds(bounds, { padding: 56, maxZoom: 12, duration: 0 });
+    didFitRef.current = true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boundsKey]);
+
+  // Recenter when asked (search result tap, Near ferry, etc.).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !focus) return;
+    map.easeTo({ center: [focus.lng, focus.lat], zoom: Math.max(map.getZoom(), 14), duration: 500 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focus?.nonce]);
 
   // "You are here" marker + recenter when location is first shared.
   useEffect(() => {

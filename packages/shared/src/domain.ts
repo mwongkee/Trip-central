@@ -65,6 +65,20 @@ export function haversineKm(lat1: number, lng1: number, lat2: number, lng2: numb
   return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
 }
 
+export type TravelMode = 'walk' | 'drive';
+
+/**
+ * Estimated travel time (minutes) between two points. We don't have a routing
+ * engine, so this approximates road distance as straight-line × 1.3 and divides
+ * by a typical speed (walk 4.8 km/h, city drive 38 km/h). Good enough to filter
+ * "within ~15 min walk"; label it as approximate in the UI.
+ */
+export function travelMinutes(lat1: number, lng1: number, lat2: number, lng2: number, mode: TravelMode): number {
+  const roadKm = haversineKm(lat1, lng1, lat2, lng2) * 1.3;
+  const kmh = mode === 'walk' ? 4.8 : 38;
+  return (roadKm / kmh) * 60;
+}
+
 /** Net score and count derived from a list of votes (server keeps a denormalized copy). */
 export function tallyVotes(votes: Vote[]): { voteScore: number; voteCount: number } {
   return {

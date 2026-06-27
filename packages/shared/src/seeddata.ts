@@ -309,6 +309,24 @@ export function seedItems(): Item[] {
     place('item-deedees', "Dee Dee's Ice Cream", 'restaurant', 44.6500, -63.5890, 'Small-batch handmade ice cream and sorbet, North End.', { address: 'North End, Halifax', tags: ['kids'], website: 'https://deedees.ca' }),
     place('item-propeller', 'Propeller Brewing', 'restaurant', 44.6510, -63.5900, 'Taproom with a basement pinball/arcade and house-made sodas for kids.', { address: 'Gottingen St, Halifax', tags: ['kids', 'rainy-day'], website: 'https://drinkpropeller.ca' }),
 
+    // ---- More restaurants (broader coverage) ----
+    place('item-bluenoseii', 'Bluenose II Restaurant', 'restaurant', 44.6452, -63.5715, 'Beloved Greek-Canadian diner on Hollis St (since 1964) — big menu, all-day breakfast.', { address: '1824 Hollis St, Halifax', tags: ['walkable', 'kids'] }),
+    place('item-lowerdeck', 'The Lower Deck', 'restaurant', 44.6489, -63.5697, 'Iconic Maritime pub with live East Coast music at Historic Properties.', { address: '1887 Upper Water St, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-staynerswharf', "Stayner's Wharf", 'restaurant', 44.6483, -63.5688, 'Waterfront pub + live music, steps from the ferry.', { address: '5075 George St, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-garrison', 'Garrison Brewing', 'restaurant', 44.6425, -63.5670, 'Seaport brewery taproom next to the farmers’ market.', { address: '1149 Marginal Rd, Halifax', tags: ['walkable'] }),
+    place('item-amano', 'Ristorante a Mano', 'restaurant', 44.6452, -63.5686, 'Bishop’s Landing Italian on the boardwalk — pasta + wood-fired pizza.', { address: '1477 Lower Water St, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-damaurizio', 'Da Maurizio', 'restaurant', 44.6447, -63.5740, 'Upscale Italian in the historic Brewery Market.', { address: '1496 Lower Water St, Halifax', tags: ['walkable'] }),
+    place('item-cheelin', 'Cheelin', 'restaurant', 44.6447, -63.5742, 'Long-loved Chinese restaurant in the Brewery Market.', { address: '1496 Lower Water St, Halifax', tags: ['walkable'] }),
+    place('item-highwayman', 'Highwayman', 'restaurant', 44.6478, -63.5732, 'Spanish-style tapas + sherry on Argyle St.', { address: '1714 Argyle St, Halifax', tags: ['walkable'] }),
+    place('item-antojo', 'Antojo Tacos & Tequila', 'restaurant', 44.6480, -63.5730, 'Lively Mexican on the Argyle St strip.', { address: '1667 Argyle St, Halifax', tags: ['walkable'] }),
+    place('item-athens', 'The Athens', 'restaurant', 44.6470, -63.5990, 'Family Greek restaurant on Quinpool Rd.', { address: '6273 Quinpool Rd, Halifax', tags: ['kids'] }),
+    place('item-agricola', 'Agricola Street Brasserie', 'restaurant', 44.6575, -63.5930, 'North-End brasserie — brunch and bistro fare.', { address: '2540 Agricola St, Halifax' }),
+    place('item-salvatores', "Salvatore's Pizzaiolo", 'restaurant', 44.6610, -63.6010, 'Authentic thin-crust pizza in the Hydrostone.', { address: '5541 Young St, Halifax', tags: ['kids'] }),
+    place('item-armview', 'The Armview', 'restaurant', 44.6360, -63.6080, 'Retro diner-meets-bistro by the Armdale Rotary.', { address: '7156 Chebucto Rd, Halifax', tags: ['kids'] }),
+    place('item-ardmore', 'Ardmore Tea Room', 'restaurant', 44.6470, -63.6010, 'Classic no-frills breakfast/lunch diner on Quinpool.', { address: '6499 Quinpool Rd, Halifax', tags: ['kids'] }),
+    place('item-cabincoffee', 'Cabin Coffee', 'restaurant', 44.6455, -63.5720, 'Cozy local coffee + breakfast near the waterfront.', { address: '1554 Hollis St, Halifax', tags: ['walkable'] }),
+    place('item-brightwood', 'Brightwood Brewery', 'restaurant', 44.6672, -63.5688, 'Neighbourhood Dartmouth brewery taproom, near the ferry.', { address: '64 Portland St, Dartmouth', tags: ['walkable'] }),
+
     // ---- Meals ----
     meal('meal-lobster', 'Lobster rolls on the boardwalk', 'dinner', 'Fresh rolls on the Halifax waterfront — perfect after the ferry tonight.', {
       lat: 44.6476, lng: -63.5683, address: 'Halifax Waterfront', category: 'restaurant', tags: ['walkable', 'ferry', 'tonight'],

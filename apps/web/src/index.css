@@ -220,25 +220,9 @@ input, select, textarea {
 
 /* ---- Map ---- */
 .map { height: 58vh; min-height: 340px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
-.marker { position: relative; background: var(--marker-color, var(--accent)); color: #fff; border: 2px solid #fff; border-radius: 50%; width: 30px; height: 30px; font-size: 15px; line-height: 1; display: grid; place-items: center; cursor: pointer; box-shadow: 0 1px 5px rgba(0, 0, 0, 0.45); padding: 0; }
+.marker { background: var(--marker-color, var(--accent)); color: #fff; border: 2px solid #fff; border-radius: 50%; width: 30px; height: 30px; font-size: 15px; line-height: 1; display: grid; place-items: center; cursor: pointer; box-shadow: 0 1px 5px rgba(0, 0, 0, 0.45); padding: 0; }
 .marker--sel { outline: 3px solid #fff; transform: scale(1.2); z-index: 1; }
 .marker--voted { box-shadow: 0 0 0 3px #f0c000, 0 1px 5px rgba(0, 0, 0, 0.45); }
-.marker__badge {
-  position: absolute;
-  top: -7px;
-  right: -7px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 3px;
-  border-radius: 999px;
-  background: #f0c000;
-  color: #1a1a1a;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 16px;
-  text-align: center;
-  border: 1.5px solid #fff;
-}
 .marker--me { background: #1f6feb; border: 3px solid #fff; width: 18px; height: 18px; border-radius: 50%; box-shadow: 0 0 0 5px rgba(31, 111, 235, 0.3); cursor: default; }
 .marker--person { background: var(--marker-color, #1f6feb); color: #fff; border: 3px solid #fff; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 12px; box-shadow: 0 0 0 4px rgba(46, 160, 67, 0.35), 0 1px 5px rgba(0, 0, 0, 0.45); }
 
