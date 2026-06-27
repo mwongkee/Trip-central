@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import maplibregl, { type Map as MlMap, type Marker } from 'maplibre-gl';
+import { useEffect, useRef, useState } from 'react';
+import maplibregl, { type Map as MlMap, type Marker, type GeoJSONSource } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { Item, Presence } from '@tripboard/shared';
 import { colorForName, initials } from '../lib/avatar.js';
@@ -35,28 +35,37 @@ function colorFor(item: Item): string {
   return CATEGORY_COLORS[key] ?? CATEGORY_COLORS['other']!;
 }
 
-function iconFor(item: Item): string {
-  if (item.isAnchor) return item.anchorRole === 'hotel' ? '🏨' : '🏠';
-  return item.type === 'MEAL' ? '🍽' : '📍';
-}
-
 export function MapView({ items, selectedId, onSelect, userLocation, presences }: MapViewProps) {
   const styleUrl = (import.meta.env.VITE_MAP_STYLE as string | undefined) || DEFAULT_STYLE;
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
-  const markersRef = useRef<Marker[]>([]);
   const userMarkerRef = useRef<Marker | null>(null);
   const personMarkersRef = useRef<Marker[]>([]);
-  const loadedRef = useRef(false);
+  const onSelectRef = useRef(onSelect);
+  onSelectRef.current = onSelect;
+  const [styleReady, setStyleReady] = useState(false);
 
   const located = items.filter((i) => typeof i.lat === 'number' && typeof i.lng === 'number');
-  // Two stable signatures (located is a fresh array each render):
-  // - boundsKey: only the set membership → fit-bounds keys off this (no refit on votes/selection).
-  // - markersKey: includes vote score/status so marker badges & highlight refresh when votes change.
   const boundsKey = located.map((i) => i.itemId).join('|');
-  const markersKey = located.map((i) => `${i.itemId}:${i.voteScore}:${i.voteCount}:${i.status}`).join('|');
+  const markersKey = located.map((i) => `${i.itemId}:${i.voteScore}:${i.voteCount}`).join('|');
 
-  // Init once.
+  function featureCollection(): GeoJSON.FeatureCollection {
+    return {
+      type: 'FeatureCollection',
+      features: located.map((i) => ({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [i.lng!, i.lat!] },
+        properties: {
+          id: i.itemId,
+          color: colorFor(i),
+          voted: i.voteCount > 0,
+          selected: i.itemId === selectedId,
+        },
+      })),
+    };
+  }
+
+  // Init the map + clustered source/layers once.
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
     const map = new maplibregl.Map({
@@ -68,47 +77,83 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences }
     });
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     map.addControl(new maplibregl.GeolocateControl({ trackUserLocation: true }), 'top-right');
-    map.on('load', () => {
-      loadedRef.current = true;
-    });
     mapRef.current = map;
+
+    map.on('load', () => {
+      map.addSource('items', { type: 'geojson', data: featureCollection(), cluster: true, clusterMaxZoom: 13, clusterRadius: 45 });
+
+      map.addLayer({
+        id: 'clusters',
+        type: 'circle',
+        source: 'items',
+        filter: ['has', 'point_count'],
+        paint: {
+          'circle-color': '#1f6feb',
+          'circle-stroke-color': '#ffffff',
+          'circle-stroke-width': 2,
+          'circle-radius': ['step', ['get', 'point_count'], 16, 10, 22, 30, 28],
+        },
+      });
+      map.addLayer({
+        id: 'cluster-count',
+        type: 'symbol',
+        source: 'items',
+        filter: ['has', 'point_count'],
+        layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-size': 13 },
+        paint: { 'text-color': '#ffffff' },
+      });
+      map.addLayer({
+        id: 'pin',
+        type: 'circle',
+        source: 'items',
+        filter: ['!', ['has', 'point_count']],
+        paint: {
+          'circle-color': ['get', 'color'],
+          'circle-radius': ['case', ['get', 'selected'], 11, 8],
+          'circle-stroke-width': ['case', ['get', 'selected'], 4, ['case', ['get', 'voted'], 3, 2]],
+          'circle-stroke-color': ['case', ['get', 'selected'], '#58a6ff', ['case', ['get', 'voted'], '#f0c000', '#ffffff']],
+        },
+      });
+
+      map.on('click', 'clusters', (e) => {
+        const f = map.queryRenderedFeatures(e.point, { layers: ['clusters'] })[0];
+        if (!f) return;
+        const clusterId = f.properties?.['cluster_id'] as number;
+        const src = map.getSource('items') as GeoJSONSource;
+        void src.getClusterExpansionZoom(clusterId).then((zoom) => {
+          const coords = (f.geometry as GeoJSON.Point).coordinates as [number, number];
+          map.easeTo({ center: coords, zoom });
+        });
+      });
+      map.on('click', 'pin', (e) => {
+        const id = e.features?.[0]?.properties?.['id'] as string | undefined;
+        if (id) onSelectRef.current(id);
+      });
+      for (const layer of ['clusters', 'pin']) {
+        map.on('mouseenter', layer, () => { map.getCanvas().style.cursor = 'pointer'; });
+        map.on('mouseleave', layer, () => { map.getCanvas().style.cursor = ''; });
+      }
+
+      setStyleReady(true);
+    });
+
     return () => {
       map.remove();
       mapRef.current = null;
-      loadedRef.current = false;
+      setStyleReady(false);
     };
   }, [styleUrl]);
 
-  // Render markers (rebuilds on selection to update the highlight; does NOT move the map).
+  // Update source data when the visible set, votes, or selection change.
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current = located.map((item) => {
-      const voted = item.voteCount > 0;
-      const el = document.createElement('button');
-      el.type = 'button';
-      el.className = `marker ${item.isAnchor ? 'marker--anchor' : ''} ${voted ? 'marker--voted' : ''} ${item.itemId === selectedId ? 'marker--sel' : ''}`;
-      el.style.setProperty('--marker-color', colorFor(item));
-      el.setAttribute('aria-label', voted ? `${item.title} — ${item.voteScore} votes` : item.title);
-      el.textContent = iconFor(item);
-      if (voted) {
-        const badge = document.createElement('span');
-        badge.className = 'marker__badge';
-        badge.textContent = String(item.voteScore);
-        el.appendChild(badge);
-      }
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        onSelect(item.itemId); // highlight + Board shows a bottom detail card — map stays put
-      });
-      return new maplibregl.Marker({ element: el }).setLngLat([item.lng!, item.lat!]).addTo(map);
-    });
+    if (!map || !styleReady) return;
+    const src = map.getSource('items') as GeoJSONSource | undefined;
+    src?.setData(featureCollection());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [markersKey, selectedId, onSelect]);
+  }, [styleReady, markersKey, selectedId]);
 
-  // Fit the map to the visible set only when that set changes (not on selection),
-  // so tapping a pin keeps the map exactly where it is.
+  // Fit to the visible set only when membership changes (not on votes/selection).
   useEffect(() => {
     const map = mapRef.current;
     if (!map || located.length === 0) return;
@@ -118,7 +163,7 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boundsKey]);
 
-  // "You are here" marker + recenter when location is first shared.
+  // "You are here" dot + recenter when location is first shared.
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -130,14 +175,12 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences }
       const el = document.createElement('div');
       el.className = 'marker marker--me';
       el.setAttribute('aria-label', 'Your location');
-      userMarkerRef.current = new maplibregl.Marker({ element: el })
-        .setLngLat([userLocation.lng, userLocation.lat])
-        .addTo(map);
+      userMarkerRef.current = new maplibregl.Marker({ element: el }).setLngLat([userLocation.lng, userLocation.lat]).addTo(map);
       map.easeTo({ center: [userLocation.lng, userLocation.lat], zoom: Math.max(map.getZoom(), 13), duration: 500 });
     }
   }, [userLocation]);
 
-  // Family members sharing their location → avatar markers.
+  // Family members sharing location → avatar markers.
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
