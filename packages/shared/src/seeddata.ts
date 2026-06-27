@@ -191,6 +191,50 @@ export function seedItems(): Item[] {
       address: 'Upper Clements, NS', tags: ['trails'], website: 'https://www.annapoliscounty.ca/community-development/parks-trails/1936-upper-clements-trails',
     }),
 
+    // ---- Restaurants: Halifax waterfront & downtown (real spots; coords approx, tap Open in Maps for exact + menu) ----
+    place('item-bicyclethief', 'The Bicycle Thief', 'restaurant', 44.6452, -63.5686, 'Lively Italian-with-a-Maritime-twist at Bishop’s Landing (1475 Lower Water St) — very popular, expect a wait.', { address: '1475 Lower Water St, Halifax', tags: ['walkable', 'tonight'], website: 'https://bicyclethief.ca/' }),
+    place('item-waterpolo', 'Water Polo', 'restaurant', 44.6440, -63.5668, 'Seafood on the waterfront at 1325 Lower Water St.', { address: '1325 Lower Water St, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-drift', 'Drift', 'restaurant', 44.6460, -63.5683, 'Seafood + cocktails in the Queen’s Marque district on the boardwalk.', { address: '1709 Lower Water St, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-seasmoke', 'Sea Smoke', 'restaurant', 44.6464, -63.5684, 'Asian-fusion seafood with one of the best harbour views on the boardwalk.', { address: 'Queen’s Marque, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-gahan', 'Gahan House Harbour', 'restaurant', 44.6470, -63.5688, 'Waterfront brewpub — burgers, fish & chips, house beer; kid-friendly.', { address: 'Cable Wharf, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-stubborngoat', 'The Stubborn Goat', 'restaurant', 44.6479, -63.5731, 'Gastropub on the Argyle St patio strip — good for groups.', { address: '1579 Grafton St, Halifax', tags: ['walkable'], website: 'https://thestubborngoat.ca/' }),
+    place('item-fivefish', 'The Five Fishermen', 'restaurant', 44.6483, -63.5736, 'Historic upstairs seafood house with a mussel & salad bar.', { address: '1740 Argyle St, Halifax', tags: ['walkable'] }),
+    place('item-woodenmonkeyhfx', 'The Wooden Monkey (Halifax)', 'restaurant', 44.6476, -63.5739, 'Local/organic comfort food, very veg-friendly, downtown.', { address: '1707 Grafton St, Halifax', tags: ['walkable'], website: 'https://www.thewoodenmonkey.ca/' }),
+    place('item-2doors', '2 Doors Down', 'restaurant', 44.6455, -63.5740, 'Casual local comfort food off Spring Garden.', { address: '1533 Barrington St, Halifax', tags: ['walkable'] }),
+    place('item-yfm', "Your Father's Moustache", 'restaurant', 44.6435, -63.5793, 'Pub classics + rooftop patio on Spring Garden Rd.', { address: '5686 Spring Garden Rd, Halifax', tags: ['walkable'] }),
+    place('item-darrells', "Darrell's", 'restaurant', 44.6402, -63.5826, 'Diner famous for the peanut-butter burger; very kid-friendly.', { address: '5576 Fenwick St, Halifax' }),
+    place('item-barkismet', 'Bar Kismet', 'restaurant', 44.6585, -63.5945, 'Acclaimed North-End seafood small plates + cocktails (reserve ahead).', { address: '2733 Agricola St, Halifax', website: 'https://barkismet.com/' }),
+    place('item-edna', 'EDNA', 'restaurant', 44.6555, -63.5905, 'Buzzy North-End bistro; brunch favourite.', { address: '2053 Gottingen St, Halifax' }),
+    place('item-kingofdonair', 'King of Donair', 'restaurant', 44.6470, -63.5980, 'The original Halifax donair (since 1973).', { address: '6420 Quinpool Rd, Halifax' }),
+    place('item-cows', 'COWS Creamery', 'restaurant', 44.6470, -63.5683, 'PEI ice cream on the boardwalk — a kid magnet.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+
+    // ---- Restaurants: Dartmouth (near the Alderney ferry) ----
+    place('item-woodenmonkeydart', 'The Wooden Monkey (Dartmouth)', 'restaurant', 44.6647, -63.5664, 'Top floor of the Alderney ferry terminal — pizzas, pasta, kids’ menu, harbour views. Grab dinner before/after the ferry.', { address: '40 Alderney Dr, Dartmouth', tags: ['walkable', 'tonight'], website: 'https://www.thewoodenmonkey.ca/' }),
+    place('item-canteen', 'The Canteen', 'restaurant', 44.6668, -63.5688, 'Steps from the Alderney ferry — haddock burger, falafel bowl, seasonal menu.', { address: '40 Alderney Dr, Dartmouth', tags: ['walkable'] }),
+    place('item-batterypark', 'Battery Park', 'restaurant', 44.6678, -63.5703, 'Dartmouth beer bar + wood-fired food, short walk from the ferry.', { address: '62 Ochterloney St, Dartmouth', tags: ['walkable'] }),
+    place('item-johnslunch', "John's Lunch", 'restaurant', 44.6452, -63.5650, 'Woodside landmark (since 1969) famous for fish & chips.', { address: '352 Pleasant St, Dartmouth' }),
+
+    // ---- Restaurants: South Shore (near the Rose Bay Airbnb) ----
+    place('item-saltshaker', 'Salt Shaker Deli', 'restaurant', 44.3760, -64.3085, 'Lunenburg harbourfront — legendary mussels and big bowls.', { address: '124 Montague St, Lunenburg', tags: ['walkable'] }),
+    place('item-fishshack', 'South Shore Fish Shack', 'restaurant', 44.3761, -64.3082, 'Arguably the best fish & chips in Lunenburg — crisp haddock.', { address: '108 Montague St, Lunenburg', tags: ['walkable'] }),
+    place('item-rebeccas', "Rebecca's", 'restaurant', 44.4495, -64.3815, 'Waterfront home-cooked local cuisine in Mahone Bay.', { address: 'Mahone Bay, NS' }),
+
+    // ---- More attractions ----
+    place('item-naturalhistory', 'Museum of Natural History', 'museum', 44.6510, -63.5817, 'Dinosaurs, Gus the 100-yr-old tortoise, and nature exhibits — kid favourite.', { address: '1747 Summer St, Halifax', tags: ['walkable'], estCost: 6300, website: 'https://naturalhistory.novascotia.ca' }),
+    place('item-pier21', 'Canadian Museum of Immigration at Pier 21', 'museum', 44.6418, -63.5667, 'Moving museum of Canadian immigration at the south end of the boardwalk.', { address: '1055 Marginal Rd, Halifax', tags: ['walkable'], website: 'https://pier21.ca' }),
+    place('item-agns', 'Art Gallery of Nova Scotia', 'museum', 44.6470, -63.5723, "Provincial art gallery incl. Maud Lewis’s tiny painted house.", { address: '1723 Hollis St, Halifax', tags: ['walkable'], website: 'https://www.artgalleryofnovascotia.ca' }),
+    place('item-library', 'Halifax Central Library', 'other', 44.6438, -63.5783, 'Architectural landmark — zany staircases, kids’ area, rooftop view; free.', { address: '5440 Spring Garden Rd, Halifax', tags: ['walkable'] }),
+    place('item-harbourhopper', 'Harbour Hopper Tour', 'other', 44.6478, -63.5690, 'Amphibious land-and-sea tour from the boardwalk — a hit with kids.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-pointpleasant', 'Point Pleasant Park', 'outdoor', 44.6235, -63.5665, 'Wooded seaside park with trails, old forts, and off-leash areas.', { address: 'Point Pleasant Dr, Halifax' }),
+    place('item-dingle', 'Sir Sandford Fleming Park (The Dingle)', 'outdoor', 44.6300, -63.6125, 'Stone tower, little beach, and trails on the Northwest Arm.', { address: 'Dingle Rd, Halifax' }),
+    place('item-fishermanscove', "Fisherman's Cove", 'outdoor', 44.6320, -63.4640, 'Restored fishing village in Eastern Passage — boardwalk, shops, ice cream.', { address: 'Eastern Passage, NS' }),
+    place('item-hydrostone', 'Hydrostone Market', 'other', 44.6612, -63.6010, 'Cute North-End block of shops and cafes.', { address: 'Young St, Halifax' }),
+    place('item-rainbowhaven', 'Rainbow Haven Beach', 'beach', 44.6430, -63.4180, 'Supervised sandy beach east of Dartmouth — good for kids (Jul–Aug).', { address: 'Cow Bay, NS', tags: ['beach'], website: 'https://parks.novascotia.ca/park/rainbow-haven-beach' }),
+    place('item-crystalcrescent', 'Crystal Crescent Beach', 'beach', 44.4560, -63.6190, 'White-sand beaches + coastal hike south of the city.', { address: 'Sambro Creek, NS', tags: ['beach'] }),
+    place('item-mahonebay', 'Mahone Bay (Three Churches)', 'viewpoint', 44.4470, -64.3830, 'Postcard town with three waterfront churches; minutes from Lunenburg.', { address: 'Mahone Bay, NS', tags: ['photos'], website: 'https://mahonebay.com' }),
+    place('item-fisheriesmuseum', 'Fisheries Museum of the Atlantic', 'museum', 44.3757, -64.3140, 'Lunenburg waterfront museum — aquarium and tall ships.', { address: '68 Bluenose Dr, Lunenburg', tags: ['walkable'], website: 'https://fisheriesmuseum.novascotia.ca' }),
+    place('item-wildlifepark', 'Shubenacadie Wildlife Park', 'outdoor', 45.0833, -63.4030, 'Provincial wildlife park — moose, bears, deer to feed (~1 h from Halifax).', { address: 'Shubenacadie, NS', tags: ['kids'], website: 'https://wildlifepark.novascotia.ca' }),
+
     // ---- Meals ----
     meal('meal-lobster', 'Lobster rolls on the boardwalk', 'dinner', 'Fresh rolls on the Halifax waterfront — perfect after the ferry tonight.', {
       lat: 44.6476, lng: -63.5683, address: 'Halifax Waterfront', category: 'restaurant', tags: ['walkable', 'ferry', 'tonight'],

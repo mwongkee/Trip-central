@@ -53,6 +53,18 @@ export function familyVoters(
   return allVoters(members, children).filter((v) => v.familyId === familyId);
 }
 
+/** Great-circle distance in km between two lat/lng points (haversine). */
+export function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371;
+  const toRad = (d: number): number => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(a)));
+}
+
 /** Net score and count derived from a list of votes (server keeps a denormalized copy). */
 export function tallyVotes(votes: Vote[]): { voteScore: number; voteCount: number } {
   return {

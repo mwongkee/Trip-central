@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import Fuse from 'fuse.js';
-import { familyVoters, type Item, type ItemType, type TripBundle } from '@tripboard/shared';
+import { familyVoters, haversineKm, type Item, type ItemType, type TripBundle } from '@tripboard/shared';
 import { useApp } from '../lib/context.js';
 import { ItemCard } from './ItemCard.js';
 import { MapView } from './MapView.js';
@@ -21,6 +21,14 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   const [view, setView] = useState<'board' | 'itinerary'>('board');
   const [cats, setCats] = useState<Set<string>>(new Set());
   const [tagFilter, setTagFilter] = useState<Set<string>>(new Set());
+  const [radiusKm, setRadiusKm] = useState<number | null>(null);
+
+  // The selected pin doubles as the center for "within X km" search.
+  const centerItem = useMemo(
+    () => bundle.items.find((i) => i.itemId === selectedId) ?? null,
+    [bundle.items, selectedId],
+  );
+  const canRadius = !!(centerItem && typeof centerItem.lat === 'number' && typeof centerItem.lng === 'number');
 
   // Categories present in the trip, for the map/list filter chips.
   const categoryList = useMemo(() => {
@@ -57,12 +65,17 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     if (statusFilter !== 'all') items = items.filter((i) => i.status === statusFilter);
     if (cats.size > 0) items = items.filter((i) => i.category && cats.has(i.category));
     if (tagFilter.size > 0) items = items.filter((i) => [...tagFilter].every((t) => i.tags.includes(t)));
+    if (radiusKm && centerItem && centerItem.lat != null && centerItem.lng != null) {
+      items = items.filter(
+        (i) => i.lat != null && i.lng != null && haversineKm(centerItem.lat!, centerItem.lng!, i.lat, i.lng) <= radiusKm,
+      );
+    }
     // Anchors pinned to the top, then highest score first.
     return items.slice().sort((a, b) => {
       if (a.isAnchor !== b.isAnchor) return a.isAnchor ? -1 : 1;
       return b.voteScore - a.voteScore;
     });
-  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter]);
+  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, radiusKm, centerItem]);
 
   function select(itemId: string) {
     setSelectedId(itemId);
@@ -148,6 +161,31 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         )}
       </div>
 
+      {canRadius ? (
+        <div className="board__radius" role="group" aria-label="Distance from pin">
+          <span className="board__radiuslabel">Within</span>
+          {[1, 2, 5, 10].map((km) => (
+            <button
+              key={km}
+              type="button"
+              className={`fchip ${radiusKm === km ? 'fchip--on' : ''}`}
+              aria-pressed={radiusKm === km}
+              onClick={() => setRadiusKm(radiusKm === km ? null : km)}
+            >
+              {km} km
+            </button>
+          ))}
+          <span className="board__radiuslabel">of <strong>{centerItem!.title}</strong></span>
+          {radiusKm && (
+            <button type="button" className="fchip fchip--clear" onClick={() => setRadiusKm(null)}>
+              clear ✕
+            </button>
+          )}
+        </div>
+      ) : (
+        <p className="board__radiushint">Tap a pin to find places near it.</p>
+      )}
+
       {adding && <AddItemForm onDone={() => setAdding(false)} />}
 
       <aside className="board__map" aria-label="Map">
@@ -156,16 +194,23 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       </aside>
 
       <section className="board__list" aria-label="Trip items">
-        {filtered.map((item) => (
-          <ItemCard
-            key={item.itemId}
-            item={item}
-            family={family}
-            expanded={expandedId === item.itemId}
-            selected={selectedId === item.itemId}
-            onToggle={() => setExpandedId((cur) => (cur === item.itemId ? null : item.itemId))}
-          />
-        ))}
+        {filtered.map((item) => {
+          const distanceKm =
+            radiusKm && centerItem && centerItem.lat != null && centerItem.lng != null && item.lat != null && item.lng != null
+              ? haversineKm(centerItem.lat, centerItem.lng, item.lat, item.lng)
+              : null;
+          return (
+            <ItemCard
+              key={item.itemId}
+              item={item}
+              family={family}
+              distanceKm={distanceKm}
+              expanded={expandedId === item.itemId}
+              selected={selectedId === item.itemId}
+              onToggle={() => setExpandedId((cur) => (cur === item.itemId ? null : item.itemId))}
+            />
+          );
+        })}
         {filtered.length === 0 && <p className="board__empty">Nothing matches. Try a different search or suggest something.</p>}
       </section>
       </>

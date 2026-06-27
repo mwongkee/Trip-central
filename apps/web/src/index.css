@@ -94,6 +94,10 @@ input, select, textarea {
 .fchip { white-space: nowrap; background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px; padding: 0.4rem 0.75rem; color: var(--text); text-transform: capitalize; flex: 0 0 auto; }
 .fchip--on { background: var(--accent); border-color: var(--accent); color: #fff; }
 .fchip--clear { color: var(--muted); text-transform: none; }
+.board__radius { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; margin-top: 0.5rem; }
+.board__radiuslabel { color: var(--muted); font-size: 0.85rem; }
+.board__radiushint { color: var(--muted); font-size: 0.8rem; margin: 0.5rem 0 0; }
+.badge--dist { background: #10243a; border-color: #1f6feb; color: #9ecbff; }
 .board__map { margin-top: 0.75rem; }
 .board__maphint { color: var(--muted); font-size: 0.8rem; margin: 0.35rem 0 0; text-align: center; }
 .board__list { display: grid; gap: 0.6rem; margin-top: 1rem; }

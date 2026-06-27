@@ -6,6 +6,7 @@ import {
   totalsByCategory,
   buildItinerary,
   familyVoters,
+  haversineKm,
 } from './domain.js';
 import type { Expense, Item, Member, ChildProfile, Vote } from './schemas.js';
 
@@ -55,6 +56,22 @@ describe('scorePad', () => {
   it('clamps out-of-range scores', () => {
     expect(scorePad(-100)).toBe('9999');
     expect(scorePad(100000)).toBe('0000');
+  });
+});
+
+describe('haversineKm', () => {
+  it('is ~0 for the same point', () => {
+    expect(haversineKm(44.65, -63.57, 44.65, -63.57)).toBeCloseTo(0, 5);
+  });
+  it('measures Halifax waterfront → Peggys Cove at roughly 33 km', () => {
+    const d = haversineKm(44.6476, -63.5683, 44.4915, -63.917);
+    expect(d).toBeGreaterThan(28);
+    expect(d).toBeLessThan(38);
+  });
+  it('is symmetric', () => {
+    const a = haversineKm(44.64, -63.57, 44.67, -63.57);
+    const b = haversineKm(44.67, -63.57, 44.64, -63.57);
+    expect(a).toBeCloseTo(b, 6);
   });
 });
 
