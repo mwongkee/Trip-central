@@ -50,9 +50,11 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences }
   const loadedRef = useRef(false);
 
   const located = items.filter((i) => typeof i.lat === 'number' && typeof i.lng === 'number');
-  // Stable signature of the visible set so effects don't re-run on every render
-  // (located is a fresh array each render). Fit-bounds keys off this, not selection.
-  const ids = located.map((i) => i.itemId).join('|');
+  // Two stable signatures (located is a fresh array each render):
+  // - boundsKey: only the set membership → fit-bounds keys off this (no refit on votes/selection).
+  // - markersKey: includes vote score/status so marker badges & highlight refresh when votes change.
+  const boundsKey = located.map((i) => i.itemId).join('|');
+  const markersKey = located.map((i) => `${i.itemId}:${i.voteScore}:${i.voteCount}:${i.status}`).join('|');
 
   // Init once.
   useEffect(() => {
@@ -83,12 +85,19 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences }
     if (!map) return;
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = located.map((item) => {
+      const voted = item.voteCount > 0;
       const el = document.createElement('button');
       el.type = 'button';
-      el.className = `marker ${item.isAnchor ? 'marker--anchor' : ''} ${item.itemId === selectedId ? 'marker--sel' : ''}`;
+      el.className = `marker ${item.isAnchor ? 'marker--anchor' : ''} ${voted ? 'marker--voted' : ''} ${item.itemId === selectedId ? 'marker--sel' : ''}`;
       el.style.setProperty('--marker-color', colorFor(item));
-      el.setAttribute('aria-label', item.title);
+      el.setAttribute('aria-label', voted ? `${item.title} — ${item.voteScore} votes` : item.title);
       el.textContent = iconFor(item);
+      if (voted) {
+        const badge = document.createElement('span');
+        badge.className = 'marker__badge';
+        badge.textContent = String(item.voteScore);
+        el.appendChild(badge);
+      }
       el.addEventListener('click', (e) => {
         e.stopPropagation();
         onSelect(item.itemId); // highlight + Board shows a bottom detail card — map stays put
@@ -96,7 +105,7 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences }
       return new maplibregl.Marker({ element: el }).setLngLat([item.lng!, item.lat!]).addTo(map);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ids, selectedId, onSelect]);
+  }, [markersKey, selectedId, onSelect]);
 
   // Fit the map to the visible set only when that set changes (not on selection),
   // so tapping a pin keeps the map exactly where it is.
@@ -107,7 +116,7 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences }
     located.forEach((i) => bounds.extend([i.lng!, i.lat!]));
     map.fitBounds(bounds, { padding: 56, maxZoom: 14, duration: 400 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ids]);
+  }, [boundsKey]);
 
   // "You are here" marker + recenter when location is first shared.
   useEffect(() => {

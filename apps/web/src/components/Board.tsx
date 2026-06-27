@@ -6,9 +6,10 @@ import { ItemCard } from './ItemCard.js';
 import { MapView } from './MapView.js';
 import { AddItemForm } from './AddItemForm.js';
 import { Itinerary } from './Itinerary.js';
-import { usePresence } from '../hooks/queries.js';
+import { usePresence, useItemDetail } from '../hooks/queries.js';
 import { useLocationShare } from '../hooks/useLocationShare.js';
 import { mapsLink } from '../lib/links.js';
+import { Avatar } from './Avatar.js';
 
 type StatusFilter = 'all' | 'suggested' | 'scheduled' | 'done';
 type TypeFilter = 'all' | ItemType;
@@ -88,6 +89,8 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   const presenceQ = usePresence();
   const share = useLocationShare();
   const presences = presenceQ.data ?? [];
+  const peekDetail = useItemDetail(selectedId);
+  const peekVotes = peekDetail.data?.votes ?? [];
 
   const family = useMemo(
     () => (identity ? familyVoters(identity.familyId, bundle.members, bundle.children) : []),
@@ -289,8 +292,18 @@ export function Board({ bundle }: { bundle: TripBundle }) {
           <div className="peek__body">
             <strong className="peek__title">{centerItem.title}</strong>
             <div className="peek__meta">
-              {centerItem.isAnchor ? centerItem.anchorRole : centerItem.type === 'MEAL' ? centerItem.mealType : centerItem.category} · ★ {centerItem.voteScore}
+              {centerItem.isAnchor ? centerItem.anchorRole : centerItem.type === 'MEAL' ? centerItem.mealType : centerItem.category} · ★ {peekDetail.data?.item.voteScore ?? centerItem.voteScore}
             </div>
+            {peekVotes.length > 0 ? (
+              <div className="peek__voters" aria-label="Who voted">
+                {peekVotes.slice(0, 6).map((v) => (
+                  <Avatar key={v.voterId} name={v.voterName} size={18} />
+                ))}
+                <span className="peek__voternames">{peekVotes.map((v) => v.voterName).join(', ')}</span>
+              </div>
+            ) : (
+              <div className="peek__novotes">No votes yet — tap Details to vote</div>
+            )}
             {centerItem.address && <div className="peek__addr">📌 {centerItem.address}</div>}
             <div className="peek__actions">
               <a className="btn btn--link" href={mapsLink(centerItem)} target="_blank" rel="noreferrer noopener">🗺 Maps</a>
