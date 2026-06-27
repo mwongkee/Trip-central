@@ -26,6 +26,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [kidMode, setKidMode] = useState(false);
   const [foodMode, setFoodMode] = useState(false);
+  const [votedOnly, setVotedOnly] = useState(false);
   const [maxPrice, setMaxPrice] = useState<number | null>(null); // cents; null = any
   const [cats, setCats] = useState<Set<string>>(new Set());
   const [tagFilter, setTagFilter] = useState<Set<string>>(new Set());
@@ -127,6 +128,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
           i.category === 'beach',
       );
     if (foodMode) items = items.filter((i) => i.type === 'MEAL' || i.category === 'restaurant');
+    if (votedOnly) items = items.filter((i) => i.voteCount > 0);
     if (maxPrice != null) items = items.filter((i) => (i.estCost ?? 0) <= maxPrice);
     if (radiusMin && center) {
       items = items.filter(
@@ -138,7 +140,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       if (a.isAnchor !== b.isAnchor) return a.isAnchor ? -1 : 1;
       return b.voteScore - a.voteScore;
     });
-  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, kidMode, foodMode, maxPrice, radiusMin, travelMode, center]);
+  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, kidMode, foodMode, votedOnly, maxPrice, radiusMin, travelMode, center]);
 
   const activeFilterCount =
     (typeFilter !== 'all' ? 1 : 0) +
@@ -147,6 +149,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     tagFilter.size +
     (kidMode ? 1 : 0) +
     (foodMode ? 1 : 0) +
+    (votedOnly ? 1 : 0) +
     (maxPrice != null ? 1 : 0) +
     (radiusMin ? 1 : 0);
 
@@ -157,6 +160,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     setTagFilter(new Set());
     setKidMode(false);
     setFoodMode(false);
+    setVotedOnly(false);
     setMaxPrice(null);
     setRadiusMin(null);
     setNearMe(false);
@@ -279,6 +283,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         <button type="button" className="fchip" onClick={nearFerry}>⛴ Near ferry</button>
         <button type="button" className={`fchip ${foodMode ? 'fchip--on' : ''}`} aria-pressed={foodMode} onClick={() => setFoodMode((v) => !v)}>🍴 Food</button>
         <button type="button" className={`fchip ${kidMode ? 'fchip--on' : ''}`} aria-pressed={kidMode} onClick={() => setKidMode((v) => !v)}>🧒 Kids</button>
+        <button type="button" className={`fchip ${votedOnly ? 'fchip--on' : ''}`} aria-pressed={votedOnly} onClick={() => setVotedOnly((v) => !v)}>⭐ Voted</button>
         <button type="button" className={`fchip ${tagFilter.has('tonight') ? 'fchip--on' : ''}`} aria-pressed={tagFilter.has('tonight')} onClick={() => toggle(tagFilter, setTagFilter, 'tonight')}>🌙 Tonight</button>
         <button type="button" className={`fchip ${tagFilter.has('walkable') ? 'fchip--on' : ''}`} aria-pressed={tagFilter.has('walkable')} onClick={() => toggle(tagFilter, setTagFilter, 'walkable')}>🚶 Walkable</button>
         <button type="button" className={`fchip ${share.sharing ? 'fchip--on' : ''}`} aria-pressed={share.sharing} onClick={share.toggle}>
