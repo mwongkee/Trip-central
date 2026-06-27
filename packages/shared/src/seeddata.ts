@@ -235,6 +235,39 @@ export function seedItems(): Item[] {
     place('item-fisheriesmuseum', 'Fisheries Museum of the Atlantic', 'museum', 44.3757, -64.3140, 'Lunenburg waterfront museum — aquarium and tall ships.', { address: '68 Bluenose Dr, Lunenburg', tags: ['walkable'], website: 'https://fisheriesmuseum.novascotia.ca' }),
     place('item-wildlifepark', 'Shubenacadie Wildlife Park', 'outdoor', 45.0833, -63.4030, 'Provincial wildlife park — moose, bears, deer to feed (~1 h from Halifax).', { address: 'Shubenacadie, NS', tags: ['kids'], website: 'https://wildlifepark.novascotia.ca' }),
 
+    // ---- Halifax Ferry Terminal (tap as the centre for "within X km") ----
+    place('item-hfxterminal', 'Halifax Ferry Terminal', 'other', 44.6476, -63.5683, 'Where the Dartmouth ferry lands in Halifax — the boardwalk starts right here. Tap me and pick a distance to see what’s walkable.', { address: '1 George St, Halifax', tags: ['walkable', 'tonight', 'ferry'] }),
+
+    // ---- Halifax side: more attractions (walkable from the ferry) ----
+    place('item-hmcssackville', 'HMCS Sackville', 'museum', 44.6452, -63.5677, "Canada's oldest warship — a floating WWII museum on the boardwalk.", { address: 'Sackville Landing, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-theodoretoo', 'Theodore Too', 'other', 44.6470, -63.5686, 'The big red tugboat from the kids’ show — harbour tours from the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-grandparade', 'Grand Parade & City Hall', 'viewpoint', 44.6489, -63.5741, 'Historic downtown square between City Hall and St. Paul’s — events and buskers.', { address: 'Barrington St, Halifax', tags: ['walkable'] }),
+    place('item-stpauls', "St. Paul's Church", 'other', 44.6486, -63.5744, "Canada's oldest Protestant church (1750) on Grand Parade.", { address: '1749 Argyle St, Halifax', tags: ['walkable'] }),
+    place('item-provincehouse', 'Province House', 'museum', 44.6483, -63.5727, "Canada's oldest legislature building — free tours.", { address: '1726 Hollis St, Halifax', tags: ['walkable'] }),
+    place('item-oldburying', 'Old Burying Ground', 'other', 44.6452, -63.5740, '1749 cemetery and National Historic Site on Barrington St.', { address: 'Barrington St, Halifax', tags: ['walkable'] }),
+    place('item-townclock', 'Halifax Town Clock', 'viewpoint', 44.6478, -63.5766, 'The iconic clock on the slope below the Citadel.', { address: 'Brunswick St, Halifax', tags: ['walkable'] }),
+    place('item-seaportmarket', 'Halifax Seaport Farmers’ Market', 'other', 44.6428, -63.5667, 'Year-round market at Pier 20 — food stalls and local makers (busiest weekends).', { address: '1209 Marginal Rd, Halifax', tags: ['walkable'] }),
+    place('item-georgesisland', 'Georges Island', 'viewpoint', 44.6420, -63.5570, 'Harbour-island fort with tunnels — seasonal tour boats from the waterfront.', { address: 'Halifax Harbour' }),
+    place('item-emeraoval', 'Emera Oval', 'outdoor', 44.6470, -63.5840, 'Free skating / biking / blading oval on the Halifax Common (gear rentals).', { address: 'Halifax Common', tags: ['kids'] }),
+    place('item-springgarden', 'Spring Garden Road', 'other', 44.6435, -63.5790, "Halifax's main shopping street — shops, cafes, and people-watching.", { address: 'Spring Garden Rd, Halifax', tags: ['walkable'] }),
+
+    // ---- Halifax side: more restaurants ----
+    place('item-mckelvies', "McKelvie's", 'restaurant', 44.6470, -63.5710, 'Longtime seafood favourite near the waterfront (Salty’s sister restaurant).', { address: '1680 Lower Water St, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-pressgang', 'The Press Gang', 'restaurant', 44.6487, -63.5728, 'Oyster bar + steak/seafood in a 1759 stone building.', { address: '5218 Prince St, Halifax', tags: ['walkable'] }),
+    place('item-lotsix', 'Lot Six', 'restaurant', 44.6481, -63.5730, 'Modern bistro on the Argyle St patio strip.', { address: '1685 Argyle St, Halifax', tags: ['walkable'] }),
+    place('item-foggygoggle', 'The Foggy Goggle', 'restaurant', 44.6482, -63.5729, 'Casual Argyle St spot — nachos, burgers, big patio.', { address: '1667 Argyle St, Halifax', tags: ['walkable'] }),
+    place('item-oldtriangle', 'The Old Triangle', 'restaurant', 44.6489, -63.5732, 'Irish alehouse with live music downtown.', { address: '5136 Prince St, Halifax', tags: ['walkable'] }),
+    place('item-durtynellys', "Durty Nelly's", 'restaurant', 44.6481, -63.5728, 'Authentic Irish pub on Argyle St.', { address: '1645 Argyle St, Halifax', tags: ['walkable'] }),
+    place('item-henryhouse', 'Henry House', 'restaurant', 44.6433, -63.5715, 'Historic stone pub on Barrington St.', { address: '1222 Barrington St, Halifax' }),
+    place('item-morriseast', 'Morris East', 'restaurant', 44.6440, -63.5760, 'Wood-fired pizza and cocktails downtown.', { address: '5212 Morris St, Halifax', tags: ['walkable'] }),
+    place('item-envie', 'EnVie', 'restaurant', 44.6548, -63.5910, 'Acclaimed vegan kitchen in the North End.', { address: '5775 Charles St, Halifax' }),
+    place('item-fieldguide', 'Field Guide', 'restaurant', 44.6553, -63.5905, 'Inventive small plates on Gottingen St, North End.', { address: '2076 Gottingen St, Halifax' }),
+    place('item-brooklynwarehouse', 'Brooklyn Warehouse', 'restaurant', 44.6520, -63.5965, 'Neighbourhood favourite at the top of the North End.', { address: '2795 Windsor St, Halifax' }),
+    place('item-freaklunchbox', 'Freak Lunchbox', 'restaurant', 44.6469, -63.5743, 'Wild candy store on Barrington — pure kid joy.', { address: '1729 Barrington St, Halifax', tags: ['walkable', 'kids'] }),
+    place('item-sugah', 'Sugah! Confectionery', 'restaurant', 44.6486, -63.5692, 'Boardwalk fudge, candy & ice cream — kid magnet.', { address: 'Historic Properties, Halifax', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-daveslobster', "Dave's Lobster", 'restaurant', 44.6473, -63.5684, 'Lobster rolls to-go right on the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-smokespoutine', "Smoke's Poutinerie", 'restaurant', 44.6481, -63.5727, 'Loaded poutine on Argyle — great late-night snack.', { address: 'Argyle St, Halifax', tags: ['walkable'] }),
+
     // ---- Meals ----
     meal('meal-lobster', 'Lobster rolls on the boardwalk', 'dinner', 'Fresh rolls on the Halifax waterfront — perfect after the ferry tonight.', {
       lat: 44.6476, lng: -63.5683, address: 'Halifax Waterfront', category: 'restaurant', tags: ['walkable', 'ferry', 'tonight'],
