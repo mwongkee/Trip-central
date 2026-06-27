@@ -24,6 +24,11 @@ jobs:
           node-version: 20
           cache: npm
 
+      # sam build (BuildMethod: esbuild) needs node_modules to resolve the
+      # workspace package @tripboard/shared plus ulid/zod and the esbuild binary.
+      - name: Install deps
+        run: npm ci
+
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
