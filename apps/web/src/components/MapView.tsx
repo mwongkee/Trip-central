@@ -39,7 +39,53 @@ function colorFor(item: Item): string {
 
 function iconFor(item: Item): string {
   if (item.isAnchor) return item.anchorRole === 'hotel' ? '🏨' : '🏠';
-  return item.type === 'MEAL' ? '🍽' : '📍';
+
+  const title = item.title.toLowerCase();
+  const tags = item.tags ?? [];
+  const has = (...words: string[]): boolean => words.some((w) => title.includes(w));
+
+  // Food: meals + restaurants, sub-typed by what they actually serve.
+  if (item.type === 'MEAL' || item.category === 'restaurant') {
+    if (has('ice cream', 'creamery', 'gelato', 'soft-serve', 'soft serve', 'dairy bar', 'beavertail', 'cows', 'magoos', 'fog company')) return '🍦';
+    if (has('chocolate', 'candy', 'confection', 'fudge', 'sugah', 'lunchbox', 'taiyaki', 'crêpe', 'crepe')) return '🍫';
+    if (has('pizza', 'pizzaiolo')) return '🍕';
+    if (has('sushi')) return '🍣';
+    if (has('taco', 'burrito', 'antojo', 'habanero')) return '🌮';
+    if (has('thai', 'cha baa')) return '🍜';
+    if (has('donair', 'burger', 'chickenburger', 'chicken', 'chkn')) return '🍔';
+    if (has('coffee', 'café', 'cafe', 'espresso')) return '☕';
+    if (has('brew', 'beer', 'taproom', 'alehouse', 'pub', 'tavern', 'goat', 'deck', 'wharf')) return '🍺';
+    if (has('lobster', 'seafood', 'fish', 'oyster', 'salt')) return '🦞';
+    return '🍴';
+  }
+
+  switch (item.category) {
+    case 'beach':
+      return '🏖️';
+    case 'museum':
+      return '🏛️';
+    case 'playground':
+      return '🛝';
+    case 'viewpoint':
+      return has('light') ? '🗼' : '⛰️';
+    case 'outdoor':
+      if (has('garden')) return '🌷';
+      if (tags.includes('trails') || has('trail', 'park')) return '🌲';
+      if (has('pond', 'lake', 'canal')) return '🦆';
+      return '🌲';
+    case 'lodging':
+      return '🛏️';
+    case 'other':
+    default:
+      if (tags.includes('ferry') || has('ferry')) return '⛴️';
+      if (has('market')) return '🧺';
+      if (has('library')) return '📚';
+      if (has('tour', 'cruise', 'sailing', 'hopper', 'bikes', 'segway', 'silva')) return '🎟️';
+      if (has('pool', 'aquatic', 'splash', 'sportsplex', 'stadium', 'sports', 'spry', 'games centre', 'cole harbour place')) return '🏊';
+      if (has('trampoline', 'get air', 'flying squirrel', 'playdium', 'bowl', 'arcade', 'escape', 'trapped', 'fun factory', 'play cafe', 'hop skip')) return '🎮';
+      if (has('church', 'cathedral', 'st.')) return '⛪';
+      return '📍';
+  }
 }
 
 export function MapView({ items, selectedId, onSelect, userLocation, presences, focus }: MapViewProps) {

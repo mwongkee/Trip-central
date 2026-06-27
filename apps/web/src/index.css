@@ -149,7 +149,8 @@ input, select, textarea {
   .tab { min-height: 44px; }
   .card__thumb { width: 52px; height: 52px; }
   .card.status-scheduled .badge--status, .card.status-done .badge--status { display: none; }
-  .marker { width: 38px; height: 38px; font-size: 17px; }
+  .marker { width: 38px; height: 38px; font-size: 21px; }
+  .marker--anchor { width: 42px; height: 42px; font-size: 23px; }
 }
 .board__map { margin-top: 0.75rem; }
 .board__maphint { color: var(--muted); font-size: 0.8rem; margin: 0.35rem 0 0; text-align: center; }
@@ -220,8 +221,9 @@ input, select, textarea {
 
 /* ---- Map ---- */
 .map { height: 58vh; min-height: 340px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
-.marker { background: var(--marker-color, var(--accent)); color: #fff; border: 2px solid #fff; border-radius: 50%; width: 30px; height: 30px; font-size: 15px; line-height: 1; display: grid; place-items: center; cursor: pointer; box-shadow: 0 1px 5px rgba(0, 0, 0, 0.45); padding: 0; }
-.marker--sel { outline: 3px solid #fff; transform: scale(1.2); z-index: 1; }
+.marker { background: #fff; color: #1b1b1b; border: 3px solid var(--marker-color, var(--accent)); border-radius: 50%; width: 32px; height: 32px; font-size: 17px; line-height: 1; display: grid; place-items: center; cursor: pointer; box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4); padding: 0; }
+.marker--anchor { width: 36px; height: 36px; font-size: 19px; border-width: 4px; z-index: 2; }
+.marker--sel { outline: 2px solid #1b1b1b; outline-offset: 2px; transform: scale(1.2); z-index: 3; }
 .marker--voted { box-shadow: 0 0 0 3px #f0c000, 0 1px 5px rgba(0, 0, 0, 0.45); }
 .marker--me { background: #1f6feb; border: 3px solid #fff; width: 18px; height: 18px; border-radius: 50%; box-shadow: 0 0 0 5px rgba(31, 111, 235, 0.3); cursor: default; }
 .marker--person { background: var(--marker-color, #1f6feb); color: #fff; border: 3px solid #fff; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 12px; box-shadow: 0 0 0 4px rgba(46, 160, 67, 0.35), 0 1px 5px rgba(0, 0, 0, 0.45); }
