@@ -74,7 +74,8 @@ resource "aws_lambda_function" "api" {
 
   environment {
     variables = {
-      TABLE_NAME = aws_dynamodb_table.this.name
+      TABLE_NAME  = aws_dynamodb_table.this.name
+      EDGE_SECRET = random_password.edge_secret.result
     }
   }
 

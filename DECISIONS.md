@@ -18,8 +18,18 @@ single family and removes all auth setup.
   easy upgrade — add a JWT authorizer to the HTTP API in `infra/apigw.tf`.
 
 Trade-off: device-join is not real authentication; anyone with the link can pick a
-name. Acceptable for a private family trip. To harden, enable the Cognito JWT
+name. Acceptable for a private family trip. To harden further, enable a Cognito JWT
 authorizer and drop the header fallback.
+
+### Edge secret: the API only accepts traffic via CloudFront
+
+To stop the (authorizer-less) HTTP API from being called directly, Terraform generates
+a random secret (`infra/edge_secret.tf`) and injects it two ways: as a CloudFront origin
+header `x-edge-secret` on the `/api/*` behavior, and as the Lambda's `EDGE_SECRET` env
+var. The handler rejects any request whose header doesn't match (`services/api/src/edge.ts`,
+constant-time compare). So requests must come through CloudFront; direct API Gateway hits
+get `403`. The browser never sees the secret — CloudFront adds it server-side. When
+`EDGE_SECRET` is unset (local dev, tests), the check is skipped.
 
 ## "Mark your family" voting (requested)
 

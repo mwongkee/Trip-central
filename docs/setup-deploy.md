@@ -201,10 +201,14 @@ curl https://<cloudfront-domain>/api/health     # → {"ok":true}
 
 - **Region**: default `ca-central-1`; set `AWS_REGION` to anything (nothing is
   region-pinned in code). `infra/variables.tf` holds other defaults.
-- **Open API**: the HTTP API has no authorizer (the device-join model). It's reachable
-  directly if someone finds the URL — fine for a private family trip. To lock it down,
-  add a CloudFront secret-origin-header check in the Lambda, or enable Cognito. See
-  `DECISIONS.md`.
+- **API access**: the HTTP API has no JWT authorizer (device-join model), but it is **not
+  open** — Terraform generates a secret that CloudFront injects as the `x-edge-secret`
+  origin header, and the Lambda rejects requests that lack it. So the API only accepts
+  traffic coming through CloudFront; direct API Gateway calls get `403`. The secret lives
+  only in Terraform state and the function/CloudFront config (never output). See
+  `DECISIONS.md`. (To go further, add a Cognito JWT authorizer in `infra/apigw.tf`.)
+  Note: this means you can't hit the raw API URL directly for `curl` checks — use the
+  CloudFront domain (which injects the header for you).
 - **Teardown**: `cd infra && terraform destroy` (with the same backend config) removes
   everything. Empty the site bucket first if Terraform complains.
 - **Cost**: ~$1–5/month while actively used, near-zero idle.

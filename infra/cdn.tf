@@ -56,6 +56,11 @@ resource "aws_cloudfront_distribution" "this" {
       origin_protocol_policy = "https-only"
       origin_ssl_protocols   = ["TLSv1.2"]
     }
+    # Proves the request came through CloudFront; the Lambda rejects requests without it.
+    custom_header {
+      name  = "x-edge-secret"
+      value = random_password.edge_secret.result
+    }
   }
 
   default_cache_behavior {

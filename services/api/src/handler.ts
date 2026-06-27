@@ -6,8 +6,11 @@ import type {
 } from 'aws-lambda';
 import { DynamoRepo } from './repo.js';
 import { handleRequest, type ApiRequest, type Identity } from './router.js';
+import { edgeSecretOk } from './edge.js';
 
 const TABLE_NAME = process.env['TABLE_NAME'] ?? 'TripBoard';
+// Set by Terraform; when present, requests must arrive via CloudFront (which injects it).
+const EDGE_SECRET = process.env['EDGE_SECRET'];
 
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
   marshallOptions: { removeUndefinedValues: true },
@@ -46,6 +49,12 @@ export const handler = async (
 ): Promise<APIGatewayProxyResultV2> => {
   const method = event.requestContext.http.method;
   const path = stripApiPrefix(event.rawPath);
+
+  // Reject anything that didn't come through CloudFront (no/!matching edge secret).
+  const edgeHeaders = event.headers ?? {};
+  if (!edgeSecretOk(edgeHeaders['x-edge-secret'] ?? edgeHeaders['X-Edge-Secret'], EDGE_SECRET)) {
+    return respond(403, { error: { code: 'FORBIDDEN', message: 'direct API access is not allowed' } });
+  }
 
   let body: unknown = undefined;
   if (event.body) {
