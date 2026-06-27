@@ -115,6 +115,14 @@ input, select, textarea {
 .board__results { color: var(--muted); font-size: 0.8rem; margin: 0.1rem 0 0.3rem; }
 .board__results strong { color: var(--text); }
 .linkbtn { background: none; border: 0; color: #58a6ff; cursor: pointer; padding: 0 0.3rem; font: inherit; }
+.searchresults { list-style: none; margin: 0.2rem 0 0.4rem; padding: 0; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; max-height: 40vh; overflow-y: auto; }
+.searchresults li { border-bottom: 1px solid var(--border); }
+.searchresults li:last-child { border-bottom: 0; }
+.searchresults__item { width: 100%; text-align: left; background: none; border: 0; color: var(--text); padding: 0.55rem 0.7rem; display: grid; gap: 0.1rem; cursor: pointer; }
+.searchresults__item:hover { background: var(--panel-2); }
+.searchresults__name { font-weight: 600; }
+.searchresults__meta { color: var(--muted); font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: capitalize; }
+.searchresults__more { color: var(--muted); font-size: 0.78rem; padding: 0.45rem 0.7rem; }
 .board__presets { display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.3rem; -webkit-overflow-scrolling: touch; }
 .fchip { min-height: 40px; }
 
@@ -295,6 +303,19 @@ input, select, textarea {
 .app__me { display: inline-flex; align-items: center; gap: 0.5rem; }
 .app__me strong { display: block; }
 .app__family { color: var(--muted); }
+
+/* Slim single-row header (land on the map after login) */
+.app__header { padding: 0.4rem 0; margin-bottom: 0.3rem; gap: 0.5rem; flex-wrap: nowrap; align-items: center; }
+.app__brandwrap { display: flex; flex-direction: column; min-width: 0; }
+.app__brand { font-size: 1.05rem; line-height: 1.1; }
+.app__trip { font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app__who { gap: 0.4rem; align-items: center; }
+.menu { position: relative; }
+.menu__btn { padding: 0.3rem 0.6rem; font-size: 1.2rem; line-height: 1; }
+.menu__backdrop { position: fixed; inset: 0; z-index: 40; }
+.menu__list { position: absolute; right: 0; top: calc(100% + 4px); z-index: 50; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 0.3rem; display: grid; gap: 0.2rem; min-width: 170px; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5); }
+.menu__list button { text-align: left; background: none; border: 0; color: var(--text); padding: 0.6rem; border-radius: 8px; cursor: pointer; font: inherit; }
+.menu__list button:hover { background: var(--panel-2); }
 
 /* ---- Tabs ---- */
 .board__tabs { display: flex; gap: 0.25rem; margin: 0.75rem 0 0; }

@@ -25,6 +25,8 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   const [view, setView] = useState<'board' | 'itinerary'>('board');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [kidMode, setKidMode] = useState(false);
+  const [foodMode, setFoodMode] = useState(false);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null); // cents; null = any
   const [cats, setCats] = useState<Set<string>>(new Set());
   const [tagFilter, setTagFilter] = useState<Set<string>>(new Set());
   const [radiusKm, setRadiusKm] = useState<number | null>(null);
@@ -121,6 +123,8 @@ export function Board({ bundle }: { bundle: TripBundle }) {
           i.category === 'playground' ||
           i.category === 'beach',
       );
+    if (foodMode) items = items.filter((i) => i.type === 'MEAL' || i.category === 'restaurant');
+    if (maxPrice != null) items = items.filter((i) => (i.estCost ?? 0) <= maxPrice);
     if (radiusKm && center) {
       items = items.filter(
         (i) => i.lat != null && i.lng != null && haversineKm(center.lat, center.lng, i.lat, i.lng) <= radiusKm,
@@ -131,7 +135,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       if (a.isAnchor !== b.isAnchor) return a.isAnchor ? -1 : 1;
       return b.voteScore - a.voteScore;
     });
-  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, kidMode, radiusKm, center]);
+  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, kidMode, foodMode, maxPrice, radiusKm, center]);
 
   const activeFilterCount =
     (typeFilter !== 'all' ? 1 : 0) +
@@ -139,6 +143,8 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     cats.size +
     tagFilter.size +
     (kidMode ? 1 : 0) +
+    (foodMode ? 1 : 0) +
+    (maxPrice != null ? 1 : 0) +
     (radiusKm ? 1 : 0);
 
   function clearAllFilters() {
@@ -147,6 +153,8 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     setCats(new Set());
     setTagFilter(new Set());
     setKidMode(false);
+    setFoodMode(false);
+    setMaxPrice(null);
     setRadiusKm(null);
     setNearMe(false);
   }
@@ -238,9 +246,27 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         </p>
       )}
 
+      {query.trim() && filtered.length > 0 && (
+        <ul className="searchresults" aria-label="Search results">
+          {filtered.slice(0, 8).map((item) => (
+            <li key={item.itemId}>
+              <button type="button" className="searchresults__item" onClick={() => highlight(item.itemId)}>
+                <span className="searchresults__name">{item.title}</span>
+                <span className="searchresults__meta">
+                  {item.type === 'MEAL' ? '🍽' : '📍'} {item.category ?? item.mealType ?? ''}
+                  {item.address ? ` · ${item.address}` : ''}
+                </span>
+              </button>
+            </li>
+          ))}
+          {filtered.length > 8 && <li className="searchresults__more">+{filtered.length - 8} more in the list below</li>}
+        </ul>
+      )}
+
       <div className="board__presets" role="group" aria-label="Quick filters">
         <button type="button" className={`fchip ${nearMe ? 'fchip--on' : ''}`} aria-pressed={nearMe} onClick={useMyLocation}>📍 Near me</button>
         <button type="button" className="fchip" onClick={nearFerry}>⛴ Near ferry</button>
+        <button type="button" className={`fchip ${foodMode ? 'fchip--on' : ''}`} aria-pressed={foodMode} onClick={() => setFoodMode((v) => !v)}>🍴 Food</button>
         <button type="button" className={`fchip ${kidMode ? 'fchip--on' : ''}`} aria-pressed={kidMode} onClick={() => setKidMode((v) => !v)}>🧒 Kids</button>
         <button type="button" className={`fchip ${tagFilter.has('tonight') ? 'fchip--on' : ''}`} aria-pressed={tagFilter.has('tonight')} onClick={() => toggle(tagFilter, setTagFilter, 'tonight')}>🌙 Tonight</button>
         <button type="button" className={`fchip ${tagFilter.has('walkable') ? 'fchip--on' : ''}`} aria-pressed={tagFilter.has('walkable')} onClick={() => toggle(tagFilter, setTagFilter, 'walkable')}>🚶 Walkable</button>
@@ -350,6 +376,16 @@ export function Board({ bundle }: { bundle: TripBundle }) {
               <option value="suggested">Suggested</option>
               <option value="scheduled">Scheduled</option>
               <option value="done">Done</option>
+            </select>
+
+            <label className="sheet__label" htmlFor="f-price">Max price (per person)</label>
+            <select id="f-price" value={maxPrice ?? ''} onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : null)}>
+              <option value="">Any price</option>
+              <option value="0">Free only</option>
+              <option value="1000">Up to $10</option>
+              <option value="2500">Up to $25</option>
+              <option value="5000">Up to $50</option>
+              <option value="10000">Up to $100</option>
             </select>
 
             <span className="sheet__label">Category</span>

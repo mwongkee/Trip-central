@@ -10,6 +10,7 @@ export function App() {
   const { identity, signOut, api } = useApp();
   const bundle = useBundle();
   const [showHelp, setShowHelp] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   if (bundle.isLoading)
     return (
@@ -33,49 +34,40 @@ export function App() {
   return (
     <div className="app">
       <header className="app__header">
-        <div>
-          <h1 className="app__brand">TripBoard</h1>
-          <p className="app__trip">{bundle.data.trip.name}</p>
+        <div className="app__brandwrap">
+          <span className="app__brand">TripBoard</span>
+          <span className="app__trip">{bundle.data.trip.name}{familyName ? ` · ${identity.name}` : ''}</span>
         </div>
         <div className="app__who">
-          <span className="app__me">
-            <Avatar name={identity.name} size={28} />
-            <span>
-              <strong>{identity.name}</strong>
-              {familyName && <small className="app__family">{familyName}</small>}
-            </span>
-          </span>
-          {api.mode === 'local' && api.reset && (
+          <Avatar name={identity.name} size={26} />
+          <div className="menu">
             <button
               type="button"
-              className="btn btn--ghost"
-              onClick={() => {
-                if (confirm('Reset the demo data on this device?')) {
-                  api.reset?.();
-                  location.reload();
-                }
-              }}
+              className="btn btn--ghost menu__btn"
+              aria-haspopup="menu"
+              aria-expanded={menuOpen}
+              aria-label="Menu"
+              onClick={() => setMenuOpen((v) => !v)}
             >
-              Reset demo
+              ⋯
             </button>
-          )}
-          <button type="button" className="btn btn--ghost" onClick={() => setShowHelp(true)}>
-            ❔ Help
-          </button>
-          <button type="button" className="btn btn--ghost" onClick={signOut}>
-            Switch user
-          </button>
+            {menuOpen && (
+              <>
+                <div className="menu__backdrop" onClick={() => setMenuOpen(false)} />
+                <div className="menu__list" role="menu">
+                  <button type="button" role="menuitem" onClick={() => { setShowHelp(true); setMenuOpen(false); }}>❔ Help</button>
+                  {api.mode === 'local' && api.reset && (
+                    <button type="button" role="menuitem" onClick={() => { if (confirm('Reset the demo data on this device?')) { api.reset?.(); location.reload(); } }}>🔄 Reset demo</button>
+                  )}
+                  <button type="button" role="menuitem" onClick={() => { signOut(); setMenuOpen(false); }}>↩ Switch user</button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </header>
       {showHelp && <Help onClose={() => setShowHelp(false)} />}
       <Board bundle={bundle.data} />
-      <footer className="app__footer">
-        <small>
-          {api.mode === 'local'
-            ? 'Local demo mode — data is stored on this device.'
-            : 'Connected to the trip API.'}
-        </small>
-      </footer>
     </div>
   );
 }
