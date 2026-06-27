@@ -327,6 +327,97 @@ export function seedItems(): Item[] {
     place('item-cabincoffee', 'Cabin Coffee', 'restaurant', 44.6455, -63.5720, 'Cozy local coffee + breakfast near the waterfront.', { address: '1554 Hollis St, Halifax', tags: ['walkable'] }),
     place('item-brightwood', 'Brightwood Brewery', 'restaurant', 44.6672, -63.5688, 'Neighbourhood Dartmouth brewery taproom, near the ferry.', { address: '64 Portland St, Dartmouth', tags: ['walkable'] }),
 
+    // ==== From the kids' tourism magazine (Build Nova Scotia) ====
+
+    // ---- Downtown Dartmouth (kid-friendly) ----
+    place('item-backtothesea', 'The Back to the Sea Centre', 'museum', 44.6652, -63.5690, 'Hands-on marine centre near the ferry — touch tanks of local crabs, lobster and sea stars, all released back to the ocean each fall.', { address: 'Alderney Dr, Dartmouth', tags: ['walkable', 'kids', 'rainy-day'], website: 'https://backtothesea.org' }),
+    place('item-alderneylanding', 'Alderney Landing', 'other', 44.6660, -63.5668, 'Ferry-terminal complex on the Dartmouth waterfront — farmers’ market, theatre, public library and a waterfront plaza.', { address: '2 Ochterloney St, Dartmouth', tags: ['walkable', 'kids'], website: 'https://alderneylanding.com' }),
+    place('item-kiwanisplayground', 'Kiwanis Playground at Ferry Terminal Park', 'playground', 44.6638, -63.5650, 'Waterfront playground beside the Dartmouth ferry — rope climbing, carousel and harbour views.', { address: 'Ferry Terminal Park, Dartmouth', tags: ['walkable', 'kids'] }),
+    place('item-dartmouthcommon', 'Dartmouth Common', 'outdoor', 44.6705, -63.5745, 'Big central green with a skatepark, splash pad, ball fields and playground.', { address: 'Dartmouth Common, Dartmouth', tags: ['kids'] }),
+    place('item-lakebanook', 'Lake Banook', 'outdoor', 44.6735, -63.5680, 'Calm paddling lake with beaches and walking paths — host of national canoe/kayak races.', { address: 'Dartmouth', tags: ['kids', 'photos'] }),
+    place('item-evergreenhouse', 'Evergreen House (Dartmouth Heritage Museum)', 'museum', 44.6690, -63.5728, 'Victorian house museum telling Dartmouth’s story.', { address: '26 Newcastle St, Dartmouth', tags: ['rainy-day'], website: 'https://dartmouthheritagemuseum.ns.ca' }),
+    place('item-quakerhouse', 'Quaker House', 'museum', 44.6678, -63.5712, 'Restored 1786 Quaker whaler’s house — the oldest house in Dartmouth.', { address: '57 Ochterloney St, Dartmouth', tags: ['walkable'] }),
+    place('item-zatzman', 'Zatzman Sportsplex', 'other', 44.6728, -63.5732, 'Dartmouth rec complex — pools, waterslide, gym and arena; a solid rainy-day option.', { address: '110 Wyse Rd, Dartmouth', tags: ['kids', 'rainy-day'], website: 'https://zatzmansportsplex.com' }),
+    place('item-portlandcreperie', 'Portland Street Crêperie', 'restaurant', 44.6668, -63.5708, 'Sweet and savoury crêpes (and bubble-waffle cones) on Portland St, Dartmouth.', { address: '55 Portland St, Dartmouth', tags: ['kids'] }),
+    place('item-twoifbysea', 'Two If By Sea Café', 'restaurant', 44.6664, -63.5702, 'Beloved café famous for giant croissants and great coffee, downtown Dartmouth.', { address: '66 Ochterloney St, Dartmouth', tags: ['walkable'] }),
+    place('item-yeahyeahs', "Yeah Yeah's Pizza", 'restaurant', 44.6660, -63.5700, 'Wood-fired pizza joint in downtown Dartmouth.', { address: 'Portland St, Dartmouth', tags: ['kids'] }),
+    place('item-stonepizza', 'Stone Pizza', 'restaurant', 44.6657, -63.5682, 'Brick-oven pizza near the Dartmouth waterfront.', { address: 'Alderney Dr, Dartmouth', tags: ['walkable', 'kids'] }),
+    place('item-josicecream', "Jo's Old Time Candy & Ice Cream Parlour", 'restaurant', 44.6700, -63.4785, 'Old-fashioned ice cream, candy and doughnuts, Cole Harbour.', { address: 'Cole Harbour, NS', tags: ['kids'] }),
+
+    // ---- Halifax Waterfront landmarks ----
+    place('item-thewave', 'The Wave Sculpture', 'viewpoint', 44.6458, -63.5685, 'The big curling concrete wave on the boardwalk — kids love climbing it (carefully!).', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids', 'photos'] }),
+    place('item-submarineplayground', 'Submarine Playground', 'playground', 44.6486, -63.5676, 'Submarine-themed waterfront playground with rope climbers — accessible and right on the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-hammocks', 'Waterfront Hammocks', 'outdoor', 44.6481, -63.5681, 'The free orange hammocks strung along the boardwalk — perfect for a rest.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-drunkenlampposts', 'Drunken Lampposts', 'viewpoint', 44.6492, -63.5668, 'A cluster of deliberately tilted lampposts — a quirky boardwalk photo stop.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'photos'] }),
+    place('item-artmural', 'Art Mural Wall', 'other', 44.6500, -63.5662, 'Colourful rotating mural wall along the north end of the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'photos'] }),
+    place('item-saltyard', 'Salt Yard Shops', 'other', 44.6497, -63.5662, 'Shipping-container shops and snack stops on the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-obstaclecourse', 'Waterfront Obstacle Course', 'playground', 44.6483, -63.5673, 'Free outdoor obstacle/play course on the boardwalk for burning off energy.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-cssacadia', 'CSS Acadia', 'museum', 44.6466, -63.5690, 'Steam-powered survey ship you can board, moored beside the Maritime Museum.', { address: '1675 Lower Water St, Halifax', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-brewerymarket', 'Halifax Brewery Farmers’ Market', 'other', 44.6447, -63.5740, 'Saturday market in the historic Keith’s brewery building — food, makers and music.', { address: '1496 Lower Water St, Halifax', tags: ['walkable'], website: 'https://halifaxbrewerymarket.com' }),
+
+    // ---- Halifax Waterfront treats ----
+    place('item-blackbearicecream', 'Black Bear Ice Cream', 'restaurant', 44.6474, -63.5683, 'Small-batch homemade ice cream on the Halifax waterfront.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-fogcompany', 'The Fog Company', 'restaurant', 44.6471, -63.5685, 'Imaginative ice cream, cotton candy and doughnuts on the waterfront.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-peacebychocolate', 'Peace by Chocolate', 'restaurant', 44.6478, -63.5685, 'Chocolate from the celebrated Syrian-Canadian family business — waterfront kiosk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'], website: 'https://peacebychocolate.ca' }),
+    place('item-rousseau', 'Rousseau Chocolatier', 'restaurant', 44.6462, -63.5720, 'Hand-made chocolates and rich hot chocolate, downtown Halifax.', { address: 'Halifax', tags: ['walkable', 'kids'] }),
+    place('item-taiyaki', 'Taiyaki 52', 'restaurant', 44.6466, -63.5732, 'Soft-serve in a crunchy fish-shaped waffle cone, downtown Halifax.', { address: 'Halifax', tags: ['walkable', 'kids'] }),
+    place('item-paneecirco', 'Pane e Circo', 'restaurant', 44.6461, -63.5740, 'Bubble waffles and housemade gelato, downtown Halifax.', { address: 'Halifax', tags: ['walkable', 'kids'] }),
+    place('item-dairybar', 'The Dairy Bar', 'restaurant', 44.6452, -63.5752, 'Soft-serve and sundaes made with seasonal local ingredients, downtown Halifax.', { address: 'Halifax', tags: ['kids'] }),
+    place('item-lemonadegeneral', 'Lemonade General Store', 'restaurant', 44.6552, -63.5908, 'Small-batch ice cream and treats, North End Halifax.', { address: 'North End, Halifax', tags: ['kids'] }),
+    place('item-flynns', "Flynn's Dairy Bar & Convenience", 'restaurant', 44.6555, -63.5895, 'Tons of flavours of milkshakes, sundaes and scoops, North End Halifax.', { address: 'North End, Halifax', tags: ['kids'] }),
+
+    // ---- Halifax Waterfront tours & rentals ----
+    place('item-ambassatours', 'Ambassatours Tall Ship Silva', 'other', 44.6470, -63.5688, 'Harbour sailing tours aboard the tall ship Silva from the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'], website: 'https://ambassatours.com' }),
+    place('item-iheartbikes', 'I Heart Bikes', 'other', 44.6463, -63.5689, 'Bike and e-bike rentals plus guided tours on the waterfront.', { address: 'Halifax Waterfront', tags: ['walkable'], website: 'https://iheartbikeshfx.com' }),
+    place('item-jfarwell', 'J. Farwell Sailing Tours', 'other', 44.6470, -63.5687, 'Small-group harbour sailing adventures from the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-segway', 'Segway Nova Scotia', 'other', 44.6475, -63.5688, 'Guided Segway tours of the waterfront and downtown.', { address: 'Halifax Waterfront', tags: ['walkable'] }),
+    place('item-cityharbourcruises', 'City & Harbour Cruises', 'other', 44.6469, -63.5689, 'Sightseeing boat cruises of Halifax Harbour.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+
+    // ---- Kid-friendly restaurants (HRM-wide) ----
+    place('item-chickenburger', 'The Chickenburger', 'restaurant', 44.7282, -63.6618, 'Retro 1940s burger-and-shake joint in Bedford — a Nova Scotia institution.', { address: '1531 Bedford Hwy, Bedford', tags: ['kids'], website: 'https://thechickenburger.com' }),
+    place('item-chknchop', 'CHKN CHOP', 'restaurant', 44.6560, -63.5910, 'Charcoal chicken joint with freshly baked cookies and mac n’ cheese, North End.', { address: 'North End, Halifax', tags: ['kids'] }),
+    place('item-cheekyneighbour', 'Cheeky Neighbour Diner', 'restaurant', 44.6450, -63.6080, 'Modern neighbourhood diner — all-day breakfast and rotating local beers, West End.', { address: 'West End, Halifax', tags: ['kids'] }),
+    place('item-easystreetdiner', 'Easy Street Diner', 'restaurant', 44.7700, -63.6880, 'Retro family diner with all-day breakfast, Bedford-Sackville.', { address: 'Sackville, NS', tags: ['kids'] }),
+    place('item-localjo', 'Local Jo Café & Market', 'restaurant', 44.6445, -63.6055, 'Neighbourhood café with a play area and fair-trade coffee, West End.', { address: 'West End, Halifax', tags: ['kids'] }),
+    place('item-gooddaykitchen', 'Good Day Kitchen & Café', 'restaurant', 44.8390, -63.5090, 'Family-run café near the airport — “babycinos”, baked goods and breakfast.', { address: 'Goffs, NS', tags: ['kids'] }),
+    place('item-freemans', "Freeman's Little New York", 'restaurant', 44.6512, -63.5950, 'New-York-style pizza with kids’ menu and booths; several HRM locations.', { address: 'Halifax', tags: ['kids'], website: 'https://freemans.ca' }),
+    place('item-ojetsushi', 'Ojet Sushi (Sushi Jet)', 'restaurant', 44.6470, -63.5742, 'All-you-can-eat sushi where robots help deliver the food — a hit with kids.', { address: 'Halifax', tags: ['kids', 'walkable'] }),
+    place('item-micmacbar', 'Mic Mac Bar & Grill', 'restaurant', 44.6905, -63.5780, 'Long-running Dartmouth family restaurant with a big menu.', { address: 'Dartmouth', tags: ['kids'] }),
+    place('item-vernons', "Vernon's Thunderbird Diner", 'restaurant', 44.7750, -63.6850, 'Retro family diner — sundaes, banana splits and all-day breakfast, Bedford-Sackville.', { address: 'Sackville, NS', tags: ['kids'] }),
+
+    // ---- Ice cream worth a drive ----
+    place('item-bubbamagoos', 'Bubba Magoos', 'restaurant', 44.4920, -63.9160, "Maritime-made ice cream and savoury snacks near Peggy's Cove.", { address: "Peggy's Cove area, NS", tags: ['kids', 'daytrip'] }),
+    place('item-cavicchis', "Cavicchi's Meats", 'restaurant', 44.5000, -63.9050, "Small-batch ice cream from a takeout window with a patio, near St. Margaret's Bay.", { address: "St. Margaret's Bay, NS", tags: ['kids', 'daytrip'] }),
+    place('item-thelittleicecream', 'The Little Ice Cream Shop', 'restaurant', 44.4950, -63.9150, "Soft-serve, sundaes and vegan options near Peggy's Cove.", { address: "Peggy's Cove area, NS", tags: ['kids', 'daytrip'] }),
+    place('item-boozaemessa', 'Booza Emessa', 'restaurant', 44.7300, -63.6600, 'Small-batch Syrian ice cream, Bedford-Sackville.', { address: 'Sackville, NS', tags: ['kids'] }),
+    place('item-chickenlittle', 'Chicken Little Café', 'restaurant', 44.7350, -63.6650, 'Kid-sized scoops and ice cream hurricanes, Bedford-Sackville.', { address: 'Sackville, NS', tags: ['kids'] }),
+    place('item-bettervibe', 'Better Vibe', 'restaurant', 44.6450, -63.3450, 'Small-batch ice cream made with local ingredients, Eastern Shore.', { address: 'Eastern Shore, NS', tags: ['kids', 'daytrip'] }),
+
+    // ---- Outdoors, hikes & heritage ----
+    place('item-africville', 'Africville Park & Museum', 'museum', 44.6678, -63.6092, 'National Historic Site with a short waterfront trail and a museum telling the story of Halifax’s historic Black community.', { address: '5795 Africville Rd, Halifax', tags: ['trails', 'walkable'], website: 'https://africvillemuseum.org' }),
+    place('item-taylorhead', 'Taylor Head Provincial Park', 'beach', 44.8130, -62.5700, 'White-sand beach and rugged coastal trails on the Eastern Shore (~1.5 h).', { address: 'Spry Bay, NS', tags: ['beach', 'trails', 'daytrip'], website: 'https://parks.novascotia.ca/park/taylor-head' }),
+    place('item-ataraxyfarm', 'Ataraxy Farm', 'outdoor', 44.7000, -63.2000, 'Therapy goat farm on the Eastern Shore — free tours and playtime with the goats.', { address: 'Eastern Shore, NS', tags: ['kids', 'daytrip'] }),
+    place('item-memorylane', 'Memory Lane Heritage Village', 'museum', 44.7900, -62.9000, '1940s living-history village on the Eastern Shore — schoolhouse, general store and a working cookhouse.', { address: 'Lake Charlotte, NS', tags: ['kids', 'daytrip'], website: 'https://heritagevillage.ca' }),
+
+    // ---- Must-play playgrounds ----
+    place('item-dewolf', 'DeWolf Park Playground', 'playground', 44.7245, -63.6585, 'Waterfront playground on the Bedford waterfront with a boardwalk and picnic area.', { address: 'Bedford', tags: ['kids'] }),
+    place('item-fortneedham', 'Fort Needham Memorial Park', 'outdoor', 44.6620, -63.6020, 'North-End hilltop park with a playground and the Halifax Explosion memorial bell tower.', { address: 'Fort Needham, Halifax', tags: ['kids', 'photos'] }),
+    place('item-isleville', 'Isleville Playground', 'playground', 44.6582, -63.5952, 'North-End playground with interactive games, a tube slide and a splash pad.', { address: 'North End, Halifax', tags: ['kids'] }),
+    place('item-jumpstart', 'Jumpstart Inclusive Playground', 'playground', 44.6572, -63.5980, 'Fully accessible playground at George Dixon Centre — barrier-free ramps and braille lettering, North End.', { address: 'George Dixon Centre, Halifax', tags: ['kids'] }),
+    place('item-westmount', 'Westmount Inclusive Playground', 'playground', 44.6430, -63.6100, 'Accessible West-End playground with tactile and audible features and a splash pad.', { address: 'West End, Halifax', tags: ['kids'] }),
+    place('item-grandlakeoakfield', 'Grand Lake Oakfield Playground', 'playground', 44.9000, -63.5000, 'Tree-house-style playground with sports fields by Grand Lake (~25 min north).', { address: 'Oakfield, NS', tags: ['kids', 'daytrip'] }),
+
+    // ---- Pools & splash pads ----
+    place('item-canadagames', 'Canada Games Centre', 'other', 44.6530, -63.6450, 'Big indoor aquatic + fitness centre with a leisure pool and slides, Clayton Park.', { address: '26 Thomas Raddall Dr, Halifax', tags: ['kids', 'rainy-day'], website: 'https://canadagamescentre.ca' }),
+    place('item-captainspry', 'Captain William Spry Community Centre', 'other', 44.6200, -63.6300, 'Spryfield rec centre with a wave pool, slide and climbing wall.', { address: '10 Kidston Rd, Halifax', tags: ['kids', 'rainy-day'] }),
+    place('item-coleharbourplace', 'Cole Harbour Place', 'other', 44.6700, -63.4750, 'Pool, arena and indoor playground in Cole Harbour.', { address: '51 Forest Hills Pkwy, Dartmouth', tags: ['kids', 'rainy-day'], website: 'https://coleharbourplace.com' }),
+    place('item-sackvillesports', 'Sackville Sports Stadium', 'other', 44.7700, -63.6900, 'Pool with a small slide and mushroom shower, plus arena and gym, Lower Sackville.', { address: '409 Glendale Ave, Lower Sackville', tags: ['kids', 'rainy-day'] }),
+    place('item-halifaxcommonpool', 'Halifax Common Aquatic Facility', 'outdoor', 44.6478, -63.5828, 'New outdoor pool on the Halifax Common — beach-style entry, water plaza and toddler wading pool.', { address: 'Halifax Common', tags: ['kids'] }),
+    place('item-shirleyssplash', "Shirley's Splash Pad", 'playground', 44.6760, -63.5680, 'Popular Dartmouth splash pad for hot summer days.', { address: 'Dartmouth', tags: ['kids'] }),
+
+    // ---- Best family beach (drive) ----
+    place('item-hubbards', 'Hubbards Beach', 'beach', 44.6320, -64.0820, 'Sandy beach with a floating dock and nearby canteen, ~45 min from Halifax.', { address: 'Hubbards, NS', tags: ['beach', 'kids', 'daytrip'] }),
+
     // ---- Meals ----
     meal('meal-lobster', 'Lobster rolls on the boardwalk', 'dinner', 'Fresh rolls on the Halifax waterfront — perfect after the ferry tonight.', {
       lat: 44.6476, lng: -63.5683, address: 'Halifax Waterfront', category: 'restaurant', tags: ['walkable', 'ferry', 'tonight'],
