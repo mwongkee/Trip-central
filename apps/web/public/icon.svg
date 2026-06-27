@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="TripBoard">
+  <rect width="512" height="512" rx="96" fill="#1f6feb"/>
+  <path d="M256 96c-66 0-120 54-120 120 0 84 120 200 120 200s120-116 120-200c0-66-54-120-120-120zm0 168a48 48 0 110-96 48 48 0 010 96z" fill="#fff"/>
+</svg>

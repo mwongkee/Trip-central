@@ -1,0 +1,125 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  TripBoard backend — single DynamoDB table, one Lambda (router + repo layer)
+  behind an API Gateway HTTP API. Durable/edge resources (S3, CloudFront, Cognito,
+  Location) are stood up via docs/aws-console-setup.md. See docs/data-model.md.
+
+Parameters:
+  TableName:
+    Type: String
+    Default: TripBoard
+    Description: DynamoDB table name (also passed to the Lambda as TABLE_NAME).
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Architectures: [arm64]
+    Timeout: 10
+    MemorySize: 256
+    Tracing: Active
+
+Resources:
+  TripBoardTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref TableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: PK, AttributeType: S }
+        - { AttributeName: SK, AttributeType: S }
+        - { AttributeName: GSI1PK, AttributeType: S }
+        - { AttributeName: GSI1SK, AttributeType: S }
+        - { AttributeName: GSI2PK, AttributeType: S }
+        - { AttributeName: GSI2SK, AttributeType: S }
+      KeySchema:
+        - { AttributeName: PK, KeyType: HASH }
+        - { AttributeName: SK, KeyType: RANGE }
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - { AttributeName: GSI1PK, KeyType: HASH }
+            - { AttributeName: GSI1SK, KeyType: RANGE }
+          Projection: { ProjectionType: ALL }
+        - IndexName: GSI2
+          KeySchema:
+            - { AttributeName: GSI2PK, KeyType: HASH }
+            - { AttributeName: GSI2SK, KeyType: RANGE }
+          Projection: { ProjectionType: ALL }
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2022
+        Format: esm
+        OutExtension: ['.js=.mjs']
+        EntryPoints: [src/handler.ts]
+        # The Lambda runtime already ships the AWS SDK v3 — don't bundle it.
+        External: ['@aws-sdk/*']
+        Banner:
+          js: "import { createRequire } from 'module'; const require = createRequire(import.meta.url);"
+    Properties:
+      CodeUri: services/api
+      Handler: handler.handler
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
+      Events:
+        Health:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/health
+            Method: GET
+        Proxy:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /api/{proxy+}
+            Method: ANY
+
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      # In production CloudFront fronts this at /api/* (same origin → no CORS).
+      # For local dev against this API directly, allow the Vite dev origin.
+      CorsConfiguration:
+        AllowOrigins:
+          - http://localhost:5173
+        AllowHeaders:
+          - content-type
+          - x-tripboard-user
+          - x-tripboard-name
+          - authorization
+        AllowMethods:
+          - GET
+          - POST
+          - PATCH
+          - DELETE
+      # ---------------------------------------------------------------------
+      # Cognito JWT authorizer (upgrade path). The app currently uses a
+      # lightweight device-join identity (see DECISIONS.md). To require sign-in,
+      # set the params below and uncomment, then add Auth to the events above.
+      # Auth:
+      #   Authorizers:
+      #     CognitoJwt:
+      #       IdentitySource: "$request.header.Authorization"
+      #       JwtConfiguration:
+      #         issuer: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPoolId}"
+      #         audience:
+      #           - !Ref UserPoolClientId
+      #   DefaultAuthorizer: CognitoJwt
+
+Outputs:
+  ApiUrl:
+    Description: HTTP API base URL (wire CloudFront /api/* to this in production).
+    Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+  TableName:
+    Description: DynamoDB table name.
+    Value: !Ref TableName

@@ -1,0 +1,17 @@
+{
+  "name": "TripBoard",
+  "short_name": "TripBoard",
+  "description": "Plan a family trip together: suggest places and meals, vote, and schedule.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#1f6feb",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
