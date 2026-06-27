@@ -25,10 +25,10 @@ jobs:
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN || secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || secrets.AWS_REGION }}
       - name: Seed DynamoDB
         env:
           TABLE_NAME: TripBoard
-          AWS_REGION: ${{ vars.AWS_REGION }}
+          AWS_REGION: ${{ vars.AWS_REGION || secrets.AWS_REGION }}
         run: npm run seed
