@@ -237,6 +237,15 @@ input, select, textarea {
 .status-scheduled .card__head { border-left: 3px solid var(--accent); padding-left: 0.5rem; }
 .status-done .card__head { border-left: 3px solid var(--accent-2); padding-left: 0.5rem; }
 
+/* ---- Help overlay ---- */
+.help { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); display: grid; place-items: center; padding: 1rem; z-index: 1000; }
+.help__card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.2rem; max-width: 560px; width: 100%; max-height: 88vh; overflow: auto; }
+.help__head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.help__head h2 { margin: 0; }
+.help__list { display: grid; gap: 0.7rem; padding-left: 1.1rem; margin: 0.8rem 0; }
+.help__list li { line-height: 1.5; }
+.help__foot { color: var(--muted); font-size: 0.9rem; }
+
 /* ---- Spinner ---- */
 .spinner {
   display: inline-block;

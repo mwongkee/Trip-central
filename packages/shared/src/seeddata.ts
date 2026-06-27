@@ -147,31 +147,49 @@ export function seedItems(): Item[] {
     }),
 
     // ---- Tonight: ferry Dartmouth → Halifax, then walk the waterfront ----
-    place('item-ferry', 'Alderney Ferry → Halifax', 'other', 44.6647, -63.5664, 'Catch the ferry from Alderney Landing across the harbour. Quick, fun ride with great skyline views.', {
-      address: 'Alderney Landing, Dartmouth', tags: ['ferry', 'tonight'],
+    place('item-ferry', 'Alderney Ferry → Halifax', 'other', 44.6647, -63.5664, 'Catch the ferry from Alderney Landing across the harbour — a quick, cheap ride with great skyline views (runs every ~15–30 min). Pays your transit fare.', {
+      address: 'Alderney Ferry Terminal, Dartmouth', tags: ['ferry', 'tonight'],
+      website: 'https://www.halifax.ca/transportation/halifax-transit/ferry-service/alderney-ferry-schedule',
     }),
-    place('item-boardwalk', 'Halifax Waterfront Boardwalk', 'outdoor', 44.6472, -63.5685, 'Right off the Halifax ferry terminal — a 4 km boardwalk with food, buskers, and the wave sculpture.', {
+    place('item-boardwalk', 'Halifax Waterfront Boardwalk', 'outdoor', 44.6472, -63.5685, 'Right off the Halifax ferry terminal — a 4.4 km harbourfront boardwalk with food, buskers, the blue wave sculpture, and the orange hammocks.', {
       address: 'Halifax Waterfront', tags: ['walkable', 'ferry', 'tonight', 'stroller-friendly'],
+      website: 'https://buildns.ca/visit/halifax/',
     }),
-    place('item-maritime', 'Maritime Museum of the Atlantic', 'museum', 44.6463, -63.5697, 'Titanic + shipwreck exhibits, steps from the ferry. Open some evenings.', {
+    place('item-maritime', 'Maritime Museum of the Atlantic', 'museum', 44.6463, -63.5697, "Canada's oldest/largest maritime museum — Titanic relics and the Halifax Explosion, steps from the ferry.", {
       address: '1675 Lower Water St, Halifax', tags: ['walkable', 'ferry', 'tonight'], estCost: 4000,
       website: 'https://maritimemuseum.novascotia.ca',
     }),
-    place('item-historic', 'Historic Properties', 'other', 44.6489, -63.5697, 'Restored waterfront warehouses — shops, patios, and ice cream. Short walk from the ferry.', {
-      address: 'Upper Water St, Halifax', tags: ['walkable', 'ferry', 'tonight'],
+    place('item-historic', 'Historic Properties', 'other', 44.6489, -63.5697, "Canada's oldest surviving waterfront warehouses (Privateers' Wharf) — shops, patios, and ice cream. Short walk from the ferry.", {
+      address: '1869 Upper Water St, Halifax', tags: ['walkable', 'ferry', 'tonight'],
+      website: 'https://www.historicproperties.ca/',
     }),
-    place('item-citadel', 'Halifax Citadel', 'viewpoint', 44.6478, -63.5803, 'Star-shaped hilltop fort with the best city views — ~15 min uphill walk from the ferry.', {
-      address: 'Citadel Hill, Halifax', tags: ['walkable', 'views'],
+    place('item-citadel', 'Halifax Citadel', 'viewpoint', 44.6478, -63.5803, 'Star-shaped 1856 hilltop fort with the noon gun and the best city views — ~15 min uphill walk from the ferry.', {
+      address: 'Citadel Hill, Halifax', tags: ['walkable', 'views'], estCost: 0,
+      website: 'https://parks.canada.ca/lhn-nhs/ns/halifax',
     }),
 
     // ---- Day trips & South Shore ----
-    place('item-peggys', "Peggy's Cove Lighthouse", 'viewpoint', 44.4915, -63.917, 'Iconic lighthouse and granite rocks — hold little hands near the water.', { address: 'Peggys Cove, NS', tags: ['scenic', 'photos'] }),
-    place('item-lunenburg', 'Old Town Lunenburg', 'viewpoint', 44.3762, -64.3079, 'Colourful UNESCO waterfront town, 15 min from the Airbnb.', { address: 'Lunenburg, NS', tags: ['walkable', 'photos'] }),
-    place('item-gardens', 'Halifax Public Gardens', 'outdoor', 44.643, -63.5818, 'Victorian gardens, ducks, and ice cream — ~15 min walk from the ferry.', { address: 'Spring Garden Rd, Halifax', tags: ['walkable', 'stroller-friendly'] }),
-    place('item-discovery', 'Discovery Centre', 'museum', 44.6448, -63.5664, 'Hands-on science centre by the waterfront — great rainy-day backup.', { address: 'Lower Water St, Halifax', tags: ['walkable'], estCost: 5400, website: 'https://thediscoverycentre.ca' }),
-    place('item-lawrencetown', 'Lawrencetown Beach', 'beach', 44.642, -63.347, 'Surf beach with lifeguards; bring towels.', { address: 'Lawrencetown, NS', tags: ['beach', 'surf'] }),
-    place('item-shubie', 'Shubie Park', 'outdoor', 44.708, -63.546, 'Trails, canal locks, and a splash of history in Dartmouth.', { address: 'Dartmouth, NS', tags: ['trails'] }),
-    place('item-playground', 'Upper Clements Adventure Park', 'playground', 44.741, -65.604, 'Rides and a wooden coaster for the bigger kids.', { address: 'Upper Clements, NS', estCost: 12000 }),
+    place('item-peggys', "Peggy's Cove Lighthouse", 'viewpoint', 44.4915, -63.917, 'Iconic lighthouse on wave-washed granite — free to visit, busiest 11–3. Hold little hands: the black rocks are slippery and dangerous.', {
+      address: 'Peggys Cove, NS', tags: ['scenic', 'photos'], website: 'https://visitpeggyscove.ca/',
+    }),
+    place('item-lunenburg', 'Old Town Lunenburg', 'viewpoint', 44.3762, -64.3079, 'Colourful UNESCO World Heritage town (planned in 1753), ~15 min from the Airbnb. Walkable waterfront, shops, and the Bluenose II home port.', {
+      address: 'Lunenburg, NS', tags: ['walkable', 'photos'], website: 'https://www.explorelunenburg.com/',
+    }),
+    place('item-gardens', 'Halifax Public Gardens', 'outdoor', 44.643, -63.5818, 'The only true Victorian garden in North America — ducks, bandstand, and ice cream. ~15 min walk from the ferry; gates open 8am.', {
+      address: 'Spring Garden Rd, Halifax', tags: ['walkable', 'stroller-friendly'], website: 'https://www.halifaxpublicgardens.ca/',
+    }),
+    place('item-discovery', 'Discovery Centre', 'museum', 44.6448, -63.5664, 'Hands-on science centre by the waterfront — great rainy-day backup for the kids.', {
+      address: '1215 Lower Water St, Halifax', tags: ['walkable'], estCost: 5400, website: 'https://thediscoverycentre.ca',
+    }),
+    place('item-lawrencetown', 'Lawrencetown Beach', 'beach', 44.642, -63.347, 'Atlantic surf beach ~20 min east of Dartmouth — supervised swimming Jul–Aug, but strong rip currents. Boardwalks, change houses, showers.', {
+      address: 'Lawrencetown, NS', tags: ['beach', 'surf'], website: 'https://parks.novascotia.ca/park/lawrencetown-beach',
+    }),
+    place('item-shubie', 'Shubie Park', 'outdoor', 44.708, -63.546, '40-acre Dartmouth park between two lakes — canal locks, easy trails, lake beaches, and the Fairbanks interpretive centre.', {
+      address: '54 Locks Rd, Dartmouth', tags: ['trails', 'stroller-friendly'], website: 'https://www.shubenacadiecanal.ca/shubie-park',
+    }),
+    place('item-clements', 'Upper Clements Trails', 'outdoor', 44.741, -65.604, 'NOTE: the old amusement park closed in 2019. The grounds are now 16 km of hiking/biking trails (near Annapolis Royal, ~2 h away).', {
+      address: 'Upper Clements, NS', tags: ['trails'], website: 'https://www.annapoliscounty.ca/community-development/parks-trails/1936-upper-clements-trails',
+    }),
 
     // ---- Meals ----
     meal('meal-lobster', 'Lobster rolls on the boardwalk', 'dinner', 'Fresh rolls on the Halifax waterfront — perfect after the ferry tonight.', {

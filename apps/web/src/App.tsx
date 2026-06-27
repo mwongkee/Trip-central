@@ -1,12 +1,15 @@
+import { useState } from 'react';
 import { useApp } from './lib/context.js';
 import { useBundle } from './hooks/queries.js';
 import { JoinGate } from './components/JoinGate.js';
 import { Board } from './components/Board.js';
 import { Avatar } from './components/Avatar.js';
+import { Help } from './components/Help.js';
 
 export function App() {
   const { identity, signOut, api } = useApp();
   const bundle = useBundle();
+  const [showHelp, setShowHelp] = useState(false);
 
   if (bundle.isLoading)
     return (
@@ -56,11 +59,15 @@ export function App() {
               Reset demo
             </button>
           )}
+          <button type="button" className="btn btn--ghost" onClick={() => setShowHelp(true)}>
+            ❔ Help
+          </button>
           <button type="button" className="btn btn--ghost" onClick={signOut}>
             Switch user
           </button>
         </div>
       </header>
+      {showHelp && <Help onClose={() => setShowHelp(false)} />}
       <Board bundle={bundle.data} />
       <footer className="app__footer">
         <small>
