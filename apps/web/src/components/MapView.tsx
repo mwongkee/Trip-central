@@ -6,7 +6,12 @@ import type { Item } from '@tripboard/shared';
 interface MapViewProps {
   items: Item[];
   selectedId: string | null;
+  /** Highlight a pin (no scroll/jump) — used when a marker is tapped. */
   onSelect: (itemId: string) => void;
+  /** Jump to the item's full details in the list — used by the popup button. */
+  onOpenDetails: (itemId: string) => void;
+  /** The user's shared location, shown as a "you are here" dot. */
+  userLocation?: { lat: number; lng: number } | null;
 }
 
 /** Free, no-key vector basemap. Override with VITE_MAP_STYLE (e.g. Amazon Location). */
@@ -34,11 +39,12 @@ function iconFor(item: Item): string {
   return item.type === 'MEAL' ? '🍽' : '📍';
 }
 
-export function MapView({ items, selectedId, onSelect }: MapViewProps) {
+export function MapView({ items, selectedId, onSelect, onOpenDetails, userLocation }: MapViewProps) {
   const styleUrl = (import.meta.env.VITE_MAP_STYLE as string | undefined) || DEFAULT_STYLE;
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
+  const userMarkerRef = useRef<Marker | null>(null);
   const popupRef = useRef<Popup | null>(null);
   const loadedRef = useRef(false);
 
@@ -68,11 +74,10 @@ export function MapView({ items, selectedId, onSelect }: MapViewProps) {
     };
   }, [styleUrl]);
 
-  // Render markers + fit bounds whenever the (filtered) set changes.
+  // Render markers (rebuilds on selection to update the highlight; does NOT move the map).
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-
     markersRef.current.forEach((m) => m.remove());
     markersRef.current = located.map((item) => {
       const el = document.createElement('button');
@@ -83,18 +88,42 @@ export function MapView({ items, selectedId, onSelect }: MapViewProps) {
       el.textContent = iconFor(item);
       el.addEventListener('click', (e) => {
         e.stopPropagation();
-        onSelect(item.itemId);
-        openPopup(map, item);
+        onSelect(item.itemId); // highlight only — stay on the map
+        openPopup(map, item); // show the text popup
       });
       return new maplibregl.Marker({ element: el }).setLngLat([item.lng!, item.lat!]).addTo(map);
     });
+  }, [located, selectedId, onSelect, onOpenDetails]);
 
-    if (located.length > 0) {
-      const bounds = new maplibregl.LngLatBounds();
-      located.forEach((i) => bounds.extend([i.lng!, i.lat!]));
-      map.fitBounds(bounds, { padding: 56, maxZoom: 14, duration: 400 });
+  // Fit the map to the visible set only when that set changes (not on selection),
+  // so tapping a pin keeps the map exactly where it is.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || located.length === 0) return;
+    const bounds = new maplibregl.LngLatBounds();
+    located.forEach((i) => bounds.extend([i.lng!, i.lat!]));
+    map.fitBounds(bounds, { padding: 56, maxZoom: 14, duration: 400 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [located]);
+
+  // "You are here" marker + recenter when location is first shared.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (userMarkerRef.current) {
+      userMarkerRef.current.remove();
+      userMarkerRef.current = null;
     }
-  }, [located, selectedId, onSelect]);
+    if (userLocation) {
+      const el = document.createElement('div');
+      el.className = 'marker marker--me';
+      el.setAttribute('aria-label', 'Your location');
+      userMarkerRef.current = new maplibregl.Marker({ element: el })
+        .setLngLat([userLocation.lng, userLocation.lat])
+        .addTo(map);
+      map.easeTo({ center: [userLocation.lng, userLocation.lat], zoom: Math.max(map.getZoom(), 13), duration: 500 });
+    }
+  }, [userLocation]);
 
   function openPopup(map: MlMap, item: Item) {
     const popup = popupRef.current;
@@ -117,7 +146,7 @@ export function MapView({ items, selectedId, onSelect }: MapViewProps) {
     btn.className = 'mappop__btn';
     btn.textContent = 'Open details ›';
     btn.addEventListener('click', () => {
-      onSelect(item.itemId);
+      onOpenDetails(item.itemId);
       popup.remove();
     });
     el.appendChild(btn);

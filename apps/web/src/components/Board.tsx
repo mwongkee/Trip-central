@@ -22,13 +22,40 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   const [cats, setCats] = useState<Set<string>>(new Set());
   const [tagFilter, setTagFilter] = useState<Set<string>>(new Set());
   const [radiusKm, setRadiusKm] = useState<number | null>(null);
+  const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
+  const [nearMe, setNearMe] = useState(false);
+  const [geoError, setGeoError] = useState<string | null>(null);
 
-  // The selected pin doubles as the center for "within X km" search.
+  // The distance-search centre is either your location ("Near me") or the selected pin.
   const centerItem = useMemo(
     () => bundle.items.find((i) => i.itemId === selectedId) ?? null,
     [bundle.items, selectedId],
   );
-  const canRadius = !!(centerItem && typeof centerItem.lat === 'number' && typeof centerItem.lng === 'number');
+  const center = useMemo<{ lat: number; lng: number; label: string } | null>(() => {
+    if (nearMe && userLoc) return { lat: userLoc.lat, lng: userLoc.lng, label: 'you' };
+    if (centerItem && typeof centerItem.lat === 'number' && typeof centerItem.lng === 'number') {
+      return { lat: centerItem.lat, lng: centerItem.lng, label: centerItem.title };
+    }
+    return null;
+  }, [nearMe, userLoc, centerItem]);
+  const canRadius = !!center;
+
+  function useMyLocation() {
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      setGeoError('Location is not available on this device.');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setUserLoc({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setNearMe(true);
+        setRadiusKm((r) => r ?? 2);
+        setGeoError(null);
+      },
+      () => setGeoError('Could not get your location — check location permissions.'),
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  }
 
   // Categories present in the trip, for the map/list filter chips.
   const categoryList = useMemo(() => {
@@ -65,9 +92,9 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     if (statusFilter !== 'all') items = items.filter((i) => i.status === statusFilter);
     if (cats.size > 0) items = items.filter((i) => i.category && cats.has(i.category));
     if (tagFilter.size > 0) items = items.filter((i) => [...tagFilter].every((t) => i.tags.includes(t)));
-    if (radiusKm && centerItem && centerItem.lat != null && centerItem.lng != null) {
+    if (radiusKm && center) {
       items = items.filter(
-        (i) => i.lat != null && i.lng != null && haversineKm(centerItem.lat!, centerItem.lng!, i.lat, i.lng) <= radiusKm,
+        (i) => i.lat != null && i.lng != null && haversineKm(center.lat, center.lng, i.lat, i.lng) <= radiusKm,
       );
     }
     // Anchors pinned to the top, then highest score first.
@@ -75,12 +102,18 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       if (a.isAnchor !== b.isAnchor) return a.isAnchor ? -1 : 1;
       return b.voteScore - a.voteScore;
     });
-  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, radiusKm, centerItem]);
+  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, radiusKm, center]);
 
+  // Tapping a pin just highlights it (and sets the distance centre) — stays on the map.
+  function highlight(itemId: string) {
+    setSelectedId(itemId);
+    setNearMe(false); // switch the distance centre to this pin
+  }
+
+  // From the popup's "Open details": expand the card and scroll the list to it.
   function select(itemId: string) {
     setSelectedId(itemId);
     setExpandedId(itemId);
-    // Bring the matching list card into view below the map.
     setTimeout(() => document.getElementById(`card-${itemId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
   }
 
@@ -161,43 +194,49 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         )}
       </div>
 
-      {canRadius ? (
-        <div className="board__radius" role="group" aria-label="Distance from pin">
-          <span className="board__radiuslabel">Within</span>
-          {[1, 2, 5, 10].map((km) => (
-            <button
-              key={km}
-              type="button"
-              className={`fchip ${radiusKm === km ? 'fchip--on' : ''}`}
-              aria-pressed={radiusKm === km}
-              onClick={() => setRadiusKm(radiusKm === km ? null : km)}
-            >
-              {km} km
-            </button>
-          ))}
-          <span className="board__radiuslabel">of <strong>{centerItem!.title}</strong></span>
-          {radiusKm && (
-            <button type="button" className="fchip fchip--clear" onClick={() => setRadiusKm(null)}>
-              clear ✕
-            </button>
-          )}
-        </div>
-      ) : (
-        <p className="board__radiushint">Tap a pin to find places near it.</p>
-      )}
+      <div className="board__radius" role="group" aria-label="Distance search">
+        <button type="button" className={`fchip ${nearMe ? 'fchip--on' : ''}`} aria-pressed={nearMe} onClick={useMyLocation}>
+          📍 Near me
+        </button>
+        {canRadius ? (
+          <>
+            <span className="board__radiuslabel">within</span>
+            {[1, 2, 5, 10].map((km) => (
+              <button
+                key={km}
+                type="button"
+                className={`fchip ${radiusKm === km ? 'fchip--on' : ''}`}
+                aria-pressed={radiusKm === km}
+                onClick={() => setRadiusKm(radiusKm === km ? null : km)}
+              >
+                {km} km
+              </button>
+            ))}
+            <span className="board__radiuslabel">of <strong>{center!.label}</strong></span>
+            {radiusKm && (
+              <button type="button" className="fchip fchip--clear" onClick={() => setRadiusKm(null)}>
+                clear ✕
+              </button>
+            )}
+          </>
+        ) : (
+          <span className="board__radiuslabel">or tap a pin to find places nearby</span>
+        )}
+      </div>
+      {geoError && <p className="join__error" role="alert">{geoError}</p>}
 
       {adding && <AddItemForm onDone={() => setAdding(false)} />}
 
       <aside className="board__map" aria-label="Map">
-        <MapView items={filtered} selectedId={selectedId} onSelect={select} />
+        <MapView items={filtered} selectedId={selectedId} userLocation={userLoc} onSelect={highlight} onOpenDetails={select} />
         <p className="board__maphint">{filtered.length} place{filtered.length === 1 ? '' : 's'} shown · tap a pin for details</p>
       </aside>
 
       <section className="board__list" aria-label="Trip items">
         {filtered.map((item) => {
           const distanceKm =
-            radiusKm && centerItem && centerItem.lat != null && centerItem.lng != null && item.lat != null && item.lng != null
-              ? haversineKm(centerItem.lat, centerItem.lng, item.lat, item.lng)
+            radiusKm && center && item.lat != null && item.lng != null
+              ? haversineKm(center.lat, center.lng, item.lat, item.lng)
               : null;
           return (
             <ItemCard
