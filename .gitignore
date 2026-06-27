@@ -1,7 +1,16 @@
 node_modules/
 dist/
 build/
+lambda-build/
 .aws-sam/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+infra/build/
 coverage/
 *.local
 .env

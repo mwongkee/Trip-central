@@ -15,7 +15,7 @@ single family and removes all auth setup.
 - The SPA sends identity to the API as `x-tripboard-user` / `x-tripboard-name` headers.
 - The Lambda reads those headers **or** Cognito JWT claims if a JWT authorizer is wired
   up (`services/api/src/handler.ts`), so the Cognito path in `PROMPT.md` remains an
-  easy upgrade — see the commented authorizer block in `template.yaml`.
+  easy upgrade — add a JWT authorizer to the HTTP API in `infra/apigw.tf`.
 
 Trade-off: device-join is not real authentication; anyone with the link can pick a
 name. Acceptable for a private family trip. To harden, enable the Cognito JWT
@@ -76,6 +76,16 @@ in `services/api/src/transactions.ts` and unit-tested.
 `PATCH item { action: "defer" }` either re-buckets the meal back to `suggested` for the
 next occasion of the same `mealType`, or (`toDate`) reschedules it to that date. Votes
 and comments are children of the same `ITEM#` partition, so they are preserved untouched.
+
+## IaC: Terraform for the whole stack, deployed by GitHub Actions (OIDC)
+
+`infra/` provisions **everything** — DynamoDB, Lambda, HTTP API, S3, and CloudFront — in
+one `terraform apply`. Terraform references the API Gateway domain when building the
+CloudFront `/api/*` behavior, so the SPA's same-origin `/api` works on the first deploy
+with **no manual console step**. State lives in S3 with native locking (`use_lockfile`,
+no DynamoDB lock table). CI assumes a scoped deploy role via GitHub OIDC — no stored
+keys. One-time setup + copy-paste IAM is in `docs/setup-deploy.md`. (The original bundle
+docs describe a SAM + console flow; Terraform replaces it here.)
 
 ## Milestone status
 

@@ -5,6 +5,7 @@
   "main": "./src/handler.ts",
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "bundle": "node esbuild.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },

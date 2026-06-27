@@ -1,5 +1,10 @@
 # docs/cicd.md — CI/CD with GitHub Actions + OIDC
 
+> ⚠️ **Superseded by [`setup-deploy.md`](./setup-deploy.md).** This build deploys the
+> whole stack with **Terraform** (`infra/`), not SAM + console resources. The OIDC idea
+> below still applies; the concrete steps, variables, and IAM live in `setup-deploy.md`.
+> This file is kept as the original bundle spec.
+
 Deploys are keyless: GitHub Actions assumes an AWS IAM role via OIDC (set up in
 `docs/aws-console-setup.md` step 6). No access keys are ever stored.
 

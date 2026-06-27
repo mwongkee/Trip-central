@@ -1,4 +1,5 @@
 import type { Item, Vote, Voter } from '@tripboard/shared';
+import { Avatar } from './Avatar.js';
 
 interface VoteControlProps {
   item: Item;
@@ -47,6 +48,7 @@ export function VoteControl({ item, votes, family, onVote, onRemove, busy }: Vot
                   onClick={() => (isUp ? onRemove(f.voterId) : onVote(f.voterId, 1))}
                   title={isUp ? `Remove ${f.name}'s vote` : `Vote as ${f.name}`}
                 >
+                  <Avatar name={f.name} size={18} />
                   <span aria-hidden="true">{isUp ? '✓ ' : '+ '}</span>
                   {f.name}
                   {f.type === 'child' && <span className="chip__tag"> (kid)</span>}
@@ -80,8 +82,10 @@ function VoterList({ votes }: { votes: Vote[] }) {
         .sort((a, b) => a.voterName.localeCompare(b.voterName))
         .map((v) => (
           <li key={v.voterId} className="vote__voter">
-            <span aria-hidden="true">{v.value > 0 ? '👍' : '👎'}</span> {v.voterName}
+            <Avatar name={v.voterName} size={18} />
+            <span className="vote__voterName">{v.voterName}</span>
             {v.voterType === 'child' && <span className="chip__tag"> (kid)</span>}
+            <span aria-hidden="true" className="vote__dir">{v.value > 0 ? '👍' : '👎'}</span>
           </li>
         ))}
     </ul>

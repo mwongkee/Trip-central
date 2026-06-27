@@ -1,5 +1,10 @@
 # docs/aws-console-setup.md — first‑time setup from the AWS console
 
+> ⚠️ **Superseded by [`setup-deploy.md`](./setup-deploy.md).** This build provisions
+> everything (S3, CloudFront, DynamoDB, Lambda, HTTP API) with **Terraform** (`infra/`),
+> so almost none of the clicking below is needed. Follow `setup-deploy.md` instead; this
+> file is kept as the original bundle reference (e.g. for optional Cognito/Location).
+
 Do these **once** to stand up the durable + edge infrastructure. The serverless backend
 (DynamoDB table, Lambda, HTTP API) is created by the repo's SAM template via CI/CD, so it is
 *not* clicked here — see steps 6–7 for how CI/CD plugs in.

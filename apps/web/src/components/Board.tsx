@@ -5,6 +5,7 @@ import { useApp } from '../lib/context.js';
 import { ItemCard } from './ItemCard.js';
 import { MapView } from './MapView.js';
 import { AddItemForm } from './AddItemForm.js';
+import { Itinerary } from './Itinerary.js';
 
 type StatusFilter = 'all' | 'suggested' | 'scheduled' | 'done';
 type TypeFilter = 'all' | ItemType;
@@ -17,6 +18,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
+  const [view, setView] = useState<'board' | 'itinerary'>('board');
 
   const family = useMemo(
     () => (identity ? familyVoters(identity.familyId, bundle.members, bundle.children) : []),
@@ -51,6 +53,38 @@ export function Board({ bundle }: { bundle: TripBundle }) {
 
   return (
     <div className="board">
+      <div className="board__tabs" role="tablist" aria-label="View">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === 'board'}
+          className={`tab ${view === 'board' ? 'tab--on' : ''}`}
+          onClick={() => setView('board')}
+        >
+          Board
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === 'itinerary'}
+          className={`tab ${view === 'itinerary' ? 'tab--on' : ''}`}
+          onClick={() => setView('itinerary')}
+        >
+          📅 Itinerary
+        </button>
+      </div>
+
+      {view === 'itinerary' ? (
+        <Itinerary items={bundle.items} onSelect={(id) => { setView('board'); select(id); }} />
+      ) : (
+        boardMain()
+      )}
+    </div>
+  );
+
+  function boardMain() {
+    return (
+      <>
       <div className="board__controls">
         <input
           type="search"
@@ -99,6 +133,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
           <MapView items={filtered} selectedId={selectedId} onSelect={select} />
         </aside>
       </div>
-    </div>
-  );
+      </>
+    );
+  }
 }
