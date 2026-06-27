@@ -268,6 +268,47 @@ export function seedItems(): Item[] {
     place('item-daveslobster', "Dave's Lobster", 'restaurant', 44.6473, -63.5684, 'Lobster rolls to-go right on the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
     place('item-smokespoutine', "Smoke's Poutinerie", 'restaurant', 44.6481, -63.5727, 'Loaded poutine on Argyle — great late-night snack.', { address: 'Argyle St, Halifax', tags: ['walkable'] }),
 
+    // ---- Indoor / rainy-day & active fun ----
+    place('item-flyingsquirrel', 'Flying Squirrel Trampoline Park', 'other', 44.6455, -63.6490, 'Trampolines, foam pits, dodgeball and climbing walls in Bayers Lake.', { address: 'Bayers Lake, Halifax', tags: ['kids', 'rainy-day'], website: 'https://flyingsquirrelsports.ca' }),
+    place('item-getair', 'Get Air Halifax', 'other', 44.7010, -63.5590, 'Indoor trampoline + ninja course in Burnside, Dartmouth.', { address: 'Burnside, Dartmouth', tags: ['kids', 'rainy-day'], website: 'https://getairsports.com' }),
+    place('item-kidsfunfactory', 'The Kids Fun Factory', 'playground', 44.6760, -63.5450, 'Big indoor playground — tunnels, ball pit, multi-tier climber, Dartmouth.', { address: 'Dartmouth', tags: ['kids', 'rainy-day'] }),
+    place('item-hopskipjump', 'Hop Skip Jump', 'playground', 44.6490, -63.6130, 'Three-level indoor play structure + toddler area and coffee bar.', { address: 'Halifax', tags: ['kids', 'rainy-day'] }),
+    place('item-millplaycafe', 'The Mill Play Cafe', 'playground', 44.7250, -63.6580, 'Indoor playground with sensory garden and role-play areas, Lower Sackville.', { address: 'Lower Sackville', tags: ['kids', 'rainy-day'], website: 'https://themillplaycafe.com' }),
+    place('item-playdium', 'Playdium Dartmouth', 'other', 44.6958, -63.5675, 'Arcade, VR, and 10-pin bowling at Dartmouth Crossing.', { address: 'Dartmouth Crossing', tags: ['kids', 'rainy-day'] }),
+    place('item-bowlaramabayers', 'Bowlarama Bayers Lake', 'other', 44.6450, -63.6480, 'Bowling, laser tag and arcade for indoor family nights.', { address: 'Bayers Lake, Halifax', tags: ['kids', 'rainy-day'], website: 'https://bowlarama.ca' }),
+    place('item-trapped', 'Trapped Halifax', 'other', 44.6455, -63.6470, 'Escape rooms with puzzles — good for families and teens.', { address: 'Bayers Lake, Halifax', tags: ['kids', 'rainy-day'], website: 'https://trappedhalifax.com' }),
+
+    // ---- Beaches & easy nature (day-trippable) ----
+    place('item-longlake', 'Long Lake Provincial Park', 'outdoor', 44.6240, -63.6480, 'Easy wooded loop trails and lake swimming minutes from the city.', { address: 'Halifax', tags: ['trails', 'kids'] }),
+    place('item-queensland', 'Queensland Beach', 'beach', 44.6230, -64.0290, 'Warm sandy beach with easy parking, ~30 min from Halifax.', { address: 'Queensland, NS', tags: ['beach', 'kids', 'daytrip'] }),
+    place('item-bayswater', 'Bayswater Beach', 'beach', 44.5560, -64.0270, 'White-sand South Shore beach with warm water and picnic tables.', { address: 'Bayswater, NS', tags: ['beach', 'kids', 'daytrip'] }),
+    place('item-clamharbour', 'Clam Harbour Beach', 'beach', 44.7170, -62.8770, 'Long shallow warm beach, famous for its sandcastle competition (Eastern Shore).', { address: 'Clam Harbour, NS', tags: ['beach', 'kids', 'daytrip'] }),
+    place('item-martinique', 'Martinique Beach', 'beach', 44.7000, -63.1300, "NS's longest sandy beach — boardwalks, birding, surfing (Eastern Shore).", { address: 'Musquodoboit Harbour, NS', tags: ['beach', 'daytrip'] }),
+    place('item-sullivanspond', "Sullivan's Pond", 'outdoor', 44.6685, -63.5712, 'Duck/swan pond with an easy boardwalk loop, downtown Dartmouth.', { address: 'Dartmouth', tags: ['walkable', 'kids', 'photos'] }),
+
+    // ---- Farms, animals & u-pick (day trips) ----
+    place('item-hatfield', 'Hatfield Farm', 'outdoor', 44.7000, -63.7600, 'Farm with pony/wagon rides, petting zoo and inflatable water course, Hammonds Plains.', { address: 'Hammonds Plains, NS', tags: ['kids', 'daytrip'], website: 'https://hatfieldfarm.com' }),
+    place('item-atlanticsplash', 'Atlantic Splash Adventure', 'outdoor', 44.7920, -63.5460, "NS's largest water/amusement park — slides, go-karts, mini-golf (Windsor Jct).", { address: 'Windsor Junction, NS', tags: ['kids', 'daytrip'], website: 'https://splashadventure.ca' }),
+    place('item-coleharbourfarm', 'Cole Harbour Heritage Farm', 'museum', 44.6700, -63.4760, 'Working community farm with animals, gardens and a blacksmith (by donation).', { address: 'Cole Harbour, NS', tags: ['kids', 'trails'], website: 'https://coleharbourfarmmuseum.ca' }),
+    place('item-oaklawnzoo', 'Oaklawn Farm Zoo', 'other', 45.0830, -64.6440, 'Family zoo with lions, tigers and many animals, Aylesford (~1.5 h).', { address: 'Aylesford, NS', tags: ['kids', 'daytrip'], website: 'https://oaklawnfarmzoo.ca' }),
+    place('item-noggins', 'Noggins Corner Farm', 'other', 45.0960, -64.3370, 'U-pick, farm market, animals and play area near Wolfville.', { address: 'Greenwich, NS', tags: ['kids', 'daytrip'], website: 'https://nogginsfarm.ca' }),
+    place('item-rossfarm', 'Ross Farm Museum', 'museum', 44.5760, -64.3380, 'Living 19th-century heritage farm with hands-on activities, New Ross (~1 h).', { address: 'New Ross, NS', tags: ['kids', 'daytrip'], website: 'https://rossfarm.novascotia.ca' }),
+
+    // ---- Bigger day trips ----
+    place('item-victoriapark', 'Victoria Park (Truro)', 'outdoor', 45.3580, -63.2700, 'Big park with gorge trails, waterfalls, splash-pad, pool and playground (~1 h).', { address: 'Truro, NS', tags: ['trails', 'kids', 'daytrip'], website: 'https://victoriaparktruro.ca' }),
+    place('item-fundybore', 'Fundy Discovery Site', 'viewpoint', 45.3760, -63.2330, 'Tidal-bore viewing platform with playground and river trail, Truro.', { address: 'Truro, NS', tags: ['kids', 'daytrip', 'photos'] }),
+    place('item-uniacke', 'Uniacke Estate Museum Park', 'museum', 44.9050, -63.8350, 'Georgian mansion with family trails and tea room, Mount Uniacke (~45 min).', { address: 'Mount Uniacke, NS', tags: ['trails', 'daytrip'], website: 'https://uniacke.novascotia.ca' }),
+    place('item-sugarmoon', 'Sugar Moon Farm', 'restaurant', 45.5440, -63.0980, 'Maple farm + pancake house with sugar-camp tours and trails, Earltown (Fri–Sun).', { address: 'Earltown, NS', tags: ['kids', 'daytrip', 'trails'], website: 'https://sugarmoon.ca' }),
+
+    // ---- More family restaurants ----
+    place('item-saltash', 'Salt + Ash Beach House', 'restaurant', 44.6463, -63.5682, 'Waterfront live-fire spot — wood-fired pizza and East Coast fare.', { address: 'Queen’s Marque, Halifax', tags: ['walkable', 'tonight', 'photos'], website: 'https://saltashhalifax.com' }),
+    place('item-boondocks', 'Boondocks', 'restaurant', 44.6360, -63.4720, "Casual seafood on the wharf at Fisherman's Cove, Eastern Passage.", { address: "Fisherman's Cove, Eastern Passage", tags: ['kids', 'photos'], website: 'https://boondocksdining.com' }),
+    place('item-chabaa', 'Cha Baa Thai', 'restaurant', 44.6700, -63.5650, 'Reliable family Thai (Halifax, Dartmouth, Bedford).', { address: 'Dartmouth', tags: ['kids'], website: 'https://chabaathai.ca' }),
+    place('item-cheesecurds', 'Cheese Curds Gourmet Burgers', 'restaurant', 44.6770, -63.5240, 'Gourmet burgers and poutine; kid-friendly, several HRM locations.', { address: 'Dartmouth', tags: ['kids'], website: 'https://cheesecurdsburgers.com' }),
+    place('item-habaneros', 'Habaneros Modern Taco Bar', 'restaurant', 44.6420, -63.5780, 'Build-your-own tacos & burritos with veg/GF options.', { address: 'Halifax', tags: ['kids', 'walkable'] }),
+    place('item-deedees', "Dee Dee's Ice Cream", 'restaurant', 44.6500, -63.5890, 'Small-batch handmade ice cream and sorbet, North End.', { address: 'North End, Halifax', tags: ['kids'], website: 'https://deedees.ca' }),
+    place('item-propeller', 'Propeller Brewing', 'restaurant', 44.6510, -63.5900, 'Taproom with a basement pinball/arcade and house-made sodas for kids.', { address: 'Gottingen St, Halifax', tags: ['kids', 'rainy-day'], website: 'https://drinkpropeller.ca' }),
+
     // ---- Meals ----
     meal('meal-lobster', 'Lobster rolls on the boardwalk', 'dinner', 'Fresh rolls on the Halifax waterfront — perfect after the ferry tonight.', {
       lat: 44.6476, lng: -63.5683, address: 'Halifax Waterfront', category: 'restaurant', tags: ['walkable', 'ferry', 'tonight'],

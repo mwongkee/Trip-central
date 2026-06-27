@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Fuse from 'fuse.js';
 import { familyVoters, haversineKm, type Item, type ItemType, type TripBundle } from '@tripboard/shared';
 import { useApp } from '../lib/context.js';
@@ -19,6 +19,8 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [view, setView] = useState<'board' | 'itinerary'>('board');
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [kidMode, setKidMode] = useState(false);
   const [cats, setCats] = useState<Set<string>>(new Set());
   const [tagFilter, setTagFilter] = useState<Set<string>>(new Set());
   const [radiusKm, setRadiusKm] = useState<number | null>(null);
@@ -64,6 +66,15 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     return [...s].sort();
   }, [bundle.items]);
 
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setFiltersOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [filtersOpen]);
+
   function toggle(set: Set<string>, setter: (s: Set<string>) => void, key: string) {
     const next = new Set(set);
     if (next.has(key)) next.delete(key);
@@ -92,6 +103,14 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     if (statusFilter !== 'all') items = items.filter((i) => i.status === statusFilter);
     if (cats.size > 0) items = items.filter((i) => i.category && cats.has(i.category));
     if (tagFilter.size > 0) items = items.filter((i) => [...tagFilter].every((t) => i.tags.includes(t)));
+    if (kidMode)
+      items = items.filter(
+        (i) =>
+          i.tags.includes('kids') ||
+          i.tags.includes('stroller-friendly') ||
+          i.category === 'playground' ||
+          i.category === 'beach',
+      );
     if (radiusKm && center) {
       items = items.filter(
         (i) => i.lat != null && i.lng != null && haversineKm(center.lat, center.lng, i.lat, i.lng) <= radiusKm,
@@ -102,7 +121,36 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       if (a.isAnchor !== b.isAnchor) return a.isAnchor ? -1 : 1;
       return b.voteScore - a.voteScore;
     });
-  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, radiusKm, center]);
+  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, kidMode, radiusKm, center]);
+
+  const activeFilterCount =
+    (typeFilter !== 'all' ? 1 : 0) +
+    (statusFilter !== 'all' ? 1 : 0) +
+    cats.size +
+    tagFilter.size +
+    (kidMode ? 1 : 0) +
+    (radiusKm ? 1 : 0);
+
+  function clearAllFilters() {
+    setTypeFilter('all');
+    setStatusFilter('all');
+    setCats(new Set());
+    setTagFilter(new Set());
+    setKidMode(false);
+    setRadiusKm(null);
+    setNearMe(false);
+  }
+
+  // "Near the ferry": centre the distance search on the Halifax ferry terminal.
+  function nearFerry() {
+    const ferry =
+      bundle.items.find((i) => i.itemId === 'item-hfxterminal') ??
+      bundle.items.find((i) => i.tags.includes('ferry') && i.lat != null);
+    if (!ferry) return;
+    setNearMe(false);
+    setSelectedId(ferry.itemId);
+    setRadiusKm((r) => r ?? 2);
+  }
 
   // Tapping a pin just highlights it (and sets the distance centre) — stays on the map.
   function highlight(itemId: string) {
@@ -151,78 +199,45 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   function boardMain() {
     return (
       <>
-      <div className="board__controls">
+      <div className="board__bar">
         <input
           type="search"
           className="board__search"
-          placeholder="Search places, meals, tags…"
+          placeholder="Search places, meals…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           aria-label="Search trip items"
         />
-        <label className="sr-only" htmlFor="f-type">Type</label>
-        <select id="f-type" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as TypeFilter)}>
-          <option value="all">All types</option>
-          <option value="PLACE">Places</option>
-          <option value="MEAL">Meals</option>
-        </select>
-        <label className="sr-only" htmlFor="f-status">Status</label>
-        <select id="f-status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}>
-          <option value="all">Any status</option>
-          <option value="suggested">Suggested</option>
-          <option value="scheduled">Scheduled</option>
-          <option value="done">Done</option>
-        </select>
+        <button type="button" className="btn" onClick={() => setFiltersOpen(true)} aria-haspopup="dialog">
+          ⚙ Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ''}
+        </button>
         <button type="button" className="btn btn--primary" onClick={() => setAdding((v) => !v)}>
-          {adding ? 'Close' : '+ Suggest'}
+          {adding ? 'Close' : '+'}
         </button>
       </div>
 
-      <div className="board__filters" role="group" aria-label="Filters">
+      <div className="board__presets" role="group" aria-label="Quick filters">
+        <button type="button" className={`fchip ${nearMe ? 'fchip--on' : ''}`} aria-pressed={nearMe} onClick={useMyLocation}>📍 Near me</button>
+        <button type="button" className="fchip" onClick={nearFerry}>⛴ Near ferry</button>
+        <button type="button" className={`fchip ${kidMode ? 'fchip--on' : ''}`} aria-pressed={kidMode} onClick={() => setKidMode((v) => !v)}>🧒 Kids</button>
         <button type="button" className={`fchip ${tagFilter.has('tonight') ? 'fchip--on' : ''}`} aria-pressed={tagFilter.has('tonight')} onClick={() => toggle(tagFilter, setTagFilter, 'tonight')}>🌙 Tonight</button>
         <button type="button" className={`fchip ${tagFilter.has('walkable') ? 'fchip--on' : ''}`} aria-pressed={tagFilter.has('walkable')} onClick={() => toggle(tagFilter, setTagFilter, 'walkable')}>🚶 Walkable</button>
-        <span className="board__filtersep" aria-hidden="true" />
-        {categoryList.map((c) => (
-          <button key={c} type="button" className={`fchip ${cats.has(c) ? 'fchip--on' : ''}`} aria-pressed={cats.has(c)} onClick={() => toggle(cats, setCats, c)}>
-            {c}
-          </button>
-        ))}
-        {(cats.size > 0 || tagFilter.size > 0) && (
-          <button type="button" className="fchip fchip--clear" onClick={() => { setCats(new Set()); setTagFilter(new Set()); }}>
-            clear ✕
-          </button>
+        {activeFilterCount > 0 && (
+          <button type="button" className="fchip fchip--clear" onClick={clearAllFilters}>clear ✕</button>
         )}
       </div>
 
-      <div className="board__radius" role="group" aria-label="Distance search">
-        <button type="button" className={`fchip ${nearMe ? 'fchip--on' : ''}`} aria-pressed={nearMe} onClick={useMyLocation}>
-          📍 Near me
-        </button>
-        {canRadius ? (
-          <>
-            <span className="board__radiuslabel">within</span>
-            {[1, 2, 5, 10].map((km) => (
-              <button
-                key={km}
-                type="button"
-                className={`fchip ${radiusKm === km ? 'fchip--on' : ''}`}
-                aria-pressed={radiusKm === km}
-                onClick={() => setRadiusKm(radiusKm === km ? null : km)}
-              >
-                {km} km
-              </button>
-            ))}
-            <span className="board__radiuslabel">of <strong>{center!.label}</strong></span>
-            {radiusKm && (
-              <button type="button" className="fchip fchip--clear" onClick={() => setRadiusKm(null)}>
-                clear ✕
-              </button>
-            )}
-          </>
-        ) : (
-          <span className="board__radiuslabel">or tap a pin to find places nearby</span>
-        )}
-      </div>
+      {canRadius && (
+        <div className="board__radius" role="group" aria-label="Distance">
+          <span className="board__radiuslabel">within</span>
+          {[1, 2, 5, 10].map((km) => (
+            <button key={km} type="button" className={`fchip ${radiusKm === km ? 'fchip--on' : ''}`} aria-pressed={radiusKm === km} onClick={() => setRadiusKm(radiusKm === km ? null : km)}>
+              {km} km
+            </button>
+          ))}
+          <span className="board__radiuslabel">of <strong>{center!.label}</strong></span>
+        </div>
+      )}
       {geoError && <p className="join__error" role="alert">{geoError}</p>}
 
       {adding && <AddItemForm onDone={() => setAdding(false)} />}
@@ -252,6 +267,46 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         })}
         {filtered.length === 0 && <p className="board__empty">Nothing matches. Try a different search or suggest something.</p>}
       </section>
+
+      {filtersOpen && (
+        <div className="sheet" role="dialog" aria-modal="true" aria-label="Filters" onClick={() => setFiltersOpen(false)}>
+          <div className="sheet__card" onClick={(e) => e.stopPropagation()}>
+            <div className="sheet__head">
+              <h2>Filters</h2>
+              <button type="button" className="btn btn--ghost" onClick={() => setFiltersOpen(false)} aria-label="Close filters">✕</button>
+            </div>
+
+            <label className="sheet__label" htmlFor="f-type">Type</label>
+            <select id="f-type" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as TypeFilter)}>
+              <option value="all">All types</option>
+              <option value="PLACE">Places</option>
+              <option value="MEAL">Meals</option>
+            </select>
+
+            <label className="sheet__label" htmlFor="f-status">Status</label>
+            <select id="f-status" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}>
+              <option value="all">Any status</option>
+              <option value="suggested">Suggested</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="done">Done</option>
+            </select>
+
+            <span className="sheet__label">Category</span>
+            <div className="sheet__chips">
+              {categoryList.map((c) => (
+                <button key={c} type="button" className={`fchip ${cats.has(c) ? 'fchip--on' : ''}`} aria-pressed={cats.has(c)} onClick={() => toggle(cats, setCats, c)}>
+                  {c}
+                </button>
+              ))}
+            </div>
+
+            <div className="sheet__foot">
+              <button type="button" className="btn" onClick={clearAllFilters}>Clear all</button>
+              <button type="button" className="btn btn--primary" onClick={() => setFiltersOpen(false)}>Show {filtered.length} places</button>
+            </div>
+          </div>
+        </div>
+      )}
       </>
     );
   }

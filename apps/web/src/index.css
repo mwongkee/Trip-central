@@ -98,6 +98,48 @@ input, select, textarea {
 .board__radiuslabel { color: var(--muted); font-size: 0.85rem; }
 .board__radiushint { color: var(--muted); font-size: 0.8rem; margin: 0.5rem 0 0; }
 .badge--dist { background: #10243a; border-color: #1f6feb; color: #9ecbff; }
+
+/* ---- Compact filter bar + presets (mobile-first) ---- */
+.board__bar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg);
+  padding: 0.6rem 0;
+}
+.board__bar .board__search { flex: 1 1 auto; min-width: 0; }
+.board__bar .btn { white-space: nowrap; }
+.board__presets { display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.3rem; -webkit-overflow-scrolling: touch; }
+.fchip { min-height: 40px; }
+
+/* ---- Filter bottom-sheet ---- */
+.sheet { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55); display: flex; align-items: flex-end; justify-content: center; z-index: 1000; }
+.sheet__card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px 16px 0 0; padding: 1rem 1rem 1.4rem; width: 100%; max-width: 560px; max-height: 85vh; overflow: auto; display: grid; gap: 0.5rem; }
+.sheet__head { display: flex; justify-content: space-between; align-items: center; }
+.sheet__head h2 { margin: 0; }
+.sheet__label { font-size: 0.8rem; color: var(--muted); margin-top: 0.4rem; }
+.sheet__chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.sheet__foot { display: flex; gap: 0.5rem; margin-top: 0.8rem; position: sticky; bottom: 0; background: var(--panel); padding-top: 0.5rem; }
+.sheet__foot .btn { flex: 1; min-height: 46px; }
+@media (min-width: 560px) { .sheet { align-items: center; } .sheet__card { border-radius: 16px; } }
+
+/* ---- Mobile breakpoints (the app previously had none) ---- */
+@media (max-width: 480px) {
+  .app { padding: 0.5rem; }
+  .app__header { padding-bottom: 0.6rem; }
+  .app__brand { font-size: 1.1rem; }
+  .map { height: 52vh; min-height: 300px; }
+  .fchip { min-height: 44px; padding: 0.5rem 0.8rem; }
+  .chip { min-height: 40px; }
+  .btn { min-height: 44px; }
+  .tab { min-height: 44px; }
+  .card__thumb { width: 52px; height: 52px; }
+  .card.status-scheduled .badge--status, .card.status-done .badge--status { display: none; }
+  .marker { width: 38px; height: 38px; font-size: 17px; }
+}
 .board__map { margin-top: 0.75rem; }
 .board__maphint { color: var(--muted); font-size: 0.8rem; margin: 0.35rem 0 0; text-align: center; }
 .board__list { display: grid; gap: 0.6rem; margin-top: 1rem; }
