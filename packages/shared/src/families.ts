@@ -17,12 +17,13 @@ export interface FamilySeed {
 export const FAMILIES: FamilySeed[] = [
   {
     familyId: 'fam-lewis',
-    familyName: 'Lewis & Kristin',
+    familyName: 'Matt & Kristin',
     adults: [
-      { userId: 'user-lewis', name: 'Lewis' },
+      { userId: 'user-matt', name: 'Matt' },
       { userId: 'user-kristin', name: 'Kristin' },
     ],
     kids: [
+      { childId: 'child-lewis', name: 'Lewis' },
       { childId: 'child-emmett', name: 'Emmett' },
       { childId: 'child-nico', name: 'Nico' },
     ],

@@ -3,43 +3,43 @@ import { LocalStore, applyLocalUpdate } from './localStore.js';
 import type { DeviceIdentity } from './identity.js';
 import type { Item } from '@tripboard/shared';
 
-const lewis: DeviceIdentity = { userId: 'user-lewis', name: 'Lewis', familyId: 'fam-lewis' };
+const matt: DeviceIdentity = { userId: 'user-matt', name: 'Matt', familyId: 'fam-lewis' };
 
 describe('LocalStore (demo backend)', () => {
   let store: LocalStore;
   beforeEach(() => {
     localStorage.clear();
-    store = new LocalStore(() => lewis);
+    store = new LocalStore(() => matt);
   });
 
   it('seeds the trip with families and items', async () => {
     const bundle = await store.getBundle();
     expect(bundle.trip.name).toContain('Nova Scotia');
     expect(bundle.members.length).toBe(6); // 3 families x 2 adults
-    expect(bundle.children.length).toBe(7); // 2 + 3 + 2 kids
+    expect(bundle.children.length).toBe(8); // 3 + 3 + 2 kids
     expect(bundle.items.length).toBeGreaterThan(5);
   });
 
   it('a parent voting for self + two kids scores 3', async () => {
     const bundle = await store.getBundle();
     const item = bundle.items.find((i) => !i.isAnchor)!;
-    for (const voterId of ['user-lewis', 'child-emmett', 'child-nico']) {
+    for (const voterId of ['user-matt', 'child-emmett', 'child-nico']) {
       await store.castVote(item.itemId, voterId, 1);
     }
     const detail = await store.getDetail(item.itemId);
     expect(detail.item.voteScore).toBe(3);
     expect(detail.item.voteCount).toBe(3);
-    expect(detail.votes.find((v) => v.voterId === 'child-emmett')!.castByUserId).toBe('user-lewis');
+    expect(detail.votes.find((v) => v.voterId === 'child-emmett')!.castByUserId).toBe('user-matt');
   });
 
   it('re-voting the same voter is idempotent; removing reverses', async () => {
     const bundle = await store.getBundle();
     const item = bundle.items[1]!;
-    await store.castVote(item.itemId, 'user-lewis', 1);
-    await store.castVote(item.itemId, 'user-lewis', 1);
+    await store.castVote(item.itemId, 'user-matt', 1);
+    await store.castVote(item.itemId, 'user-matt', 1);
     let detail = await store.getDetail(item.itemId);
     expect(detail.item.voteCount).toBe(1);
-    await store.removeVote(item.itemId, 'user-lewis');
+    await store.removeVote(item.itemId, 'user-matt');
     detail = await store.getDetail(item.itemId);
     expect(detail.item.voteScore).toBe(0);
   });
@@ -47,8 +47,8 @@ describe('LocalStore (demo backend)', () => {
   it('persists across instances (same device)', async () => {
     const bundle = await store.getBundle();
     const item = bundle.items[1]!;
-    await store.castVote(item.itemId, 'user-lewis', 1);
-    const reopened = new LocalStore(() => lewis);
+    await store.castVote(item.itemId, 'user-matt', 1);
+    const reopened = new LocalStore(() => matt);
     const detail = await reopened.getDetail(item.itemId);
     expect(detail.item.voteScore).toBe(1);
   });
@@ -56,7 +56,7 @@ describe('LocalStore (demo backend)', () => {
   it('rejects mutations before joining', async () => {
     const anon = new LocalStore(() => null);
     const bundle = await anon.getBundle();
-    await expect(anon.castVote(bundle.items[1]!.itemId, 'user-lewis', 1)).rejects.toThrow();
+    await expect(anon.castVote(bundle.items[1]!.itemId, 'user-matt', 1)).rejects.toThrow();
   });
 });
 
