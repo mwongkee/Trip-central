@@ -258,6 +258,24 @@ export const JoinInput = z.object({
 });
 export type JoinInput = z.infer<typeof JoinInput>;
 
+export const Presence = z.object({
+  entity: z.literal('presence'),
+  tripId: z.string(),
+  userId: z.string(),
+  name: z.string(),
+  familyId: z.string().optional(),
+  lat: z.number(),
+  lng: z.number(),
+  updatedAt: z.string(),
+});
+export type Presence = z.infer<typeof Presence>;
+
+export const SharePresenceInput = z.object({
+  lat: z.number(),
+  lng: z.number(),
+});
+export type SharePresenceInput = z.infer<typeof SharePresenceInput>;
+
 export const CreateExpenseInput = z.object({
   amount: z.number().int().nonnegative(),
   currency: z.string().optional(),

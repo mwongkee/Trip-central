@@ -15,6 +15,7 @@ import type {
   ChildProfile,
   TripBundle,
   ItemDetail,
+  Presence,
 } from '@tripboard/shared';
 import {
   tripPk,
@@ -27,6 +28,8 @@ import {
   memberRecord,
   childRecord,
   expenseRecord,
+  presenceRecord,
+  presenceSk,
 } from './keys.js';
 import {
   buildCastVoteTransaction,
@@ -61,6 +64,9 @@ export interface Repo {
   deleteExpense(tripId: string, expenseId: string, createdAt: string): Promise<void>;
   upsertMember(member: Member): Promise<Member>;
   getMember(tripId: string, userId: string): Promise<Member | null>;
+  putPresence(presence: Presence, ttlEpochSeconds: number): Promise<Presence>;
+  listPresence(tripId: string): Promise<Presence[]>;
+  deletePresence(tripId: string, userId: string): Promise<void>;
 }
 
 const MAX_TX_RETRIES = 3;
@@ -306,6 +312,31 @@ export class DynamoRepo implements Repo {
       }),
     );
     return (res.Item as Member | undefined) ?? null;
+  }
+
+  async putPresence(presence: Presence, ttlEpochSeconds: number): Promise<Presence> {
+    await this.ddb.send(
+      new PutCommand({ TableName: this.tableName, Item: presenceRecord(presence, ttlEpochSeconds) }),
+    );
+    return presence;
+  }
+
+  async listPresence(tripId: string): Promise<Presence[]> {
+    const rows = await this.queryAll({
+      TableName: this.tableName,
+      KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
+      ExpressionAttributeValues: { ':pk': tripPk(tripId), ':sk': 'PRESENCE#' },
+    });
+    return rows as Presence[];
+  }
+
+  async deletePresence(tripId: string, userId: string): Promise<void> {
+    await this.ddb.send(
+      new DeleteCommand({
+        TableName: this.tableName,
+        Key: { PK: tripPk(tripId), SK: presenceSk(userId) },
+      }),
+    );
   }
 }
 

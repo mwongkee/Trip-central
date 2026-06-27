@@ -148,6 +148,27 @@ describe('device join', () => {
   });
 });
 
+describe('presence (shared location)', () => {
+  it('shares, lists, and stops sharing location', async () => {
+    const repo = makeRepo();
+    const post = await handleRequest(repo, req({ method: 'POST', path: `/trips/${TRIP}/presence`, identity: lewis, body: { lat: 44.66, lng: -63.57 } }));
+    expect(post.statusCode).toBe(200);
+
+    const list = await handleRequest(repo, req({ method: 'GET', path: `/trips/${TRIP}/presence` }));
+    expect((list.body as { presences: unknown[] }).presences).toHaveLength(1);
+
+    const del = await handleRequest(repo, req({ method: 'DELETE', path: `/trips/${TRIP}/presence`, identity: lewis }));
+    expect(del.statusCode).toBe(204);
+    const after = await handleRequest(repo, req({ method: 'GET', path: `/trips/${TRIP}/presence` }));
+    expect((after.body as { presences: unknown[] }).presences).toHaveLength(0);
+  });
+
+  it('requires joining before sharing', async () => {
+    const res = await handleRequest(makeRepo(), req({ method: 'POST', path: `/trips/${TRIP}/presence`, body: { lat: 1, lng: 2 } }));
+    expect(res.statusCode).toBe(401);
+  });
+});
+
 describe('applyItemUpdate', () => {
   const meal: Item = {
     entity: 'item',

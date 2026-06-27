@@ -4,6 +4,7 @@ import type {
   Item,
   Member,
   Comment,
+  Presence,
   CreateItemInput,
   UpdateItemInput,
   JoinInput,
@@ -24,6 +25,9 @@ export interface Api {
   removeVote(itemId: string, voterId: string): Promise<void>;
   addComment(itemId: string, text: string, parentCommentId?: string): Promise<Comment>;
   join(input: JoinInput): Promise<Member>;
+  sharePresence(lat: number, lng: number): Promise<void>;
+  stopPresence(): Promise<void>;
+  getPresence(): Promise<Presence[]>;
   reset?(): void;
 }
 
@@ -99,6 +103,16 @@ class HttpApi implements Api {
   }
   join(input: JoinInput): Promise<Member> {
     return this.req('POST', this.t('/join'), input);
+  }
+  async sharePresence(lat: number, lng: number): Promise<void> {
+    await this.req('POST', this.t('/presence'), { lat, lng });
+  }
+  async stopPresence(): Promise<void> {
+    await this.req('DELETE', this.t('/presence'));
+  }
+  async getPresence(): Promise<Presence[]> {
+    const r = await this.req<{ presences: Presence[] }>('GET', this.t('/presence'));
+    return r.presences;
   }
 }
 

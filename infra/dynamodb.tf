@@ -45,4 +45,10 @@ resource "aws_dynamodb_table" "this" {
   point_in_time_recovery {
     enabled = true
   }
+
+  # Auto-expire shared-location (presence) records.
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true
+  }
 }

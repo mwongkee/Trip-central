@@ -7,12 +7,13 @@ import {
   CreateCommentInput,
   CreateChildInput,
   CreateExpenseInput,
+  SharePresenceInput,
   JoinInput,
   Item as ItemSchema,
   allVoters,
   buildItinerary,
 } from '@tripboard/shared';
-import type { Item, Vote, Comment, ChildProfile, Expense, Member } from '@tripboard/shared';
+import type { Item, Vote, Comment, ChildProfile, Expense, Member, Presence } from '@tripboard/shared';
 import { NotFoundError, type Repo } from './repo.js';
 
 export interface Identity {
@@ -137,6 +138,11 @@ async function route(repo: Repo, req: ApiRequest): Promise<ApiResponse> {
   // ---- expenses ----
   if (rest[0] === 'expenses') {
     return routeExpenses(repo, req, tripId, rest.slice(1));
+  }
+
+  // ---- presence (shared live location) ----
+  if (rest[0] === 'presence') {
+    return routePresence(repo, req, tripId, rest.slice(1));
   }
 
   // ---- itinerary ----
@@ -400,6 +406,52 @@ async function routeChildren(
     await repo.deleteChild(tripId, rest[0]!);
     return json(204, null);
   }
+  throw new HttpError(405, 'METHOD_NOT_ALLOWED', `${method} not allowed`);
+}
+
+const PRESENCE_FRESH_MS = 20 * 60 * 1000;
+const PRESENCE_TTL_SECONDS = 60 * 60;
+
+async function routePresence(
+  repo: Repo,
+  req: ApiRequest,
+  tripId: string,
+  rest: string[],
+): Promise<ApiResponse> {
+  const { method } = req;
+  if (rest.length !== 0) throw new HttpError(404, 'NOT_FOUND', 'no route');
+
+  if (method === 'GET') {
+    const all = await repo.listPresence(tripId);
+    const cutoff = Date.now() - PRESENCE_FRESH_MS;
+    const fresh = all.filter((p) => Date.parse(p.updatedAt) >= cutoff);
+    return json(200, { presences: fresh });
+  }
+
+  if (method === 'POST') {
+    const identity = requireIdentity(req);
+    const member = await requireMember(repo, tripId, identity);
+    const input = SharePresenceInput.parse(req.body);
+    const presence: Presence = {
+      entity: 'presence',
+      tripId,
+      userId: identity.userId,
+      name: identity.name,
+      familyId: member.familyId,
+      lat: input.lat,
+      lng: input.lng,
+      updatedAt: now(),
+    };
+    await repo.putPresence(presence, Math.floor(Date.now() / 1000) + PRESENCE_TTL_SECONDS);
+    return json(200, presence);
+  }
+
+  if (method === 'DELETE') {
+    const identity = requireIdentity(req);
+    await repo.deletePresence(tripId, identity.userId);
+    return json(204, null);
+  }
+
   throw new HttpError(405, 'METHOD_NOT_ALLOWED', `${method} not allowed`);
 }
 

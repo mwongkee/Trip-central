@@ -1,5 +1,5 @@
 import { scorePad } from '@tripboard/shared';
-import type { Item, Vote, Comment, Expense, Member, ChildProfile, Trip } from '@tripboard/shared';
+import type { Item, Vote, Comment, Expense, Member, ChildProfile, Trip, Presence } from '@tripboard/shared';
 
 /**
  * Single-table key construction + GSI projections. Pure functions only (no AWS
@@ -13,6 +13,7 @@ export const metaSk = (): string => 'META';
 export const memberSk = (userId: string): string => `MEMBER#${userId}`;
 export const childSk = (childId: string): string => `CHILD#${childId}`;
 export const itemSk = (itemId: string): string => `ITEM#${itemId}`;
+export const presenceSk = (userId: string): string => `PRESENCE#${userId}`;
 export const voteSk = (voterId: string): string => `VOTE#${voterId}`;
 export const commentSk = (createdAt: string, commentId: string): string =>
   `COMMENT#${createdAt}#${commentId}`;
@@ -81,4 +82,9 @@ export function commentRecord(c: Comment): Record<string, unknown> {
 
 export function expenseRecord(e: Expense): Record<string, unknown> {
   return { PK: tripPk(e.tripId), SK: expenseSk(e.createdAt, e.expenseId), ...e };
+}
+
+/** Presence record carries a DynamoDB `ttl` (epoch seconds) so it auto-expires. */
+export function presenceRecord(p: Presence, ttlEpochSeconds: number): Record<string, unknown> {
+  return { PK: tripPk(p.tripId), SK: presenceSk(p.userId), ttl: ttlEpochSeconds, ...p };
 }

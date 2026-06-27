@@ -8,6 +8,7 @@ import type {
   Trip,
   TripBundle,
   ItemDetail,
+  Presence,
 } from '@tripboard/shared';
 import type { ItemFilter, Repo } from './repo.js';
 import { NotFoundError } from './repo.js';
@@ -24,6 +25,7 @@ export class MemoryRepo implements Repo {
   votes = new Map<string, Vote>(); // key: itemId/voterId
   comments = new Map<string, Comment>(); // key: itemId/commentId
   expenses = new Map<string, Expense>(); // key: tripId/expenseId
+  presences = new Map<string, Presence>(); // key: tripId/userId
 
   seedTrip(trip: Trip): void {
     this.trips.set(trip.tripId, trip);
@@ -156,5 +158,18 @@ export class MemoryRepo implements Repo {
 
   async getMember(tripId: string, userId: string): Promise<Member | null> {
     return this.members.get(`${tripId}/${userId}`) ?? null;
+  }
+
+  async putPresence(presence: Presence): Promise<Presence> {
+    this.presences.set(`${presence.tripId}/${presence.userId}`, presence);
+    return presence;
+  }
+
+  async listPresence(tripId: string): Promise<Presence[]> {
+    return [...this.presences.values()].filter((p) => p.tripId === tripId);
+  }
+
+  async deletePresence(tripId: string, userId: string): Promise<void> {
+    this.presences.delete(`${tripId}/${userId}`);
   }
 }

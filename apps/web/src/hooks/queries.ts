@@ -75,6 +75,16 @@ export function useRemoveVote() {
   });
 }
 
+export function usePresence(enabled = true) {
+  const { api } = useApp();
+  return useQuery({
+    queryKey: ['presence'],
+    queryFn: () => api.getPresence(),
+    refetchInterval: 20_000,
+    enabled,
+  });
+}
+
 export function useAddComment() {
   const { api } = useApp();
   const qc = useQueryClient();

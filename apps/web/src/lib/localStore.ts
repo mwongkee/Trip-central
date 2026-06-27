@@ -11,6 +11,7 @@ import {
   type CreateItemInput,
   type UpdateItemInput,
   type JoinInput,
+  type Presence,
 } from '@tripboard/shared';
 import { seedTrip, seedMembers, seedChildren, seedItems } from './seed.js';
 import { ulid } from './ulid.js';
@@ -47,6 +48,8 @@ function freshState(): State {
 export class LocalStore {
   readonly mode = 'local' as const;
   private state: State;
+  // Presence is ephemeral (not persisted); in local mode it's just you on this device.
+  private presence: Presence | null = null;
 
   constructor(private readonly getIdentity: () => DeviceIdentity | null) {
     this.state = this.load();
@@ -207,6 +210,28 @@ export class LocalStore {
     this.state.comments[itemId] = [...(this.state.comments[itemId] ?? []), comment];
     this.persist();
     return comment;
+  }
+
+  async sharePresence(lat: number, lng: number): Promise<void> {
+    const id = this.requireIdentity();
+    this.presence = {
+      entity: 'presence',
+      tripId: this.state.trip.tripId,
+      userId: id.userId,
+      name: id.name,
+      familyId: id.familyId,
+      lat,
+      lng,
+      updatedAt: this.now(),
+    };
+  }
+
+  async stopPresence(): Promise<void> {
+    this.presence = null;
+  }
+
+  async getPresence(): Promise<Presence[]> {
+    return this.presence ? [this.presence] : [];
   }
 
   async join(input: JoinInput): Promise<Member> {

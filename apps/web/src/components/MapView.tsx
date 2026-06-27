@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import maplibregl, { type Map as MlMap, type Marker, type Popup } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import type { Item } from '@tripboard/shared';
+import type { Item, Presence } from '@tripboard/shared';
+import { colorForName, initials } from '../lib/avatar.js';
 
 interface MapViewProps {
   items: Item[];
@@ -12,6 +13,8 @@ interface MapViewProps {
   onOpenDetails: (itemId: string) => void;
   /** The user's shared location, shown as a "you are here" dot. */
   userLocation?: { lat: number; lng: number } | null;
+  /** Family members currently sharing their location. */
+  presences?: Presence[];
 }
 
 /** Free, no-key vector basemap. Override with VITE_MAP_STYLE (e.g. Amazon Location). */
@@ -39,12 +42,13 @@ function iconFor(item: Item): string {
   return item.type === 'MEAL' ? '🍽' : '📍';
 }
 
-export function MapView({ items, selectedId, onSelect, onOpenDetails, userLocation }: MapViewProps) {
+export function MapView({ items, selectedId, onSelect, onOpenDetails, userLocation, presences }: MapViewProps) {
   const styleUrl = (import.meta.env.VITE_MAP_STYLE as string | undefined) || DEFAULT_STYLE;
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MlMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
   const userMarkerRef = useRef<Marker | null>(null);
+  const personMarkersRef = useRef<Marker[]>([]);
   const popupRef = useRef<Popup | null>(null);
   const loadedRef = useRef(false);
 
@@ -124,6 +128,22 @@ export function MapView({ items, selectedId, onSelect, onOpenDetails, userLocati
       map.easeTo({ center: [userLocation.lng, userLocation.lat], zoom: Math.max(map.getZoom(), 13), duration: 500 });
     }
   }, [userLocation]);
+
+  // Family members sharing their location → avatar markers.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    personMarkersRef.current.forEach((m) => m.remove());
+    personMarkersRef.current = (presences ?? []).map((p) => {
+      const el = document.createElement('div');
+      el.className = 'marker marker--person';
+      el.style.setProperty('--marker-color', colorForName(p.name));
+      el.setAttribute('aria-label', `${p.name} is here`);
+      el.title = `${p.name} (shared location)`;
+      el.textContent = initials(p.name);
+      return new maplibregl.Marker({ element: el }).setLngLat([p.lng, p.lat]).addTo(map);
+    });
+  }, [presences]);
 
   function openPopup(map: MlMap, item: Item) {
     const popup = popupRef.current;

@@ -212,6 +212,7 @@ input, select, textarea {
 .marker { background: var(--marker-color, var(--accent)); color: #fff; border: 2px solid #fff; border-radius: 50%; width: 30px; height: 30px; font-size: 15px; line-height: 1; display: grid; place-items: center; cursor: pointer; box-shadow: 0 1px 5px rgba(0, 0, 0, 0.45); padding: 0; }
 .marker--sel { outline: 3px solid #fff; transform: scale(1.2); z-index: 1; }
 .marker--me { background: #1f6feb; border: 3px solid #fff; width: 18px; height: 18px; border-radius: 50%; box-shadow: 0 0 0 5px rgba(31, 111, 235, 0.3); cursor: default; }
+.marker--person { background: var(--marker-color, #1f6feb); color: #fff; border: 3px solid #fff; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 12px; box-shadow: 0 0 0 4px rgba(46, 160, 67, 0.35), 0 1px 5px rgba(0, 0, 0, 0.45); }
 
 /* Map popup (dark themed) */
 .maplibregl-popup-content { background: var(--panel); color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 0; overflow: hidden; }

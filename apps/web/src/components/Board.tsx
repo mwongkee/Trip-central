@@ -6,6 +6,8 @@ import { ItemCard } from './ItemCard.js';
 import { MapView } from './MapView.js';
 import { AddItemForm } from './AddItemForm.js';
 import { Itinerary } from './Itinerary.js';
+import { usePresence } from '../hooks/queries.js';
+import { useLocationShare } from '../hooks/useLocationShare.js';
 
 type StatusFilter = 'all' | 'suggested' | 'scheduled' | 'done';
 type TypeFilter = 'all' | ItemType;
@@ -81,6 +83,10 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     else next.add(key);
     setter(next);
   }
+
+  const presenceQ = usePresence();
+  const share = useLocationShare();
+  const presences = presenceQ.data ?? [];
 
   const family = useMemo(
     () => (identity ? familyVoters(identity.familyId, bundle.members, bundle.children) : []),
@@ -222,6 +228,9 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         <button type="button" className={`fchip ${kidMode ? 'fchip--on' : ''}`} aria-pressed={kidMode} onClick={() => setKidMode((v) => !v)}>🧒 Kids</button>
         <button type="button" className={`fchip ${tagFilter.has('tonight') ? 'fchip--on' : ''}`} aria-pressed={tagFilter.has('tonight')} onClick={() => toggle(tagFilter, setTagFilter, 'tonight')}>🌙 Tonight</button>
         <button type="button" className={`fchip ${tagFilter.has('walkable') ? 'fchip--on' : ''}`} aria-pressed={tagFilter.has('walkable')} onClick={() => toggle(tagFilter, setTagFilter, 'walkable')}>🚶 Walkable</button>
+        <button type="button" className={`fchip ${share.sharing ? 'fchip--on' : ''}`} aria-pressed={share.sharing} onClick={share.toggle}>
+          📡 {share.sharing ? 'Sharing…' : 'Share location'}
+        </button>
         {activeFilterCount > 0 && (
           <button type="button" className="fchip fchip--clear" onClick={clearAllFilters}>clear ✕</button>
         )}
@@ -238,13 +247,16 @@ export function Board({ bundle }: { bundle: TripBundle }) {
           <span className="board__radiuslabel">of <strong>{center!.label}</strong></span>
         </div>
       )}
-      {geoError && <p className="join__error" role="alert">{geoError}</p>}
+      {(geoError || share.error) && <p className="join__error" role="alert">{geoError || share.error}</p>}
 
       {adding && <AddItemForm onDone={() => setAdding(false)} />}
 
       <aside className="board__map" aria-label="Map">
-        <MapView items={filtered} selectedId={selectedId} userLocation={userLoc} onSelect={highlight} onOpenDetails={select} />
-        <p className="board__maphint">{filtered.length} place{filtered.length === 1 ? '' : 's'} shown · tap a pin for details</p>
+        <MapView items={filtered} selectedId={selectedId} userLocation={userLoc} presences={presences} onSelect={highlight} onOpenDetails={select} />
+        <p className="board__maphint">
+          {filtered.length} place{filtered.length === 1 ? '' : 's'} shown · tap a pin for details
+          {presences.length > 0 && ` · ${presences.length} sharing location`}
+        </p>
       </aside>
 
       <section className="board__list" aria-label="Trip items">
