@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { CreateItemInput, type ItemType, type MealType, type Category } from '@tripboard/shared';
 import { useCreateItem } from '../hooks/queries.js';
+import { parseGoogleMapsCoords, searchPlaces, type GeoResult } from '../lib/geocode.js';
 
 interface FormValues {
   type: ItemType;
@@ -15,16 +17,58 @@ interface FormValues {
   imageUrl: string;
 }
 
-const CATEGORIES: Category[] = ['outdoor', 'museum', 'beach', 'playground', 'viewpoint', 'restaurant', 'lodging', 'other'];
+const CATEGORIES: Category[] = ['outdoor', 'museum', 'beach', 'playground', 'viewpoint', 'restaurant', 'lodging', 'landmark', 'activity', 'shopping', 'other'];
 const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 
-/** Suggest a new place or meal. Address geocoding (Amazon Location) is a TODO — see PLAN.md M1. */
+/** Suggest a new place or meal — find it by name (OpenStreetMap) or paste a Maps link. */
 export function AddItemForm({ onDone }: { onDone: () => void }) {
   const create = useCreateItem();
-  const { register, handleSubmit, watch, reset, formState } = useForm<FormValues>({
+  const { register, handleSubmit, watch, reset, setValue, getValues, formState } = useForm<FormValues>({
     defaultValues: { type: 'PLACE', title: '', description: '', category: '', mealType: '', address: '', lat: '', lng: '', website: '', imageUrl: '' },
   });
   const type = watch('type');
+  const lat = watch('lat');
+  const lng = watch('lng');
+
+  const [find, setFind] = useState('');
+  const [results, setResults] = useState<GeoResult[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [findMsg, setFindMsg] = useState<string | null>(null);
+
+  async function runFind() {
+    const q = find.trim();
+    if (!q) return;
+    setFindMsg(null);
+    const coords = parseGoogleMapsCoords(q);
+    if (coords) {
+      setValue('lat', String(coords.lat));
+      setValue('lng', String(coords.lng));
+      setResults([]);
+      setFindMsg('📍 Pinned from the link — give it a title and add it.');
+      return;
+    }
+    setSearching(true);
+    try {
+      const r = await searchPlaces(q);
+      setResults(r);
+      setFindMsg(r.length === 0 ? 'No matches — try a different name, or paste a Maps link / coordinates.' : null);
+    } catch {
+      setFindMsg('Search failed — check your connection, or paste a Maps link / coordinates.');
+    } finally {
+      setSearching(false);
+    }
+  }
+
+  function pick(r: GeoResult) {
+    if (!getValues('title').trim()) setValue('title', r.name);
+    setValue('address', r.address);
+    setValue('lat', String(r.lat));
+    setValue('lng', String(r.lng));
+    if (r.category) setValue('category', r.category);
+    setValue('type', 'PLACE');
+    setResults([]);
+    setFindMsg(`📍 Pinned ${r.name}.`);
+  }
 
   const onSubmit = handleSubmit(async (v) => {
     const lat = v.lat ? Number(v.lat) : undefined;
@@ -51,6 +95,33 @@ export function AddItemForm({ onDone }: { onDone: () => void }) {
   return (
     <form className="addform" onSubmit={onSubmit}>
       <h3>Suggest something</h3>
+
+      <label htmlFor="af-find">🔎 Find a place or paste a Google Maps link</label>
+      <div className="addform__findrow">
+        <input
+          id="af-find"
+          value={find}
+          onChange={(e) => setFind(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); runFind(); } }}
+          placeholder="e.g. Bar Kismet  ·  or a maps.google link"
+        />
+        <button type="button" className="btn" onClick={runFind} disabled={searching}>
+          {searching ? '…' : 'Search'}
+        </button>
+      </div>
+      {results.length > 0 && (
+        <ul className="addform__results" aria-label="Search results">
+          {results.map((r, i) => (
+            <li key={`${r.lat},${r.lng},${i}`}>
+              <button type="button" className="addform__result" onClick={() => pick(r)}>
+                <span className="addform__resultname">{r.name}</span>
+                <span className="addform__resultaddr">{r.address}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {findMsg && <p className="addform__hint" aria-live="polite">{findMsg}</p>}
 
       <div className="addform__row">
         <label>
@@ -101,14 +172,15 @@ export function AddItemForm({ onDone }: { onDone: () => void }) {
       <label htmlFor="af-img">Photo URL (optional)</label>
       <input id="af-img" {...register('imageUrl')} inputMode="url" placeholder="https://… real photo URL (blank = emoji tile)" />
 
+      <label htmlFor="af-lat">
+        Location {lat && lng ? <span className="addform__pinned">✓ pinned — shows on the map</span> : <span className="addform__hint">— use Find above, or enter manually</span>}
+      </label>
       <div className="addform__row">
         <div>
-          <label htmlFor="af-lat">Lat</label>
-          <input id="af-lat" {...register('lat')} inputMode="decimal" placeholder="44.65" />
+          <input id="af-lat" {...register('lat')} inputMode="decimal" placeholder="Lat 44.65" aria-label="Latitude" />
         </div>
         <div>
-          <label htmlFor="af-lng">Lng</label>
-          <input id="af-lng" {...register('lng')} inputMode="decimal" placeholder="-63.57" />
+          <input id="af-lng" {...register('lng')} inputMode="decimal" placeholder="Lng -63.57" aria-label="Longitude" />
         </div>
       </div>
 
