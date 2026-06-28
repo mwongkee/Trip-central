@@ -7,6 +7,7 @@ import { MapView } from './MapView.js';
 import { AddItemForm } from './AddItemForm.js';
 import { Itinerary } from './Itinerary.js';
 import { SwipeDeck } from './SwipeDeck.js';
+import { Photo } from './Photo.js';
 import { usePresence, useItemDetail } from '../hooks/queries.js';
 import { useLocationShare } from '../hooks/useLocationShare.js';
 import { mapsLink } from '../lib/links.js';
@@ -483,9 +484,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
 
       {centerItem && (
         <div className="peek" role="dialog" aria-label={centerItem.title}>
-          {centerItem.imageUrl && (
-            <img className="peek__thumb" src={centerItem.imageUrl} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-          )}
+          <Photo item={centerItem} fetch className="peek__thumb" />
           <div className="peek__body">
             <strong className="peek__title">{centerItem.title}</strong>
             <div className="peek__meta">

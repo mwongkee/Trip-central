@@ -1,10 +1,11 @@
 import { useMemo, useRef, useState } from 'react';
 import { familyVoters, travelMinutes, type Item, type TripBundle } from '@tripboard/shared';
 import { useApp } from '../lib/context.js';
-import { useVote, useItemDetail, useWikiImage } from '../hooks/queries.js';
+import { useVote, useItemDetail } from '../hooks/queries.js';
 import { travelLabel } from '../lib/distance.js';
 import { mapsLink } from '../lib/links.js';
 import { Avatar } from './Avatar.js';
+import { Photo } from './Photo.js';
 
 const COMMIT = 110; // px past which a swipe commits
 
@@ -198,7 +199,6 @@ function SwipeCard({
   onVote?: (i: Item) => void;
   onSkip?: (i: Item) => void;
 }) {
-  const wiki = useWikiImage(behind ? null : item.title);
   const detail = useItemDetail(behind ? null : item.itemId);
   const [dx, setDx] = useState(0);
   const [dragging, setDragging] = useState(false);
@@ -207,7 +207,6 @@ function SwipeCard({
   const decided = useRef(false);
 
   const votes = detail.data?.votes ?? [];
-  const photo = wiki.data || item.imageUrl;
   const dist = travelLabel(center, item.lat ?? undefined, item.lng ?? undefined);
   const bucket = item.type === 'MEAL' ? item.mealType : item.category;
 
@@ -258,7 +257,7 @@ function SwipeCard({
     >
       {hint && <span className={`swipe__stamp swipe__stamp--${hint}`}>{hint === 'vote' ? '👍 VOTE' : 'SKIP'}</span>}
       <div className="swipe__photo">
-        {photo && <img src={photo} alt={item.title} draggable={false} onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />}
+        <Photo item={item} fetch={!behind} className="swipe__img" />
         {dist && <span className="swipe__dist">{dist}</span>}
       </div>
       <div className="swipe__info">

@@ -34,13 +34,13 @@ const CATEGORY_COLORS: Record<string, string> = {
   other: '#868e96',
 };
 
-function colorFor(item: Item): string {
+export function colorFor(item: Item): string {
   if (item.isAnchor) return '#f0b400';
   const key = item.type === 'MEAL' ? 'restaurant' : item.category ?? 'other';
   return CATEGORY_COLORS[key] ?? CATEGORY_COLORS['other']!;
 }
 
-function iconFor(item: Item): string {
+export function iconFor(item: Item): string {
   if (item.isAnchor) return item.anchorRole === 'hotel' ? '🏨' : '🏠';
 
   const title = item.title.toLowerCase();

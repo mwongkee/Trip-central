@@ -63,11 +63,6 @@ export function seedChildren(): ChildProfile[] {
   );
 }
 
-/** Deterministic placeholder photo so every activity has an image; swap for real ones via edit. */
-function photo(itemId: string): string {
-  return `https://picsum.photos/seed/${itemId}/800/500`;
-}
-
 function place(
   itemId: string,
   title: string,
@@ -87,7 +82,6 @@ function place(
     category,
     lat,
     lng,
-    imageUrl: photo(itemId),
     isAnchor: false,
     status: 'suggested',
     currency: 'CAD',
@@ -117,7 +111,6 @@ function meal(
     title,
     description,
     mealType,
-    imageUrl: photo(itemId),
     isAnchor: false,
     status: 'suggested',
     currency: 'CAD',

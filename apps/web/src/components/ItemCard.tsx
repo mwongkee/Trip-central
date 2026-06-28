@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Item, Slot, Voter } from '@tripboard/shared';
 import { VoteControl } from './VoteControl.js';
 import { Comments } from './Comments.js';
+import { Photo } from './Photo.js';
 import { mapsLink } from '../lib/links.js';
 import {
   useItemDetail,
@@ -58,17 +59,7 @@ export function ItemCard({ item, family, expanded, selected, onToggle, distanceL
       }}
     >
       <div className="card__head">
-        {item.imageUrl && (
-          <img
-            className="card__thumb"
-            src={item.imageUrl}
-            alt=""
-            loading="lazy"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
-          />
-        )}
+        <Photo item={item} className="card__thumb" />
         <div className="card__headtext">
           <span className="card__title">
             {item.isAnchor && <span className="badge badge--anchor" title={`Anchor: ${item.anchorRole}`}>★ {item.anchorRole}</span>}
@@ -91,17 +82,7 @@ export function ItemCard({ item, family, expanded, selected, onToggle, distanceL
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => e.stopPropagation()}
         >
-          {item.imageUrl && (
-            <img
-              className="card__photo"
-              src={item.imageUrl}
-              alt={item.title}
-              loading="lazy"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-          )}
+          <Photo item={item} fetch={expanded} className="card__photo" />
           <div className="card__links">
             <a className="btn btn--link" href={mapsLink(item)} target="_blank" rel="noreferrer noopener">
               🗺 Open in Maps

@@ -99,7 +99,7 @@ export function AddItemForm({ onDone }: { onDone: () => void }) {
       <input id="af-web" {...register('website')} inputMode="url" placeholder="https://…" />
 
       <label htmlFor="af-img">Photo URL (optional)</label>
-      <input id="af-img" {...register('imageUrl')} inputMode="url" placeholder="https://… (leave blank for a placeholder)" />
+      <input id="af-img" {...register('imageUrl')} inputMode="url" placeholder="https://… real photo URL (blank = emoji tile)" />
 
       <div className="addform__row">
         <div>

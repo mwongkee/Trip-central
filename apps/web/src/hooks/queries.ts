@@ -4,34 +4,56 @@ import { useApp } from '../lib/context.js';
 
 const BUNDLE_KEY = ['bundle'];
 
+// Only fetch real photos for attraction-type places. Restaurants/shops/lodging
+// rarely have a correct Wikipedia page and collide with unrelated articles
+// (e.g. "The Bicycle Thief" → the film), so those use the emoji tile instead.
+const PHOTO_CATEGORIES = new Set(['museum', 'landmark', 'viewpoint', 'beach', 'outdoor', 'playground', 'activity']);
+const PHOTO_STOPWORDS = new Set([
+  'the', 'and', 'of', 'at', 'on', 'in', 'a', 'to', 'park', 'centre', 'center',
+  'museum', 'beach', 'tour', 'tours', 'nova', 'scotia', 'halifax', 'dartmouth',
+]);
+
 /**
- * Best-effort real photo from Wikipedia's public API (runs in the browser, no key,
- * CORS via origin=*). Returns a thumbnail URL when the place has a Wikipedia page,
- * else null so callers fall back to the placeholder. Cached forever per query.
+ * Best-effort *related* real photo from Wikipedia (browser-side, no key, CORS via
+ * origin=*). Scopes the search to Nova Scotia and only returns a thumbnail when the
+ * matched article's title shares a meaningful word with the place — so we never show
+ * an unrelated stock-y image. Returns null (→ emoji tile) otherwise.
  */
-export function useWikiImage(title: string | null) {
+export function usePlacePhoto(item: { itemId: string; title: string; category?: string; type: string } | null, enabled: boolean) {
+  const allow =
+    enabled &&
+    !!item &&
+    item.type !== 'MEAL' &&
+    !!item.category &&
+    PHOTO_CATEGORIES.has(item.category);
   return useQuery({
-    queryKey: ['wikiimg', title],
-    enabled: !!title,
+    queryKey: ['placephoto', item?.itemId],
+    enabled: allow,
     staleTime: Infinity,
     gcTime: Infinity,
     retry: false,
     queryFn: async (): Promise<string | null> => {
+      const q = `${item!.title} Nova Scotia`;
       const url =
         'https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*' +
-        '&prop=pageimages&piprop=thumbnail&pithumbsize=900&redirects=1&titles=' +
-        encodeURIComponent(title!);
+        '&generator=search&gsrlimit=1&prop=pageimages&piprop=thumbnail&pithumbsize=900&gsrsearch=' +
+        encodeURIComponent(q);
       const res = await fetch(url);
       if (!res.ok) return null;
       const data = (await res.json()) as {
-        query?: { pages?: Record<string, { thumbnail?: { source?: string } }> };
+        query?: { pages?: Record<string, { title?: string; thumbnail?: { source?: string } }> };
       };
-      const pages = data.query?.pages ?? {};
-      for (const key of Object.keys(pages)) {
-        const src = pages[key]?.thumbnail?.source;
-        if (src) return src;
-      }
-      return null;
+      const page = Object.values(data.query?.pages ?? {})[0];
+      const src = page?.thumbnail?.source;
+      if (!src) return null;
+      const pageTitle = (page?.title ?? '').toLowerCase();
+      const want = item!.title
+        .toLowerCase()
+        .replace(/[^a-z0-9 ]/g, ' ')
+        .split(/\s+/)
+        .filter((w) => w.length > 3 && !PHOTO_STOPWORDS.has(w));
+      const related = want.some((w) => pageTitle.includes(w));
+      return related ? src : null;
     },
   });
 }

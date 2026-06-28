@@ -145,6 +145,13 @@ input, select, textarea {
 .swipe { display: flex; flex-direction: column; gap: 0.6rem; }
 .swipe__decks { display: flex; align-items: center; gap: 0.4rem; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 0.2rem; }
 .swipe__blurb { color: var(--muted); font-size: 0.84rem; margin: 0; }
+.swipe__img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Photo placeholder tile — category colour + emoji, used when there's no real photo. */
+.ph { display: grid; place-items: center; background: var(--ph-color, var(--panel-2)); }
+.ph__emoji { font-size: 1.7rem; line-height: 1; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35)); }
+.card__photo.ph { min-height: 150px; }
+.card__photo.ph .ph__emoji, .swipe__img.ph .ph__emoji { font-size: 3.6rem; }
 .swipe__count { white-space: nowrap; }
 .swipe__stack { position: relative; height: 64vh; min-height: 420px; }
 .swipe__card { position: absolute; inset: 0; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); touch-action: pan-y; user-select: none; }
