@@ -28,6 +28,9 @@ const CATEGORY_COLORS: Record<string, string> = {
   viewpoint: '#9c36b5',
   restaurant: '#e8590c',
   lodging: '#e64980',
+  landmark: '#9c6644',
+  activity: '#c92a2a',
+  shopping: '#c2255c',
   other: '#868e96',
 };
 
@@ -75,15 +78,36 @@ function iconFor(item: Item): string {
       return '🌲';
     case 'lodging':
       return '🛏️';
+    case 'landmark':
+      if (has('church', 'cathedral', "st. paul")) return '⛪';
+      if (has('clock')) return '🕰️';
+      if (has('citadel', 'fort')) return '🏰';
+      if (has('mural', 'art', 'sculpture', 'wave', 'lamppost')) return '🎨';
+      if (has('island')) return '🏝️';
+      if (has('library')) return '📚';
+      if (has('burying', 'cemetery')) return '⚰️';
+      return '🏛️';
+    case 'activity':
+      if (tags.includes('ferry') || has('ferry')) return '⛴️';
+      if (has('axe')) return '🪓';
+      if (has('golf', 'putting')) return '⛳';
+      if (has('bowl')) return '🎳';
+      if (has('escape', 'trapped')) return '🧩';
+      if (has('trampoline', 'get air', 'flying squirrel', 'jump', 'fun factory', 'hop skip')) return '🤸';
+      if (has('arcade', 'playdium')) return '🕹️';
+      if (has('theatre', 'theater', 'music', 'carleton', 'seahorse', 'neptune', 'stage', 'comedy')) return '🎭';
+      if (has('skat', 'oval')) return '⛸️';
+      if (has('pool', 'aquatic', 'splash', 'sportsplex', 'stadium', 'sports', 'spry', 'games centre', 'cole harbour place')) return '🏊';
+      if (has('bike')) return '🚲';
+      if (has('segway')) return '🛴';
+      if (has('tour', 'cruise', 'sailing', 'hopper', 'silva', 'harbour', 'zip', 'kayak', 'paddle')) return '⛵';
+      return '🎟️';
+    case 'shopping':
+      if (has('market')) return '🧺';
+      return '🛍️';
     case 'other':
     default:
       if (tags.includes('ferry') || has('ferry')) return '⛴️';
-      if (has('market')) return '🧺';
-      if (has('library')) return '📚';
-      if (has('tour', 'cruise', 'sailing', 'hopper', 'bikes', 'segway', 'silva')) return '🎟️';
-      if (has('pool', 'aquatic', 'splash', 'sportsplex', 'stadium', 'sports', 'spry', 'games centre', 'cole harbour place')) return '🏊';
-      if (has('trampoline', 'get air', 'flying squirrel', 'playdium', 'bowl', 'arcade', 'escape', 'trapped', 'fun factory', 'play cafe', 'hop skip')) return '🎮';
-      if (has('church', 'cathedral', 'st.')) return '⛪';
       return '📍';
   }
 }

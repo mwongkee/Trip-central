@@ -40,6 +40,9 @@ export const Category = z.enum([
   'viewpoint',
   'restaurant',
   'lodging',
+  'landmark',
+  'activity',
+  'shopping',
   'other',
 ]);
 export type Category = z.infer<typeof Category>;
