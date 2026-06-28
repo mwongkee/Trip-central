@@ -18,9 +18,16 @@ import {
   QueryCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { seedTrip, seedMembers, seedChildren, seedItems, DEMO_TRIP_ID } from '@tripboard/shared';
-import { tripRecord, memberRecord, childRecord, itemRecord, tripPk, itemPk } from '../services/api/src/keys.js';
+import { tripRecord, memberRecord, childRecord, itemRecord, itemSk, tripPk, itemPk } from '../services/api/src/keys.js';
 
 const TABLE_NAME = process.env.TABLE_NAME ?? 'TripBoard';
+
+/**
+ * Items to permanently remove from the live trip (mistakes / dupes). On each seed
+ * run these ids and their votes/comments are deleted. Use sparingly — this DOES
+ * drop any votes on the listed item (intentional retirement).
+ */
+const RETIRED_ITEM_IDS = ['item-bluenoseship'];
 
 type Key = { PK: string; SK: string };
 
@@ -74,6 +81,19 @@ async function main(): Promise<void> {
       console.log(`RESET: cleared ${toDelete.length} existing records.`);
     }
     existingItemIds.clear();
+  }
+
+  // Retire explicitly-removed items (item row + its votes/comments partition).
+  const toRetire = RETIRED_ITEM_IDS.filter((id) => existingItemIds.has(id));
+  if (toRetire.length > 0) {
+    const delKeys: Key[] = [];
+    for (const id of toRetire) {
+      delKeys.push({ PK: tripPk(DEMO_TRIP_ID), SK: itemSk(id) });
+      delKeys.push(...(await queryKeys(ddb, itemPk(id))));
+    }
+    await batch(ddb, delKeys.map((Key) => ({ DeleteRequest: { Key } })));
+    // eslint-disable-next-line no-console
+    console.log(`Retired ${toRetire.length} item(s): ${toRetire.join(', ')}.`);
   }
 
   // Trip meta + roster are safe to upsert (no votes attached). Items: insert

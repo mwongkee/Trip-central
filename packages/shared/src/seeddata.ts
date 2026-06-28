@@ -591,7 +591,6 @@ export function seedItems(): Item[] {
     place('item-ghostwalk', 'The Halifax Ghost Walk', 'activity', 44.6478, -63.5766, 'Lantern-lit walking tour of ghost, pirate and devil tales through the old streets.', { address: 'Old Town Clock, Halifax', tags: ['walkable'], website: 'https://halifaxghostwalk.com' }),
     place('item-altroutes', 'Alternative Routes Day Tours', 'activity', 44.6470, -63.5685, 'Hop-on-hop-off shuttle to Peggy’s Cove, Mahone Bay, Lunenburg and the Valley in a day.', { address: 'Halifax Waterfront', tags: ['daytrip'] }),
     place('item-harbourtours', 'Halifax Harbour Tours', 'activity', 44.6470, -63.5687, '60-min guided harbour tour on a quiet all-electric 1930s-style launch.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
-    place('item-bluenoseship', 'Bluenose II (Sailing)', 'activity', 44.6463, -63.5690, "Sail aboard the replica of Canada's famous racing schooner when she's in port.", { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'photos'] }),
     place('item-kayakhalifax', 'Kayak Halifax', 'activity', 44.6420, -63.5670, 'Two-hour guided harbour kayak tours from near downtown.', { address: 'Seaport, Halifax', tags: ['kids'] }),
     place('item-ridesolar', 'Ride Solar Pedal-Bus', 'activity', 44.6470, -63.5688, 'Solar-powered 18-seat pedal-bus tours of the city.', { address: 'Halifax Waterfront', tags: ['walkable'] }),
     place('item-rumrunners', 'Rum Runners Rum Cake Factory', 'restaurant', 44.6472, -63.5684, 'Waterfront bakery — famous rum cakes baked on site.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
@@ -602,7 +601,7 @@ export function seedItems(): Item[] {
     place('item-amospewter', 'Amos Pewter', 'shopping', 44.6470, -63.5686, 'Waterfront pewter workshop — watch pieces being hand-cast.', { address: 'Halifax Waterfront', tags: ['walkable', 'kids'] }),
 
     // ---- South Shore: Lunenburg (novascotia.com) ----
-    place('item-bluenoselunenburg', 'Bluenose II (Lunenburg)', 'activity', 44.3760, -64.3140, "Tour or sail the famous Bluenose II from its Lunenburg home port (when she's in).", { address: 'Bluenose Dr, Lunenburg', tags: ['photos', 'daytrip', 'walkable'] }),
+    place('item-bluenoselunenburg', 'Bluenose II', 'activity', 44.3753, -64.3138, "Tour or sail Canada's famous racing schooner from its Lunenburg home port at the Fisheries Museum wharf (when she's in).", { address: 'Bluenose Dr, Lunenburg', tags: ['photos', 'daytrip', 'walkable'] }),
     place('item-ironworks', 'Ironworks Distillery', 'restaurant', 44.3758, -64.3082, 'Small-batch spirits in a historic blacksmith shop — tastings and a 45-min tour.', { address: '2 Kempt St, Lunenburg', tags: ['walkable'] }),
     place('item-bluerocks', 'Blue Rocks', 'viewpoint', 44.3570, -64.2700, 'Tiny working fishing village with blue-slate shores — classic Nova Scotia scenery and great kayaking.', { address: 'Blue Rocks, NS', tags: ['photos', 'daytrip'] }),
     place('item-pleasantpaddling', 'Pleasant Paddling', 'activity', 44.3575, -64.2710, 'Guided kayak & paddleboard tours and rentals around the Blue Rocks islands.', { address: 'Blue Rocks, NS', tags: ['kids', 'daytrip'] }),
