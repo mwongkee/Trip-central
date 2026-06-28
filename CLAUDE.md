@@ -99,7 +99,22 @@ npm run seed       # additive seed (needs TABLE_NAME, AWS creds); SEED_RESET=1 t
    `daytrip`, `rainy-day`, `stroller-friendly`. Add a `website` when known.
    Keep `apps/web` `CATEGORY_COLORS`, `iconFor`, and the Add-form list in sync if
    you add a category.
-5. **Ship:** `npm run build` + `npm test` → push to main → run the `seed.yml`
+5. **Validate coordinates before pushing** (catch bad pins early). Check every
+   new/changed coord against all of these:
+   - **In Nova Scotia:** lat ~43.3–47.3, lng −66.6 to −59.4 (lng is negative).
+   - **Not swapped:** lat must be greater than lng (lat ~44–45, lng ~−63 to −64).
+   - **Not in the harbour:** for downtown Halifax (lat 44.643–44.652) keep lng
+     ≤ ~−63.568 — the boardwalk is ≈ −63.570; anything east lands in the water.
+     (Genuine islands like Georges Island are the only exception.)
+   - **Near the town in its address** (within a few km): Lunenburg ≈ 44.376,−64.308 ·
+     Mahone Bay ≈ 44.449,−64.382 · Hubbards ≈ 44.633,−64.083 · Rose Bay ≈ 44.346,
+     −64.267 · Dartmouth ≈ 44.67,−63.56 · Bedford ≈ 44.728,−63.662 · Cole Harbour
+     ≈ 44.672,−63.476 · Peggy's Cove ≈ 44.492,−63.917. "Sackville Landing" is on
+     the Halifax waterfront (NOT Lower Sackville).
+   - **No two items at the identical coordinate** — stacked pins can't be
+     declustered by zooming and look like duplicates. Spread any collisions onto
+     a small (~50–100 m) on-land ring (keep them out of the water).
+6. **Ship:** `npm run build` + `npm test` → push to main → run the `seed.yml`
    workflow (additive sync; preserves votes). To remove a mistake, add its id to
    `RETIRED_ITEM_IDS` in `scripts/seed.ts`.
 
