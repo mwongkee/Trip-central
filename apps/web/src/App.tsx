@@ -5,11 +5,13 @@ import { JoinGate } from './components/JoinGate.js';
 import { Board } from './components/Board.js';
 import { Avatar } from './components/Avatar.js';
 import { Help } from './components/Help.js';
+import { HiddenSheet } from './components/HiddenSheet.js';
 
 export function App() {
-  const { identity, signOut, api } = useApp();
+  const { identity, signOut, api, hidden } = useApp();
   const bundle = useBundle();
   const [showHelp, setShowHelp] = useState(false);
+  const [showHidden, setShowHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
   if (bundle.isLoading)
@@ -56,6 +58,9 @@ export function App() {
                 <div className="menu__backdrop" onClick={() => setMenuOpen(false)} />
                 <div className="menu__list" role="menu">
                   <button type="button" role="menuitem" onClick={() => { setShowHelp(true); setMenuOpen(false); }}>❔ Help</button>
+                  {hidden.size > 0 && (
+                    <button type="button" role="menuitem" onClick={() => { setShowHidden(true); setMenuOpen(false); }}>🙈 Hidden places ({hidden.size})</button>
+                  )}
                   {api.mode === 'local' && api.reset && (
                     <button type="button" role="menuitem" onClick={() => { if (confirm('Reset the demo data on this device?')) { api.reset?.(); location.reload(); } }}>🔄 Reset demo</button>
                   )}
@@ -67,6 +72,7 @@ export function App() {
         </div>
       </header>
       {showHelp && <Help onClose={() => setShowHelp(false)} />}
+      {showHidden && <HiddenSheet items={bundle.data.items} onClose={() => setShowHidden(false)} />}
       <Board bundle={bundle.data} />
     </div>
   );

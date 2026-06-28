@@ -99,6 +99,7 @@ input, select, textarea {
 .board__radiushint { color: var(--muted); font-size: 0.8rem; margin: 0.5rem 0 0; }
 .badge--dist { background: #10243a; border-color: #1f6feb; color: #9ecbff; }
 .badge--voted { background: #0f2a16; border-color: var(--accent-2); color: #6ee7a0; }
+.badge--hidden { background: var(--panel-2); border-color: var(--border); color: var(--muted); }
 
 /* ---- Compact filter bar + presets (mobile-first) ---- */
 .board__bar {
@@ -338,6 +339,36 @@ input, select, textarea {
 .peek__actions { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.3rem; }
 .peek__actions .btn { padding: 0.4rem 0.7rem; }
 .peek__close { position: absolute; top: 0.3rem; right: 0.4rem; background: none; border: 0; color: var(--muted); font-size: 1rem; cursor: pointer; line-height: 1; }
+
+/* ---- Undo toast (sits above the peek/footer) ---- */
+.toast {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(0.6rem + env(safe-area-inset-bottom, 0px));
+  width: calc(100% - 1.2rem);
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+  z-index: 1100;
+}
+.toast span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.toast .btn { flex: 0 0 auto; }
+
+/* ---- Hidden-places review list ---- */
+.hidden__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.hidden__row { display: flex; align-items: center; gap: 0.6rem; }
+.hidden__text { flex: 1 1 auto; min-width: 0; display: grid; gap: 0.1rem; }
+.hidden__title { line-height: 1.2; }
+.hidden__meta { color: var(--muted); font-size: 0.8rem; text-transform: capitalize; }
+.hidden__row .btn { flex: 0 0 auto; }
 
 /* ---- Avatars ---- */
 .avatar {

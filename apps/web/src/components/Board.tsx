@@ -52,7 +52,14 @@ const CENTER_META: Record<string, { emoji: string; short: string }> = {
 };
 
 export function Board({ bundle }: { bundle: TripBundle }) {
-  const { identity } = useApp();
+  const { identity, hidden, hide, unhide } = useApp();
+  const [toast, setToast] = useState<{ msg: string; itemId: string } | null>(null);
+  function hidePlace(item: Item) {
+    if (item.isAnchor) return;
+    hide(item.itemId);
+    if (selectedId === item.itemId) setSelectedId(null);
+    setToast({ msg: `Hidden “${item.title}”`, itemId: item.itemId });
+  }
   const [query, setQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
@@ -156,6 +163,12 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     return () => document.removeEventListener('keydown', onKey);
   }, [filtersOpen]);
 
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 6000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
   function toggle(set: Set<string>, setter: (s: Set<string>) => void, key: string) {
     const next = new Set(set);
     if (next.has(key)) next.delete(key);
@@ -209,6 +222,8 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       );
     if (foodMode) items = items.filter((i) => i.type === 'MEAL' || i.category === 'restaurant');
     if (votedOnly) items = items.filter((i) => i.voteCount > 0);
+    // Hide "noped" places — except while searching, so you can always find/unhide them.
+    if (!query.trim()) items = items.filter((i) => !hidden.has(i.itemId));
     if (lens !== 'all') {
       const def = LENSES.find((l) => l.id === lens)!;
       items = items.filter((i) => def.match(i));
@@ -224,7 +239,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       if (a.isAnchor !== b.isAnchor) return a.isAnchor ? -1 : 1;
       return b.voteScore - a.voteScore;
     });
-  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, kidMode, foodMode, votedOnly, lens, maxPrice, radiusMin, travelMode, center]);
+  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, kidMode, foodMode, votedOnly, hidden, lens, maxPrice, radiusMin, travelMode, center]);
 
   const activeFilterCount =
     (typeFilter !== 'all' ? 1 : 0) +
@@ -513,6 +528,9 @@ export function Board({ bundle }: { bundle: TripBundle }) {
               item={item}
               family={family}
               distanceLabel={distanceLabel}
+              hidden={hidden.has(item.itemId)}
+              onHide={() => hidePlace(item)}
+              onUnhide={() => unhide(item.itemId)}
               expanded={expandedId === item.itemId}
               selected={selectedId === item.itemId}
               onToggle={() => setExpandedId((cur) => (cur === item.itemId ? null : item.itemId))}
@@ -558,10 +576,20 @@ export function Board({ bundle }: { bundle: TripBundle }) {
               {centerItem.website && (
                 <a className="btn btn--link" href={centerItem.website} target="_blank" rel="noreferrer noopener">🔗 Site</a>
               )}
+              {!centerItem.isAnchor && (
+                <button type="button" className="btn btn--ghost" aria-label={`Hide ${centerItem.title} from your map`} onClick={() => hidePlace(centerItem)}>🙅 Hide</button>
+              )}
               <button type="button" className="btn btn--primary" onClick={() => select(centerItem.itemId)}>Details ›</button>
             </div>
           </div>
           <button type="button" className="peek__close" aria-label="Close" onClick={() => setSelectedId(null)}>✕</button>
+        </div>
+      )}
+
+      {toast && (
+        <div className="toast" role="status" aria-live="polite">
+          <span>{toast.msg}</span>
+          <button type="button" className="btn btn--ghost" onClick={() => { unhide(toast.itemId); setToast(null); }}>Undo</button>
         </div>
       )}
 

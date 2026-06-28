@@ -21,11 +21,15 @@ interface ItemCardProps {
   onToggle: () => void;
   /** Travel-time label from the active distance centre (null when not filtering by distance). */
   distanceLabel?: string | null;
+  /** Per-device hide state + handlers (a "noped" place stays off the map until unhidden). */
+  hidden?: boolean;
+  onHide?: () => void;
+  onUnhide?: () => void;
 }
 
 const SLOTS: Slot[] = ['morning', 'afternoon', 'evening', 'breakfast', 'lunch', 'dinner', 'snack'];
 
-export function ItemCard({ item, family, expanded, selected, onToggle, distanceLabel }: ItemCardProps) {
+export function ItemCard({ item, family, expanded, selected, onToggle, distanceLabel, hidden, onHide, onUnhide }: ItemCardProps) {
   const detail = useItemDetail(expanded ? item.itemId : null);
   const vote = useVote();
   const removeVote = useRemoveVote();
@@ -71,6 +75,7 @@ export function ItemCard({ item, family, expanded, selected, onToggle, distanceL
             <span className="card__score" aria-label={`Score ${liveItem.voteScore}`}>★ {liveItem.voteScore}</span>
             {liveItem.voteCount > 0 && <span className="badge badge--voted">✓ voted</span>}
             {distanceLabel && <span className="badge badge--dist">{distanceLabel}</span>}
+            {hidden && <span className="badge badge--hidden">🙈 hidden</span>}
           </span>
           {item.description && <p className="card__desc">{item.description}</p>}
           {item.address && <p className="card__addr">📌 {item.address}</p>}
@@ -144,6 +149,10 @@ export function ItemCard({ item, family, expanded, selected, onToggle, distanceL
                     >
                       ↪ Defer to next {item.mealType}
                     </button>
+                  )}
+                  {!item.isAnchor && (hidden
+                    ? <button type="button" className="btn" onClick={onUnhide}>🙈 Unhide</button>
+                    : <button type="button" className="btn" aria-label={`Hide ${item.title} from your map`} onClick={onHide}>🙅 Hide</button>
                   )}
                   <button type="button" className="btn btn--danger" onClick={() => { if (confirm(`Delete "${item.title}"?`)) del.mutate(item.itemId); }}>
                     Delete
