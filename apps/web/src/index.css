@@ -309,6 +309,8 @@ input, select, textarea {
 .marker--voted { box-shadow: 0 0 0 3px #f0c000, 0 1px 5px rgba(0, 0, 0, 0.45); }
 .marker--me { background: #1f6feb; border: 3px solid #fff; width: 18px; height: 18px; border-radius: 50%; box-shadow: 0 0 0 5px rgba(31, 111, 235, 0.3); cursor: default; }
 .marker--person { background: var(--marker-color, #1f6feb); color: #fff; border: 3px solid #fff; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 12px; box-shadow: 0 0 0 4px rgba(46, 160, 67, 0.35), 0 1px 5px rgba(0, 0, 0, 0.45); }
+/* Paused/stale (app backgrounded): dim it and drop the "live" green ring. */
+.marker--person.marker--stale { opacity: 0.55; box-shadow: 0 0 0 4px rgba(120, 120, 120, 0.3), 0 1px 5px rgba(0, 0, 0, 0.45); }
 
 /* Bottom detail card shown when a pin is tapped (map stays put) */
 .peek {

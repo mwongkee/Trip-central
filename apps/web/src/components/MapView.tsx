@@ -300,10 +300,13 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences, 
     personMarkersRef.current.forEach((m) => m.remove());
     personMarkersRef.current = (presences ?? []).map((p) => {
       const el = document.createElement('div');
-      el.className = 'marker marker--person';
+      const ageMin = Math.max(0, Math.round((Date.now() - Date.parse(p.updatedAt)) / 60000));
+      const stale = ageMin >= 2;
+      el.className = `marker marker--person${stale ? ' marker--stale' : ''}`;
       el.style.setProperty('--marker-color', colorForName(p.name));
-      el.setAttribute('aria-label', `${p.name} is here`);
-      el.title = `${p.name} (shared location)`;
+      const when = ageMin < 1 ? 'just now' : `${ageMin} min ago`;
+      el.setAttribute('aria-label', `${p.name} — location updated ${when}`);
+      el.title = `${p.name} · updated ${when}`;
       el.textContent = initials(p.name);
       return new maplibregl.Marker({ element: el }).setLngLat([p.lng, p.lat]).addTo(map);
     });
