@@ -388,16 +388,26 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         ))}
       </div>
 
-      <button
-        type="button"
-        className="board__quicktoggle"
-        aria-expanded={quickOpen}
-        onClick={() => setQuickOpen((v) => !v)}
-      >
-        <span aria-hidden="true" className="board__quickchev">{quickOpen ? '▴' : '▾'}</span>
-        {quickOpen ? 'Hide quick filters' : 'Quick filters'}
-        {!quickOpen && quickActiveCount > 0 && <span className="board__quickbadge">{quickActiveCount}</span>}
-      </button>
+      <div className="board__quickbar">
+        <button
+          type="button"
+          className={`fchip ${votedOnly ? 'fchip--on' : ''}`}
+          aria-pressed={votedOnly}
+          onClick={() => setVotedOnly((v) => !v)}
+        >
+          ⭐ Voted by us
+        </button>
+        <button
+          type="button"
+          className="board__quicktoggle"
+          aria-expanded={quickOpen}
+          onClick={() => setQuickOpen((v) => !v)}
+        >
+          <span aria-hidden="true" className="board__quickchev">{quickOpen ? '▴' : '▾'}</span>
+          {quickOpen ? 'Hide quick filters' : 'Quick filters'}
+          {!quickOpen && quickActiveCount > 0 && <span className="board__quickbadge">{quickActiveCount}</span>}
+        </button>
+      </div>
 
       {quickOpen && (
         <>
@@ -420,7 +430,6 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       <div className="board__presets" role="group" aria-label="Quick filters">
         <button type="button" className={`fchip ${foodMode ? 'fchip--on' : ''}`} aria-pressed={foodMode} onClick={() => setFoodMode((v) => !v)}>🍴 Food</button>
         <button type="button" className={`fchip ${kidMode ? 'fchip--on' : ''}`} aria-pressed={kidMode} onClick={() => setKidMode((v) => !v)}>🧒 Kids</button>
-        <button type="button" className={`fchip ${votedOnly ? 'fchip--on' : ''}`} aria-pressed={votedOnly} onClick={() => setVotedOnly((v) => !v)}>⭐ Voted</button>
         <button type="button" className={`fchip ${tagFilter.has('tonight') ? 'fchip--on' : ''}`} aria-pressed={tagFilter.has('tonight')} onClick={() => toggle(tagFilter, setTagFilter, 'tonight')}>🌙 Tonight</button>
         <button type="button" className={`fchip ${tagFilter.has('walkable') ? 'fchip--on' : ''}`} aria-pressed={tagFilter.has('walkable')} onClick={() => toggle(tagFilter, setTagFilter, 'walkable')}>🚶 Walkable</button>
         <button type="button" className={`fchip ${share.sharing ? 'fchip--on' : ''}`} aria-pressed={share.sharing} onClick={share.toggle}>

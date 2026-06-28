@@ -25,11 +25,15 @@ Real families are voting, commenting, and suggesting on the live site. **Votes,
 comments, and user-suggested items are irreplaceable.** Protect them:
 
 1. **Seeding is ADDITIVE by default and must stay that way.** `scripts/seed.ts`
-   inserts only items whose `itemId` does not already exist, and upserts
-   trip/members/children. It must NOT delete the trip partition and must NOT
-   re-`put` existing items (re-putting resets the denormalized `voteScore`/
-   `voteCount`/`commentCount` to 0 even though the vote rows still exist — that
-   corrupts the score). Only a deliberate `SEED_RESET=1` run may wipe and rewrite.
+   inserts only items whose `itemId` does not already exist, upserts
+   trip/members/children, and **syncs place metadata onto existing items via a
+   DynamoDB `UpdateExpression` over `SYNC_FIELDS` only** (title, description,
+   category, lat/lng, address, website, imageUrl, tags, anchor, type, mealType,
+   estCost) — it must NEVER write `voteScore`/`voteCount`/`commentCount` or the
+   user's `status`/`scheduledDate`/`slot`. Do NOT `put` (overwrite) an existing
+   item — that resets the denormalized counts even though the vote rows remain,
+   corrupting the score. Only a deliberate `SEED_RESET=1` run may wipe and rewrite.
+   `RETIRED_ITEM_IDS` deletes named stale items (and their votes) intentionally.
 2. **Never trigger a destructive seed on the live table.** Adding places = edit
    `seeddata.ts` (new `itemId`s only) → push → run the seed workflow (additive).
    Do NOT run with `SEED_RESET=1` against production unless the user explicitly

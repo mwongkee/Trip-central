@@ -67,8 +67,9 @@ export function ItemCard({ item, family, expanded, selected, onToggle, distanceL
           </span>
           <span className="card__meta">
             <span className={`badge badge--${item.type.toLowerCase()}`}>{item.type === 'MEAL' ? '🍽' : '📍'} {bucket}</span>
-            <span className="badge badge--status">{item.status}</span>
+            {item.status !== 'suggested' && <span className="badge badge--status">{item.status}</span>}
             <span className="card__score" aria-label={`Score ${liveItem.voteScore}`}>★ {liveItem.voteScore}</span>
+            {liveItem.voteCount > 0 && <span className="badge badge--voted">✓ voted</span>}
             {distanceLabel && <span className="badge badge--dist">{distanceLabel}</span>}
           </span>
           {item.description && <p className="card__desc">{item.description}</p>}

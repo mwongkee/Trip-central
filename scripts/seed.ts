@@ -16,8 +16,10 @@ import {
   DynamoDBDocumentClient,
   BatchWriteCommand,
   QueryCommand,
+  UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { seedTrip, seedMembers, seedChildren, seedItems, DEMO_TRIP_ID } from '@tripboard/shared';
+import type { Item } from '@tripboard/shared';
 import { tripRecord, memberRecord, childRecord, itemRecord, itemSk, tripPk, itemPk } from '../services/api/src/keys.js';
 
 const TABLE_NAME = process.env.TABLE_NAME ?? 'TripBoard';
@@ -30,6 +32,38 @@ const TABLE_NAME = process.env.TABLE_NAME ?? 'TripBoard';
 const RETIRED_ITEM_IDS = ['item-bluenoseship'];
 
 type Key = { PK: string; SK: string };
+
+// Place metadata the seed may sync onto EXISTING items. Deliberately excludes
+// voteScore/voteCount/commentCount (denormalized totals) and status/scheduledDate/
+// slot (user scheduling) so syncing never corrupts votes or loses user edits.
+const SYNC_FIELDS: (keyof Item)[] = [
+  'title', 'description', 'category', 'lat', 'lng', 'address', 'website',
+  'imageUrl', 'tags', 'isAnchor', 'anchorRole', 'type', 'mealType', 'estCost', 'currency', 'updatedAt',
+];
+
+/** Update only place metadata on an existing item; never touch votes or scheduling. */
+async function syncItem(ddb: DynamoDBDocumentClient, item: Item): Promise<void> {
+  const names: Record<string, string> = {};
+  const values: Record<string, unknown> = {};
+  const sets: string[] = [];
+  const removes: string[] = [];
+  for (const f of SYNC_FIELDS) {
+    names[`#${f}`] = f;
+    const v = item[f];
+    if (v === undefined) removes.push(`#${f}`);
+    else { sets.push(`#${f} = :${f}`); values[`:${f}`] = v; }
+  }
+  const expr = [sets.length ? `SET ${sets.join(', ')}` : '', removes.length ? `REMOVE ${removes.join(', ')}` : '']
+    .filter(Boolean)
+    .join(' ');
+  await ddb.send(new UpdateCommand({
+    TableName: TABLE_NAME,
+    Key: { PK: tripPk(item.tripId), SK: itemSk(item.itemId) },
+    UpdateExpression: expr,
+    ExpressionAttributeNames: names,
+    ...(Object.keys(values).length ? { ExpressionAttributeValues: values } : {}),
+  }));
+}
 
 async function queryKeys(ddb: DynamoDBDocumentClient, pk: string): Promise<Key[]> {
   const keys: Key[] = [];
@@ -97,8 +131,12 @@ async function main(): Promise<void> {
   }
 
   // Trip meta + roster are safe to upsert (no votes attached). Items: insert
-  // only the ones not already present so we never reset a voted item's score.
-  const newItems = seedItems().filter((i) => !existingItemIds.has(i.itemId));
+  // ones not present yet (full put); SYNC place metadata onto existing ones
+  // (coords, descriptions, etc.) WITHOUT touching votes/comments/scores or
+  // user scheduling.
+  const allItems = seedItems();
+  const newItems = allItems.filter((i) => !existingItemIds.has(i.itemId));
+  const existingSeedItems = reset ? [] : allItems.filter((i) => existingItemIds.has(i.itemId));
   const records: Record<string, unknown>[] = [
     tripRecord(seedTrip()),
     ...seedMembers().map(memberRecord),
@@ -107,11 +145,16 @@ async function main(): Promise<void> {
   ];
   await batch(ddb, records.map((Item) => ({ PutRequest: { Item } })));
 
+  // Sync metadata on existing items (chunked for speed; preserves votes).
+  for (let i = 0; i < existingSeedItems.length; i += 20) {
+    await Promise.all(existingSeedItems.slice(i, i + 20).map((it) => syncItem(ddb, it)));
+  }
+
   // eslint-disable-next-line no-console
   console.log(
     reset
       ? `Seeded ${records.length} records into ${TABLE_NAME}.`
-      : `Additive seed: upserted trip/roster + ${newItems.length} new item(s) into ${TABLE_NAME} (existing items & votes preserved).`,
+      : `Additive seed: ${newItems.length} new item(s) inserted, ${existingSeedItems.length} existing synced (metadata only — votes/comments/scores & scheduling preserved).`,
   );
 }
 

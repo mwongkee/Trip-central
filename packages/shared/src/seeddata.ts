@@ -144,15 +144,15 @@ export function seedItems(): Item[] {
       address: 'Alderney Ferry Terminal, Dartmouth', tags: ['ferry', 'tonight'],
       website: 'https://www.halifax.ca/transportation/halifax-transit/ferry-service/alderney-ferry-schedule',
     }),
-    place('item-boardwalk', 'Halifax Waterfront Boardwalk', 'outdoor', 44.6472, -63.5685, 'Right off the Halifax ferry terminal — a 4.4 km harbourfront boardwalk with food, buskers, the blue wave sculpture, and the orange hammocks.', {
+    place('item-boardwalk', 'Halifax Waterfront Boardwalk', 'outdoor', 44.6472, -63.57090, 'Right off the Halifax ferry terminal — a 4.4 km harbourfront boardwalk with food, buskers, the blue wave sculpture, and the orange hammocks.', {
       address: 'Halifax Waterfront', tags: ['walkable', 'ferry', 'tonight', 'stroller-friendly'],
       website: 'https://buildns.ca/visit/halifax/',
     }),
-    place('item-maritime', 'Maritime Museum of the Atlantic', 'museum', 44.6463, -63.5697, "Canada's oldest/largest maritime museum — Titanic relics and the Halifax Explosion, steps from the ferry.", {
+    place('item-maritime', 'Maritime Museum of the Atlantic', 'museum', 44.6463, -63.57040, "Canada's oldest/largest maritime museum — Titanic relics and the Halifax Explosion, steps from the ferry.", {
       address: '1675 Lower Water St, Halifax', tags: ['walkable', 'ferry', 'tonight'], estCost: 4000,
       website: 'https://maritimemuseum.novascotia.ca',
     }),
-    place('item-historic', 'Historic Properties', 'landmark', 44.6489, -63.5697, "Canada's oldest surviving waterfront warehouses (Privateers' Wharf) — shops, patios, and ice cream. Short walk from the ferry.", {
+    place('item-historic', 'Historic Properties', 'landmark', 44.6489, -63.57070, "Canada's oldest surviving waterfront warehouses (Privateers' Wharf) — shops, patios, and ice cream. Short walk from the ferry.", {
       address: '1869 Upper Water St, Halifax', tags: ['walkable', 'ferry', 'tonight'],
       website: 'https://www.historicproperties.ca/',
     }),
@@ -171,7 +171,7 @@ export function seedItems(): Item[] {
     place('item-gardens', 'Halifax Public Gardens', 'outdoor', 44.643, -63.5818, 'The only true Victorian garden in North America — ducks, bandstand, and ice cream. ~15 min walk from the ferry; gates open 8am.', {
       address: 'Spring Garden Rd, Halifax', tags: ['walkable', 'stroller-friendly'], website: 'https://www.halifaxpublicgardens.ca/',
     }),
-    place('item-discovery', 'Discovery Centre', 'museum', 44.6448, -63.5664, 'Hands-on science centre by the waterfront — great rainy-day backup for the kids.', {
+    place('item-discovery', 'Discovery Centre', 'museum', 44.6448, -63.57020, 'Hands-on science centre by the waterfront — great rainy-day backup for the kids.', {
       address: '1215 Lower Water St, Halifax', tags: ['walkable'], estCost: 5400, website: 'https://thediscoverycentre.ca',
     }),
     place('item-lawrencetown', 'Lawrencetown Beach', 'beach', 44.642, -63.347, 'Atlantic surf beach ~20 min east of Dartmouth — supervised swimming Jul–Aug, but strong rip currents. Boardwalks, change houses, showers.', {
@@ -185,11 +185,11 @@ export function seedItems(): Item[] {
     }),
 
     // ---- Restaurants: Halifax waterfront & downtown (real spots; coords approx, tap Open in Maps for exact + menu) ----
-    place('item-bicyclethief', 'The Bicycle Thief', 'restaurant', 44.6452, -63.5686, 'Lively Italian-with-a-Maritime-twist at Bishop’s Landing (1475 Lower Water St) — very popular, expect a wait.', { address: '1475 Lower Water St, Halifax', tags: ['walkable', 'tonight'], website: 'https://bicyclethief.ca/' }),
-    place('item-waterpolo', 'Water Polo', 'restaurant', 44.6440, -63.5668, 'Seafood on the waterfront at 1325 Lower Water St.', { address: '1325 Lower Water St, Halifax', tags: ['walkable', 'tonight'] }),
-    place('item-drift', 'Drift', 'restaurant', 44.6460, -63.5683, 'Seafood + cocktails in the Queen’s Marque district on the boardwalk.', { address: '1709 Lower Water St, Halifax', tags: ['walkable', 'tonight'] }),
-    place('item-seasmoke', 'Sea Smoke', 'restaurant', 44.6464, -63.5684, 'Asian-fusion seafood with one of the best harbour views on the boardwalk.', { address: 'Queen’s Marque, Halifax', tags: ['walkable', 'tonight'] }),
-    place('item-gahan', 'Gahan House Harbour', 'restaurant', 44.6470, -63.5688, 'Waterfront brewpub — burgers, fish & chips, house beer; kid-friendly.', { address: 'Cable Wharf, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-bicyclethief', 'The Bicycle Thief', 'restaurant', 44.6452, -63.57070, 'Lively Italian-with-a-Maritime-twist at Bishop’s Landing (1475 Lower Water St) — very popular, expect a wait.', { address: '1475 Lower Water St, Halifax', tags: ['walkable', 'tonight'], website: 'https://bicyclethief.ca/' }),
+    place('item-waterpolo', 'Water Polo', 'restaurant', 44.6440, -63.57070, 'Seafood on the waterfront at 1325 Lower Water St.', { address: '1325 Lower Water St, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-drift', 'Drift', 'restaurant', 44.6460, -63.57050, 'Seafood + cocktails in the Queen’s Marque district on the boardwalk.', { address: '1709 Lower Water St, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-seasmoke', 'Sea Smoke', 'restaurant', 44.6464, -63.57040, 'Asian-fusion seafood with one of the best harbour views on the boardwalk.', { address: 'Queen’s Marque, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-gahan', 'Gahan House Harbour', 'restaurant', 44.6470, -63.57090, 'Waterfront brewpub — burgers, fish & chips, house beer; kid-friendly.', { address: 'Cable Wharf, Halifax', tags: ['walkable', 'tonight'] }),
     place('item-stubborngoat', 'The Stubborn Goat', 'restaurant', 44.6479, -63.5731, 'Gastropub on the Argyle St patio strip — good for groups.', { address: '1579 Grafton St, Halifax', tags: ['walkable'], website: 'https://thestubborngoat.ca/' }),
     place('item-fivefish', 'The Five Fishermen', 'restaurant', 44.6483, -63.5736, 'Historic upstairs seafood house with a mussel & salad bar.', { address: '1740 Argyle St, Halifax', tags: ['walkable'] }),
     place('item-woodenmonkeyhfx', 'The Wooden Monkey (Halifax)', 'restaurant', 44.6476, -63.5739, 'Local/organic comfort food, very veg-friendly, downtown.', { address: '1707 Grafton St, Halifax', tags: ['walkable'], website: 'https://www.thewoodenmonkey.ca/' }),
@@ -199,7 +199,7 @@ export function seedItems(): Item[] {
     place('item-barkismet', 'Bar Kismet', 'restaurant', 44.6585, -63.5945, 'Acclaimed North-End seafood small plates + cocktails (reserve ahead).', { address: '2733 Agricola St, Halifax', website: 'https://barkismet.com/' }),
     place('item-edna', 'EDNA', 'restaurant', 44.6555, -63.5905, 'Buzzy North-End bistro; brunch favourite.', { address: '2053 Gottingen St, Halifax' }),
     place('item-kingofdonair', 'King of Donair', 'restaurant', 44.6470, -63.5980, 'The original Halifax donair (since 1973).', { address: '6420 Quinpool Rd, Halifax' }),
-    place('item-cows', 'COWS Creamery', 'restaurant', 44.6470, -63.5683, 'PEI ice cream on the boardwalk — a kid magnet.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-cows', 'COWS Creamery', 'restaurant', 44.6470, -63.57020, 'PEI ice cream on the boardwalk — a kid magnet.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
 
     // ---- Restaurants: Dartmouth (near the Alderney ferry) ----
     place('item-woodenmonkeydart', 'The Wooden Monkey (Dartmouth)', 'restaurant', 44.6647, -63.5664, 'Top floor of the Alderney ferry terminal — pizzas, pasta, kids’ menu, harbour views. Grab dinner before/after the ferry.', { address: '40 Alderney Dr, Dartmouth', tags: ['walkable', 'tonight'], website: 'https://www.thewoodenmonkey.ca/' }),
@@ -214,10 +214,10 @@ export function seedItems(): Item[] {
 
     // ---- More attractions ----
     place('item-naturalhistory', 'Museum of Natural History', 'museum', 44.6510, -63.5817, 'Dinosaurs, Gus the 100-yr-old tortoise, and nature exhibits — kid favourite.', { address: '1747 Summer St, Halifax', tags: ['walkable'], estCost: 6300, website: 'https://naturalhistory.novascotia.ca' }),
-    place('item-pier21', 'Canadian Museum of Immigration at Pier 21', 'museum', 44.6418, -63.5667, 'Moving museum of Canadian immigration at the south end of the boardwalk.', { address: '1055 Marginal Rd, Halifax', tags: ['walkable'], website: 'https://pier21.ca' }),
+    place('item-pier21', 'Canadian Museum of Immigration at Pier 21', 'museum', 44.6418, -63.57090, 'Moving museum of Canadian immigration at the south end of the boardwalk.', { address: '1055 Marginal Rd, Halifax', tags: ['walkable'], website: 'https://pier21.ca' }),
     place('item-agns', 'Art Gallery of Nova Scotia', 'museum', 44.6470, -63.5723, "Provincial art gallery incl. Maud Lewis’s tiny painted house.", { address: '1723 Hollis St, Halifax', tags: ['walkable'], website: 'https://www.artgalleryofnovascotia.ca' }),
     place('item-library', 'Halifax Central Library', 'landmark', 44.6438, -63.5783, 'Architectural landmark — zany staircases, kids’ area, rooftop view; free.', { address: '5440 Spring Garden Rd, Halifax', tags: ['walkable'] }),
-    place('item-harbourhopper', 'Harbour Hopper Tour', 'activity', 44.6478, -63.5690, 'Amphibious land-and-sea tour from the boardwalk — a hit with kids.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-harbourhopper', 'Harbour Hopper Tour', 'activity', 44.6478, -63.57070, 'Amphibious land-and-sea tour from the boardwalk — a hit with kids.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
     place('item-pointpleasant', 'Point Pleasant Park', 'outdoor', 44.6235, -63.5665, 'Wooded seaside park with trails, old forts, and off-leash areas.', { address: 'Point Pleasant Dr, Halifax' }),
     place('item-dingle', 'Sir Sandford Fleming Park (The Dingle)', 'outdoor', 44.6300, -63.6125, 'Stone tower, little beach, and trails on the Northwest Arm.', { address: 'Dingle Rd, Halifax' }),
     place('item-fishermanscove', "Fisherman's Cove", 'outdoor', 44.6320, -63.4640, 'Restored fishing village in Eastern Passage — boardwalk, shops, ice cream.', { address: 'Eastern Passage, NS' }),
@@ -229,17 +229,17 @@ export function seedItems(): Item[] {
     place('item-wildlifepark', 'Shubenacadie Wildlife Park', 'outdoor', 45.0833, -63.4030, 'Provincial wildlife park — moose, bears, deer to feed (~1 h from Halifax).', { address: 'Shubenacadie, NS', tags: ['kids'], website: 'https://wildlifepark.novascotia.ca' }),
 
     // ---- Halifax Ferry Terminal (tap as the centre for "within X km") ----
-    place('item-hfxterminal', 'Halifax Ferry Terminal', 'other', 44.6476, -63.5683, 'Where the Dartmouth ferry lands in Halifax — the boardwalk starts right here. Tap me and pick a distance to see what’s walkable.', { address: '1 George St, Halifax', tags: ['walkable', 'tonight', 'ferry'] }),
+    place('item-hfxterminal', 'Halifax Ferry Terminal', 'other', 44.6476, -63.57040, 'Where the Dartmouth ferry lands in Halifax — the boardwalk starts right here. Tap me and pick a distance to see what’s walkable.', { address: '1 George St, Halifax', tags: ['walkable', 'tonight', 'ferry'] }),
 
     // ---- Halifax side: more attractions (walkable from the ferry) ----
-    place('item-hmcssackville', 'HMCS Sackville', 'museum', 44.6452, -63.5677, "Canada's oldest warship — a floating WWII museum on the boardwalk.", { address: 'Sackville Landing, Halifax', tags: ['walkable', 'tonight'] }),
-    place('item-theodoretoo', 'Theodore Too', 'activity', 44.6470, -63.5686, 'The big red tugboat from the kids’ show — harbour tours from the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-hmcssackville', 'HMCS Sackville', 'museum', 44.6452, -63.57030, "Canada's oldest warship — a floating WWII museum on the boardwalk.", { address: 'Sackville Landing, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-theodoretoo', 'Theodore Too', 'activity', 44.6470, -63.57040, 'The big red tugboat from the kids’ show — harbour tours from the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
     place('item-grandparade', 'Grand Parade & City Hall', 'landmark', 44.6489, -63.5741, 'Historic downtown square between City Hall and St. Paul’s — events and buskers.', { address: 'Barrington St, Halifax', tags: ['walkable'] }),
     place('item-stpauls', "St. Paul's Church", 'landmark', 44.6486, -63.5744, "Canada's oldest Protestant church (1750) on Grand Parade.", { address: '1749 Argyle St, Halifax', tags: ['walkable'] }),
     place('item-provincehouse', 'Province House', 'museum', 44.6483, -63.5727, "Canada's oldest legislature building — free tours.", { address: '1726 Hollis St, Halifax', tags: ['walkable'] }),
     place('item-oldburying', 'Old Burying Ground', 'landmark', 44.6452, -63.5740, '1749 cemetery and National Historic Site on Barrington St.', { address: 'Barrington St, Halifax', tags: ['walkable'] }),
     place('item-townclock', 'Halifax Town Clock', 'landmark', 44.6478, -63.5766, 'The iconic clock on the slope below the Citadel.', { address: 'Brunswick St, Halifax', tags: ['walkable'] }),
-    place('item-seaportmarket', 'Halifax Seaport Farmers’ Market', 'shopping', 44.6428, -63.5667, 'Year-round market at Pier 20 — food stalls and local makers (busiest weekends).', { address: '1209 Marginal Rd, Halifax', tags: ['walkable'] }),
+    place('item-seaportmarket', 'Halifax Seaport Farmers’ Market', 'shopping', 44.6428, -63.57080, 'Year-round market at Pier 20 — food stalls and local makers (busiest weekends).', { address: '1209 Marginal Rd, Halifax', tags: ['walkable'] }),
     place('item-georgesisland', 'Georges Island', 'landmark', 44.6420, -63.5570, 'Harbour-island fort with tunnels — seasonal tour boats from the waterfront.', { address: 'Halifax Harbour' }),
     place('item-emeraoval', 'Emera Oval', 'activity', 44.6470, -63.5840, 'Free skating / biking / blading oval on the Halifax Common (gear rentals).', { address: 'Halifax Common', tags: ['kids'] }),
     place('item-springgarden', 'Spring Garden Road', 'shopping', 44.6435, -63.5790, "Halifax's main shopping street — shops, cafes, and people-watching.", { address: 'Spring Garden Rd, Halifax', tags: ['walkable'] }),
@@ -257,8 +257,8 @@ export function seedItems(): Item[] {
     place('item-fieldguide', 'Field Guide', 'restaurant', 44.6553, -63.5905, 'Inventive small plates on Gottingen St, North End.', { address: '2076 Gottingen St, Halifax' }),
     place('item-brooklynwarehouse', 'Brooklyn Warehouse', 'restaurant', 44.6520, -63.5965, 'Neighbourhood favourite at the top of the North End.', { address: '2795 Windsor St, Halifax' }),
     place('item-freaklunchbox', 'Freak Lunchbox', 'restaurant', 44.6469, -63.5743, 'Wild candy store on Barrington — pure kid joy.', { address: '1729 Barrington St, Halifax', tags: ['walkable', 'kids'] }),
-    place('item-sugah', 'Sugah! Confectionery', 'restaurant', 44.6486, -63.5692, 'Boardwalk fudge, candy & ice cream — kid magnet.', { address: 'Historic Properties, Halifax', tags: ['walkable', 'tonight', 'kids'] }),
-    place('item-daveslobster', "Dave's Lobster", 'restaurant', 44.6473, -63.5684, 'Lobster rolls to-go right on the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-sugah', 'Sugah! Confectionery', 'restaurant', 44.6486, -63.57040, 'Boardwalk fudge, candy & ice cream — kid magnet.', { address: 'Historic Properties, Halifax', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-daveslobster', "Dave's Lobster", 'restaurant', 44.6473, -63.57020, 'Lobster rolls to-go right on the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
     place('item-smokespoutine', "Smoke's Poutinerie", 'restaurant', 44.6481, -63.5727, 'Loaded poutine on Argyle — great late-night snack.', { address: 'Argyle St, Halifax', tags: ['walkable'] }),
 
     // ---- Indoor / rainy-day & active fun ----
@@ -294,7 +294,7 @@ export function seedItems(): Item[] {
     place('item-sugarmoon', 'Sugar Moon Farm', 'restaurant', 45.5440, -63.0980, 'Maple farm + pancake house with sugar-camp tours and trails, Earltown (Fri–Sun).', { address: 'Earltown, NS', tags: ['kids', 'daytrip', 'trails'], website: 'https://sugarmoon.ca' }),
 
     // ---- More family restaurants ----
-    place('item-saltash', 'Salt + Ash Beach House', 'restaurant', 44.6463, -63.5682, 'Waterfront live-fire spot — wood-fired pizza and East Coast fare.', { address: 'Queen’s Marque, Halifax', tags: ['walkable', 'tonight', 'photos'], website: 'https://saltashhalifax.com' }),
+    place('item-saltash', 'Salt + Ash Beach House', 'restaurant', 44.6463, -63.57100, 'Waterfront live-fire spot — wood-fired pizza and East Coast fare.', { address: 'Queen’s Marque, Halifax', tags: ['walkable', 'tonight', 'photos'], website: 'https://saltashhalifax.com' }),
     place('item-boondocks', 'Boondocks', 'restaurant', 44.6360, -63.4720, "Casual seafood on the wharf at Fisherman's Cove, Eastern Passage.", { address: "Fisherman's Cove, Eastern Passage", tags: ['kids', 'photos'], website: 'https://boondocksdining.com' }),
     place('item-chabaa', 'Cha Baa Thai', 'restaurant', 44.6700, -63.5650, 'Reliable family Thai (Halifax, Dartmouth, Bedford).', { address: 'Dartmouth', tags: ['kids'], website: 'https://chabaathai.ca' }),
     place('item-cheesecurds', 'Cheese Curds Gourmet Burgers', 'restaurant', 44.6770, -63.5240, 'Gourmet burgers and poutine; kid-friendly, several HRM locations.', { address: 'Dartmouth', tags: ['kids'], website: 'https://cheesecurdsburgers.com' }),
@@ -304,10 +304,10 @@ export function seedItems(): Item[] {
 
     // ---- More restaurants (broader coverage) ----
     place('item-bluenoseii', 'Bluenose II Restaurant', 'restaurant', 44.6452, -63.5715, 'Beloved Greek-Canadian diner on Hollis St (since 1964) — big menu, all-day breakfast.', { address: '1824 Hollis St, Halifax', tags: ['walkable', 'kids'] }),
-    place('item-lowerdeck', 'The Lower Deck', 'restaurant', 44.6489, -63.5697, 'Iconic Maritime pub with live East Coast music at Historic Properties.', { address: '1887 Upper Water St, Halifax', tags: ['walkable', 'tonight'] }),
-    place('item-staynerswharf', "Stayner's Wharf", 'restaurant', 44.6483, -63.5688, 'Waterfront pub + live music, steps from the ferry.', { address: '5075 George St, Halifax', tags: ['walkable', 'tonight'] }),
-    place('item-garrison', 'Garrison Brewing', 'restaurant', 44.6425, -63.5670, 'Seaport brewery taproom next to the farmers’ market.', { address: '1149 Marginal Rd, Halifax', tags: ['walkable'] }),
-    place('item-amano', 'Ristorante a Mano', 'restaurant', 44.6452, -63.5686, 'Bishop’s Landing Italian on the boardwalk — pasta + wood-fired pizza.', { address: '1477 Lower Water St, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-lowerdeck', 'The Lower Deck', 'restaurant', 44.6489, -63.57080, 'Iconic Maritime pub with live East Coast music at Historic Properties.', { address: '1887 Upper Water St, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-staynerswharf', "Stayner's Wharf", 'restaurant', 44.6483, -63.57030, 'Waterfront pub + live music, steps from the ferry.', { address: '5075 George St, Halifax', tags: ['walkable', 'tonight'] }),
+    place('item-garrison', 'Garrison Brewing', 'restaurant', 44.6425, -63.57070, 'Seaport brewery taproom next to the farmers’ market.', { address: '1149 Marginal Rd, Halifax', tags: ['walkable'] }),
+    place('item-amano', 'Ristorante a Mano', 'restaurant', 44.6452, -63.57020, 'Bishop’s Landing Italian on the boardwalk — pasta + wood-fired pizza.', { address: '1477 Lower Water St, Halifax', tags: ['walkable', 'tonight'] }),
     place('item-damaurizio', 'Da Maurizio', 'restaurant', 44.6447, -63.5740, 'Upscale Italian in the historic Brewery Market.', { address: '1496 Lower Water St, Halifax', tags: ['walkable'] }),
     place('item-cheelin', 'Cheelin', 'restaurant', 44.6447, -63.5742, 'Long-loved Chinese restaurant in the Brewery Market.', { address: '1496 Lower Water St, Halifax', tags: ['walkable'] }),
     place('item-highwayman', 'Highwayman', 'restaurant', 44.6478, -63.5732, 'Spanish-style tapas + sherry on Argyle St.', { address: '1714 Argyle St, Halifax', tags: ['walkable'] }),
@@ -329,7 +329,7 @@ export function seedItems(): Item[] {
     place('item-offtrack', 'Off Track Brewing', 'restaurant', 44.6520, -63.5880, 'Small-batch neighbourhood brewery taproom in the North End.', { address: 'Almon St, Halifax' }),
     place('item-lucyshydrostone', "Lucy's Hydrostone Café", 'restaurant', 44.6612, -63.6012, 'North-End bakery-café (formerly Julien’s) — croissants, sourdough and coffee.', { address: '5517 Young St, Halifax', tags: ['kids'] }),
     place('item-lfbakery', 'LF Bakery', 'restaurant', 44.6505, -63.5905, 'Award-winning bakery — some of the best croissants in the city, North End.', { address: '2063 Gottingen St, Halifax', tags: ['kids'] }),
-    place('item-frenchfix', 'Le French Fix Pâtisserie', 'restaurant', 44.6490, -63.5685, 'Authentic French pastries and macarons near the waterfront.', { address: '1592 Hollis St, Halifax', tags: ['walkable', 'kids'] }),
+    place('item-frenchfix', 'Le French Fix Pâtisserie', 'restaurant', 44.6490, -63.57050, 'Authentic French pastries and macarons near the waterfront.', { address: '1592 Hollis St, Halifax', tags: ['walkable', 'kids'] }),
     place('item-uncommongrounds', 'Uncommon Grounds', 'restaurant', 44.6420, -63.5790, 'Beloved local coffee house on Spring Garden Rd.', { address: '1030 South Park St, Halifax', tags: ['walkable', 'kids'] }),
 
     // ---- Live music, theatre & indoor fun ----
@@ -365,20 +365,20 @@ export function seedItems(): Item[] {
     place('item-josicecream', "Jo's Old Time Candy & Ice Cream Parlour", 'restaurant', 44.6700, -63.4785, 'Old-fashioned ice cream, candy and doughnuts, Cole Harbour.', { address: 'Cole Harbour, NS', tags: ['kids'] }),
 
     // ---- Halifax Waterfront landmarks ----
-    place('item-thewave', 'The Wave Sculpture', 'landmark', 44.6458, -63.5685, 'The big curling concrete wave on the boardwalk — kids love climbing it (carefully!).', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids', 'photos'] }),
-    place('item-submarineplayground', 'Submarine Playground', 'playground', 44.6486, -63.5676, 'Submarine-themed waterfront playground with rope climbers — accessible and right on the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
-    place('item-hammocks', 'Waterfront Hammocks', 'outdoor', 44.6481, -63.5681, 'The free orange hammocks strung along the boardwalk — perfect for a rest.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
-    place('item-drunkenlampposts', 'Drunken Lampposts', 'landmark', 44.6492, -63.5668, 'A cluster of deliberately tilted lampposts — a quirky boardwalk photo stop.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'photos'] }),
-    place('item-artmural', 'Art Mural Wall', 'landmark', 44.6500, -63.5662, 'Colourful rotating mural wall along the north end of the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'photos'] }),
-    place('item-saltyard', 'Salt Yard Shops', 'shopping', 44.6497, -63.5662, 'Shipping-container shops and snack stops on the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
-    place('item-obstaclecourse', 'Waterfront Obstacle Course', 'playground', 44.6483, -63.5673, 'Free outdoor obstacle/play course on the boardwalk for burning off energy.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
-    place('item-cssacadia', 'CSS Acadia', 'museum', 44.6466, -63.5690, 'Steam-powered survey ship you can board, moored beside the Maritime Museum.', { address: '1675 Lower Water St, Halifax', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-thewave', 'The Wave Sculpture', 'landmark', 44.6458, -63.57040, 'The big curling concrete wave on the boardwalk — kids love climbing it (carefully!).', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids', 'photos'] }),
+    place('item-submarineplayground', 'Submarine Playground', 'playground', 44.6486, -63.57070, 'Submarine-themed waterfront playground with rope climbers — accessible and right on the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-hammocks', 'Waterfront Hammocks', 'outdoor', 44.6481, -63.57090, 'The free orange hammocks strung along the boardwalk — perfect for a rest.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-drunkenlampposts', 'Drunken Lampposts', 'landmark', 44.6492, -63.57020, 'A cluster of deliberately tilted lampposts — a quirky boardwalk photo stop.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'photos'] }),
+    place('item-artmural', 'Art Mural Wall', 'landmark', 44.6500, -63.57100, 'Colourful rotating mural wall along the north end of the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'photos'] }),
+    place('item-saltyard', 'Salt Yard Shops', 'shopping', 44.6497, -63.57060, 'Shipping-container shops and snack stops on the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-obstaclecourse', 'Waterfront Obstacle Course', 'playground', 44.6483, -63.57100, 'Free outdoor obstacle/play course on the boardwalk for burning off energy.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-cssacadia', 'CSS Acadia', 'museum', 44.6466, -63.57020, 'Steam-powered survey ship you can board, moored beside the Maritime Museum.', { address: '1675 Lower Water St, Halifax', tags: ['walkable', 'tonight', 'kids'] }),
     place('item-brewerymarket', 'Halifax Brewery Farmers’ Market', 'shopping', 44.6447, -63.5740, 'Saturday market in the historic Keith’s brewery building — food, makers and music.', { address: '1496 Lower Water St, Halifax', tags: ['walkable'], website: 'https://halifaxbrewerymarket.com' }),
 
     // ---- Halifax Waterfront treats ----
-    place('item-blackbearicecream', 'Black Bear Ice Cream', 'restaurant', 44.6474, -63.5683, 'Small-batch homemade ice cream on the Halifax waterfront.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
-    place('item-fogcompany', 'The Fog Company', 'restaurant', 44.6471, -63.5685, 'Imaginative ice cream, cotton candy and doughnuts on the waterfront.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
-    place('item-peacebychocolate', 'Peace by Chocolate', 'restaurant', 44.6478, -63.5685, 'Chocolate from the celebrated Syrian-Canadian family business — waterfront kiosk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'], website: 'https://peacebychocolate.ca' }),
+    place('item-blackbearicecream', 'Black Bear Ice Cream', 'restaurant', 44.6474, -63.57020, 'Small-batch homemade ice cream on the Halifax waterfront.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-fogcompany', 'The Fog Company', 'restaurant', 44.6471, -63.57030, 'Imaginative ice cream, cotton candy and doughnuts on the waterfront.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-peacebychocolate', 'Peace by Chocolate', 'restaurant', 44.6478, -63.57030, 'Chocolate from the celebrated Syrian-Canadian family business — waterfront kiosk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'], website: 'https://peacebychocolate.ca' }),
     place('item-rousseau', 'Rousseau Chocolatier', 'restaurant', 44.6462, -63.5720, 'Hand-made chocolates and rich hot chocolate, downtown Halifax.', { address: 'Halifax', tags: ['walkable', 'kids'] }),
     place('item-taiyaki', 'Taiyaki 52', 'restaurant', 44.6466, -63.5732, 'Soft-serve in a crunchy fish-shaped waffle cone, downtown Halifax.', { address: 'Halifax', tags: ['walkable', 'kids'] }),
     place('item-paneecirco', 'Pane e Circo', 'restaurant', 44.6461, -63.5740, 'Bubble waffles and housemade gelato, downtown Halifax.', { address: 'Halifax', tags: ['walkable', 'kids'] }),
@@ -387,11 +387,11 @@ export function seedItems(): Item[] {
     place('item-flynns', "Flynn's Dairy Bar & Convenience", 'restaurant', 44.6555, -63.5895, 'Tons of flavours of milkshakes, sundaes and scoops, North End Halifax.', { address: 'North End, Halifax', tags: ['kids'] }),
 
     // ---- Halifax Waterfront tours & rentals ----
-    place('item-ambassatours', 'Ambassatours Tall Ship Silva', 'activity', 44.6470, -63.5688, 'Harbour sailing tours aboard the tall ship Silva from the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'], website: 'https://ambassatours.com' }),
-    place('item-iheartbikes', 'I Heart Bikes', 'activity', 44.6463, -63.5689, 'Bike and e-bike rentals plus guided tours on the waterfront.', { address: 'Halifax Waterfront', tags: ['walkable'], website: 'https://iheartbikeshfx.com' }),
-    place('item-jfarwell', 'J. Farwell Sailing Tours', 'activity', 44.6470, -63.5687, 'Small-group harbour sailing adventures from the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
-    place('item-segway', 'Segway Nova Scotia', 'activity', 44.6475, -63.5688, 'Guided Segway tours of the waterfront and downtown.', { address: 'Halifax Waterfront', tags: ['walkable'] }),
-    place('item-cityharbourcruises', 'City & Harbour Cruises', 'activity', 44.6469, -63.5689, 'Sightseeing boat cruises of Halifax Harbour.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-ambassatours', 'Ambassatours Tall Ship Silva', 'activity', 44.6470, -63.57090, 'Harbour sailing tours aboard the tall ship Silva from the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'], website: 'https://ambassatours.com' }),
+    place('item-iheartbikes', 'I Heart Bikes', 'activity', 44.6463, -63.57110, 'Bike and e-bike rentals plus guided tours on the waterfront.', { address: 'Halifax Waterfront', tags: ['walkable'], website: 'https://iheartbikeshfx.com' }),
+    place('item-jfarwell', 'J. Farwell Sailing Tours', 'activity', 44.6470, -63.57030, 'Small-group harbour sailing adventures from the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-segway', 'Segway Nova Scotia', 'activity', 44.6475, -63.57040, 'Guided Segway tours of the waterfront and downtown.', { address: 'Halifax Waterfront', tags: ['walkable'] }),
+    place('item-cityharbourcruises', 'City & Harbour Cruises', 'activity', 44.6469, -63.57100, 'Sightseeing boat cruises of Halifax Harbour.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
 
     // ---- Kid-friendly restaurants (HRM-wide) ----
     place('item-chickenburger', 'The Chickenburger', 'restaurant', 44.7282, -63.6618, 'Retro 1940s burger-and-shake joint in Bedford — a Nova Scotia institution.', { address: '1531 Bedford Hwy, Bedford', tags: ['kids'], website: 'https://thechickenburger.com' }),
@@ -475,13 +475,13 @@ export function seedItems(): Item[] {
     place('item-orient', 'The Orient Chinese Cuisine', 'restaurant', 44.6470, -63.5990, 'Well-reviewed Chinese restaurant.', { address: 'Halifax', tags: ['kids'] }),
     place('item-cora', 'Cora Breakfast & Lunch', 'restaurant', 44.6500, -63.6100, 'Big fruit-topped breakfasts and brunch — very kid-friendly.', { address: 'Halifax', tags: ['kids'] }),
     place('item-tako', 'Tako Sushi & Ramen', 'restaurant', 44.6465, -63.5730, 'Japanese sushi and ramen downtown.', { address: 'Halifax', tags: ['walkable', 'kids'] }),
-    place('item-harbourstone', 'Harbourstone', 'restaurant', 44.6490, -63.5690, 'Waterfront hotel restaurant — chowder, lobster roll, nachos.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-harbourstone', 'Harbourstone', 'restaurant', 44.6490, -63.57060, 'Waterfront hotel restaurant — chowder, lobster roll, nachos.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
     place('item-moxies', 'Moxies', 'restaurant', 44.6482, -63.5756, 'Family-friendly North American chain — broad menu.', { address: 'Halifax', tags: ['kids'] }),
 
     // ---- More Tripadvisor family restaurants ----
     place('item-verano', 'Verano Food Purveyors', 'restaurant', 44.6560, -63.5908, 'Family-run Mexican-Canadian spot — fresh, healthy plates.', { address: 'Halifax', tags: ['kids'] }),
     place('item-goldenfortune', 'Golden Fortune', 'restaurant', 44.6470, -63.5995, 'Good-value Chinese on Quinpool.', { address: 'Quinpool Rd, Halifax', tags: ['kids'] }),
-    place('item-shuck', 'Shuck Seafood + Raw Bar', 'restaurant', 44.6452, -63.5685, 'Oysters, seafood and steak at Bishop’s Landing on the waterfront.', { address: "Bishop's Landing, Halifax", tags: ['walkable', 'tonight'] }),
+    place('item-shuck', 'Shuck Seafood + Raw Bar', 'restaurant', 44.6452, -63.57100, 'Oysters, seafood and steak at Bishop’s Landing on the waterfront.', { address: "Bishop's Landing, Halifax", tags: ['walkable', 'tonight'] }),
     place('item-indochine', 'Indochine Banh Mi', 'restaurant', 44.6440, -63.5775, 'Vietnamese banh mi, pho and rice bowls near South Park.', { address: 'South Park St, Halifax', tags: ['walkable', 'kids'] }),
     place('item-togofresh', 'To Go Fast Fresh Food', 'restaurant', 44.6475, -63.5740, 'Quick, healthy bowls and soups downtown.', { address: 'Halifax', tags: ['walkable', 'kids'] }),
     place('item-mychaplate', 'My Cha & Plate', 'restaurant', 44.6435, -63.5800, 'Cafe for tea, coffee and noodles near the Public Gardens.', { address: 'Spring Garden, Halifax', tags: ['walkable', 'kids'] }),
@@ -512,7 +512,7 @@ export function seedItems(): Item[] {
     place('item-weirdharbour', 'Weird Harbour Espresso Bar', 'restaurant', 44.6455, -63.5735, 'Small Barrington St espresso bar.', { address: 'Barrington St, Halifax', tags: ['walkable'] }),
     place('item-tonysdonair', "Tony's Donair", 'restaurant', 44.6470, -63.5970, 'Big-value donairs and poutine.', { address: 'Halifax', tags: ['kids'] }),
     place('item-birdsnest', "Bird's Nest Cafe", 'restaurant', 44.6500, -63.5850, 'Cafe with great snacks, sandwiches and baked goods.', { address: 'Halifax', tags: ['kids'] }),
-    place('item-katch', 'Katch', 'restaurant', 44.6475, -63.5683, 'Crispy haddock fish & chips kiosk on the waterfront boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-katch', 'Katch', 'restaurant', 44.6475, -63.57110, 'Crispy haddock fish & chips kiosk on the waterfront boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
     place('item-marbleslab', 'Marble Slab Creamery', 'restaurant', 44.6470, -63.5760, 'Custom mix-in ice cream on fresh waffle cones.', { address: 'Halifax', tags: ['kids'] }),
     place('item-armdaleyacht', 'Armdale Yacht Club', 'restaurant', 44.6350, -63.6100, 'Seafood and water views at the Armdale Yacht Club.', { address: 'Armdale, Halifax', tags: ['photos'] }),
     place('item-willys', "Willy's", 'restaurant', 44.6500, -63.5950, 'Burgers and killer poutine.', { address: 'Halifax', tags: ['kids'] }),
@@ -521,7 +521,7 @@ export function seedItems(): Item[] {
     place('item-lookhoho', 'Look Ho Ho', 'restaurant', 44.6480, -63.5760, 'Reasonably-priced classic Chinese, downtown.', { address: 'Halifax', tags: ['kids'] }),
     place('item-rays', "Ray's Lebanese Cuisine", 'restaurant', 44.6500, -63.5900, 'Falafel, shawarma and skewers.', { address: 'Halifax', tags: ['kids'] }),
     place('item-worldtea', 'World Tea House', 'restaurant', 44.6470, -63.5735, 'Relaxing tea house with a huge tea selection, Argyle St.', { address: 'Argyle St, Halifax', tags: ['walkable'] }),
-    place('item-pickfordblack', 'Pickford & Black', 'restaurant', 44.6490, -63.5688, 'Waterfront bar & seafood at the Marriott Harbourfront.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-pickfordblack', 'Pickford & Black', 'restaurant', 44.6490, -63.57070, 'Waterfront bar & seafood at the Marriott Harbourfront.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
     place('item-stationsix', 'Station Six', 'restaurant', 44.6470, -63.5760, 'Pub fare — Nashville chicken, burgers, pan-fried haddock.', { address: 'Halifax', tags: ['kids'] }),
     place('item-qiubrothers', 'Qiu Brothers Dumplings', 'restaurant', 44.6470, -63.5760, 'Hand-made dumplings and wonton soup.', { address: 'Halifax', tags: ['kids'] }),
     place('item-kodoraku', 'Ko-Doraku', 'restaurant', 44.6470, -63.5980, 'Japanese sushi, soba and combos.', { address: 'Halifax', tags: ['kids'] }),
@@ -529,7 +529,7 @@ export function seedItems(): Item[] {
     place('item-sevenbays', 'Seven Bays Bouldering', 'activity', 44.6555, -63.5950, 'Indoor bouldering gym with a great cafe — climbing for all ages.', { address: '2019 Gottingen St, Halifax', tags: ['kids', 'rainy-day'] }),
     place('item-ladyhammond', 'Lady Hammond Bar & Grill', 'restaurant', 44.6620, -63.6080, 'North-End diner and grill.', { address: 'North End, Halifax', tags: ['kids'] }),
     place('item-arisu', 'Arisu Table BBQ and Sushi Bar', 'restaurant', 44.6470, -63.5760, 'All-you-can-eat Korean BBQ and sushi.', { address: 'Halifax', tags: ['kids'] }),
-    place('item-saltyardsocial', 'Salt Yard Social', 'restaurant', 44.6498, -63.5662, 'Hand-tossed pizza, mussels and cocktails on the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-saltyardsocial', 'Salt Yard Social', 'restaurant', 44.6498, -63.57110, 'Hand-tossed pizza, mussels and cocktails on the boardwalk.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
     place('item-shiraz', 'Shiraz', 'restaurant', 44.6470, -63.5770, 'Persian kebabs and stews — a Maritime favourite.', { address: 'Halifax', tags: ['kids'] }),
     place('item-narrowespresso', 'Narrow Espresso', 'restaurant', 44.6540, -63.5905, 'Tiny North-End espresso bar.', { address: 'Gottingen St, Halifax', tags: ['walkable'] }),
     place('item-randyspizza', "Randy's Pizza & Donair", 'restaurant', 44.6500, -63.6000, 'Quick pizza, garlic fingers and donairs.', { address: 'Halifax', tags: ['kids'] }),
@@ -559,7 +559,7 @@ export function seedItems(): Item[] {
     place('item-mezza', 'Mezza Lebanese Kitchen', 'restaurant', 44.6470, -63.5760, 'Fast Lebanese — shawarma, donairs and bowls.', { address: 'Halifax', tags: ['kids'] }),
     place('item-xtremepizza', 'Xtreme Pizza', 'restaurant', 44.6450, -63.5775, 'Quirky pizzas on Birmingham St downtown.', { address: 'Birmingham St, Halifax', tags: ['walkable', 'kids'] }),
     place('item-snappytomato', 'Snappy Tomato Pizza', 'restaurant', 44.6500, -63.6000, 'Quick-bite pizza.', { address: 'Halifax', tags: ['kids'] }),
-    place('item-simplyput', 'Simply Put Café', 'restaurant', 44.6450, -63.5690, 'Breakfast and waffles on Lower Water St.', { address: 'Lower Water St, Halifax', tags: ['walkable', 'kids'] }),
+    place('item-simplyput', 'Simply Put Café', 'restaurant', 44.6450, -63.57030, 'Breakfast and waffles on Lower Water St.', { address: 'Lower Water St, Halifax', tags: ['walkable', 'kids'] }),
     place('item-jeans', "Jean's Restaurant", 'restaurant', 44.6500, -63.5950, 'Chinese-Japanese — spicy beef, pad thai, egg rolls.', { address: 'Halifax', tags: ['kids'] }),
     place('item-lacucina', 'La Cucina Cafe Pizzeria', 'restaurant', 44.6500, -63.6000, 'Pizza, pasta and garlic fingers.', { address: 'Halifax', tags: ['kids'] }),
     place('item-pizzadelight', 'Pizza Delight', 'restaurant', 44.6520, -63.6100, 'Maritime pizza chain with a lunch buffet.', { address: 'Halifax', tags: ['kids'] }),
@@ -572,33 +572,33 @@ export function seedItems(): Item[] {
     // ---- Downtown Halifax attractions (Tripadvisor + guides) ----
     place('item-tattoo', 'Royal Nova Scotia International Tattoo', 'activity', 44.6486, -63.5762, 'Huge indoor summer spectacle — marching bands, acrobats, pipes & drums; kids free (early July).', { address: 'Scotiabank Centre, Halifax', tags: ['walkable', 'kids'], website: 'https://nstattoo.ca' }),
     place('item-scotiabankcentre', 'Scotiabank Centre', 'activity', 44.6486, -63.5765, 'Downtown arena for hockey, concerts and big events.', { address: '1800 Argyle St, Halifax', tags: ['walkable'] }),
-    place('item-splash', 'Splash 360° Dome', 'activity', 44.6463, -63.5690, 'Immersive 360° cinematic dome on the waterfront by the Maritime Museum.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
-    place('item-seaturtle', 'Sea Turtle Centre', 'museum', 44.6430, -63.5670, "Tiny science centre about Canada's leatherback sea turtles — quick and kid-friendly.", { address: 'Seaport, Halifax', tags: ['walkable', 'kids', 'rainy-day'] }),
+    place('item-splash', 'Splash 360° Dome', 'activity', 44.6463, -63.57090, 'Immersive 360° cinematic dome on the waterfront by the Maritime Museum.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-seaturtle', 'Sea Turtle Centre', 'museum', 44.6430, -63.57030, "Tiny science centre about Canada's leatherback sea turtles — quick and kid-friendly.", { address: 'Seaport, Halifax', tags: ['walkable', 'kids', 'rainy-day'] }),
     place('item-halifaxdistillery', 'Halifax Distillery Co.', 'restaurant', 44.6655, -63.5668, 'Craft rum distillery with a full bar/restaurant and daily tours.', { address: 'Dartmouth Waterfront', tags: ['walkable'] }),
     place('item-stmarys', "St. Mary's Cathedral Basilica", 'landmark', 44.6440, -63.5740, '1820s basilica with soaring stone and beautiful stained glass, near Spring Garden.', { address: '5221 Spring Garden Rd, Halifax', tags: ['walkable'] }),
     place('item-governmenthouse', 'Government House', 'landmark', 44.6450, -63.5755, 'Georgian residence of the Lieutenant Governor — summer tours.', { address: '1451 Barrington St, Halifax', tags: ['walkable'] }),
-    place('item-sailorsalute', "Sailor's Salute Statue", 'landmark', 44.6452, -63.5680, 'The Sailor statue at Sackville Landing on the waterfront.', { address: 'Sackville Landing, Halifax', tags: ['walkable', 'tonight', 'photos'] }),
-    place('item-harbourside', 'Harbourside Market', 'shopping', 44.6468, -63.5686, 'Local street/flea market on the waterfront — fresh produce and makers.', { address: 'Halifax Waterfront', tags: ['walkable'] }),
+    place('item-sailorsalute', "Sailor's Salute Statue", 'landmark', 44.6452, -63.57020, 'The Sailor statue at Sackville Landing on the waterfront.', { address: 'Sackville Landing, Halifax', tags: ['walkable', 'tonight', 'photos'] }),
+    place('item-harbourside', 'Harbourside Market', 'shopping', 44.6468, -63.57040, 'Local street/flea market on the waterfront — fresh produce and makers.', { address: 'Halifax Waterfront', tags: ['walkable'] }),
     place('item-victoriaparkhfx', 'Victoria Park (Halifax)', 'outdoor', 44.6420, -63.5775, 'Quiet downtown city park near Spring Garden Rd — fountains and benches.', { address: 'Spring Garden Rd, Halifax', tags: ['walkable'] }),
     place('item-zwickers', "Zwicker's Art Gallery", 'museum', 44.6470, -63.5720, 'Three floors of curated Canadian art downtown.', { address: '5415 Doyle St, Halifax', tags: ['walkable'] }),
     place('item-annaleonowens', 'Anna Leonowens Gallery', 'museum', 44.6460, -63.5740, 'NSCAD University gallery with rotating student and faculty shows.', { address: '1891 Granville St, Halifax', tags: ['walkable'] }),
-    place('item-norberts', "Norbert's Good Food", 'restaurant', 44.6428, -63.5667, 'Farm-to-table restaurant inside the Seaport Farmers’ Market.', { address: '1209 Marginal Rd, Halifax', tags: ['walkable', 'kids'] }),
+    place('item-norberts', "Norbert's Good Food", 'restaurant', 44.6428, -63.57070, 'Farm-to-table restaurant inside the Seaport Farmers’ Market.', { address: '1209 Marginal Rd, Halifax', tags: ['walkable', 'kids'] }),
     place('item-princeofwales', 'Prince of Wales Tower', 'landmark', 44.6230, -63.5680, '1790s round defensive tower tucked in Point Pleasant Park.', { address: 'Point Pleasant Park, Halifax', tags: ['trails'] }),
 
     // ---- Downtown Halifax tours, activities & treats (Tripadvisor) ----
     place('item-capturedescape', 'Captured Escape Rooms', 'activity', 44.6470, -63.5740, 'Themed escape rooms with immersive puzzles — fun for families and teens.', { address: 'Halifax', tags: ['walkable', 'kids', 'rainy-day'], website: 'https://capturedescaperooms.com' }),
     place('item-cineplexparklane', 'Cineplex Cinemas Park Lane', 'activity', 44.6438, -63.5790, 'Downtown movie theatre at Park Lane on Spring Garden Rd.', { address: '5657 Spring Garden Rd, Halifax', tags: ['walkable', 'kids', 'rainy-day'] }),
     place('item-ghostwalk', 'The Halifax Ghost Walk', 'activity', 44.6478, -63.5766, 'Lantern-lit walking tour of ghost, pirate and devil tales through the old streets.', { address: 'Old Town Clock, Halifax', tags: ['walkable'], website: 'https://halifaxghostwalk.com' }),
-    place('item-altroutes', 'Alternative Routes Day Tours', 'activity', 44.6470, -63.5685, 'Hop-on-hop-off shuttle to Peggy’s Cove, Mahone Bay, Lunenburg and the Valley in a day.', { address: 'Halifax Waterfront', tags: ['daytrip'] }),
-    place('item-harbourtours', 'Halifax Harbour Tours', 'activity', 44.6470, -63.5687, '60-min guided harbour tour on a quiet all-electric 1930s-style launch.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
-    place('item-kayakhalifax', 'Kayak Halifax', 'activity', 44.6420, -63.5670, 'Two-hour guided harbour kayak tours from near downtown.', { address: 'Seaport, Halifax', tags: ['kids'] }),
-    place('item-ridesolar', 'Ride Solar Pedal-Bus', 'activity', 44.6470, -63.5688, 'Solar-powered 18-seat pedal-bus tours of the city.', { address: 'Halifax Waterfront', tags: ['walkable'] }),
-    place('item-rumrunners', 'Rum Runners Rum Cake Factory', 'restaurant', 44.6472, -63.5684, 'Waterfront bakery — famous rum cakes baked on site.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
+    place('item-altroutes', 'Alternative Routes Day Tours', 'activity', 44.6470, -63.57030, 'Hop-on-hop-off shuttle to Peggy’s Cove, Mahone Bay, Lunenburg and the Valley in a day.', { address: 'Halifax Waterfront', tags: ['daytrip'] }),
+    place('item-harbourtours', 'Halifax Harbour Tours', 'activity', 44.6470, -63.57060, '60-min guided harbour tour on a quiet all-electric 1930s-style launch.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-kayakhalifax', 'Kayak Halifax', 'activity', 44.6420, -63.57100, 'Two-hour guided harbour kayak tours from near downtown.', { address: 'Seaport, Halifax', tags: ['kids'] }),
+    place('item-ridesolar', 'Ride Solar Pedal-Bus', 'activity', 44.6470, -63.57030, 'Solar-powered 18-seat pedal-bus tours of the city.', { address: 'Halifax Waterfront', tags: ['walkable'] }),
+    place('item-rumrunners', 'Rum Runners Rum Cake Factory', 'restaurant', 44.6472, -63.57090, 'Waterfront bakery — famous rum cakes baked on site.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight', 'kids'] }),
     place('item-obladee', 'Obladee, a Wine Bar', 'restaurant', 44.6465, -63.5728, 'Cozy downtown wine bar with an eclectic list and small plates.', { address: '1600 Barrington St, Halifax', tags: ['walkable'] }),
     place('item-splitcrow', 'The Split Crow', 'restaurant', 44.6489, -63.5720, 'Lively maritime pub with live East Coast music — one of the oldest in town.', { address: '1855 Granville St, Halifax', tags: ['walkable', 'tonight'] }),
     place('item-economyshoe', 'Economy Shoe Shop Cafe & Bar', 'restaurant', 44.6483, -63.5733, 'Iconic, funky Argyle St bar-restaurant with a great patio.', { address: '1663 Argyle St, Halifax', tags: ['walkable'] }),
     place('item-sweetjanes', "Sweet Jane's", 'restaurant', 44.6460, -63.5705, 'Vintage candy, retro toys and gourmet treats on Queen St — a kid magnet.', { address: 'Queen St, Halifax', tags: ['walkable', 'kids'] }),
-    place('item-amospewter', 'Amos Pewter', 'shopping', 44.6470, -63.5686, 'Waterfront pewter workshop — watch pieces being hand-cast.', { address: 'Halifax Waterfront', tags: ['walkable', 'kids'] }),
+    place('item-amospewter', 'Amos Pewter', 'shopping', 44.6470, -63.57030, 'Waterfront pewter workshop — watch pieces being hand-cast.', { address: 'Halifax Waterfront', tags: ['walkable', 'kids'] }),
 
     // ---- South Shore: Lunenburg (novascotia.com) ----
     place('item-bluenoselunenburg', 'Bluenose II', 'activity', 44.3753, -64.3138, "Tour or sail Canada's famous racing schooner from its Lunenburg home port at the Fisheries Museum wharf (when she's in).", { address: 'Bluenose Dr, Lunenburg', tags: ['photos', 'daytrip', 'walkable'] }),
