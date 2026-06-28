@@ -383,6 +383,12 @@ input, select, textarea {
 /* ---- Itinerary ---- */
 .itin { display: grid; gap: 1rem; margin-top: 1rem; }
 .itin__empty { color: var(--muted); margin-top: 1rem; }
+.itin__map { position: relative; }
+.itin__map .map { height: 46vh; min-height: 300px; }
+.itin__days { display: flex; gap: 0.4rem; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 0.2rem; }
+.itin__day--active { outline: 2px solid var(--accent); }
+.itin__datebtn { background: none; border: 0; color: var(--text); font: inherit; font-weight: 700; cursor: pointer; padding: 0; }
+.itin__base { color: var(--muted); font-weight: 400; }
 .itin__day { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem 1rem; }
 .itin__date { font-size: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
 .itin__slot { display: grid; grid-template-columns: 90px 1fr; gap: 0.5rem; padding: 0.4rem 0; }
