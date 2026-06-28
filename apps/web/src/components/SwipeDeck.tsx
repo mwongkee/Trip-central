@@ -1,154 +1,185 @@
 import { useMemo, useRef, useState } from 'react';
-import { familyVoters, type Item, type TripBundle } from '@tripboard/shared';
+import { familyVoters, travelMinutes, type Item, type TripBundle } from '@tripboard/shared';
 import { useApp } from '../lib/context.js';
 import { useVote, useItemDetail, useWikiImage } from '../hooks/queries.js';
 import { travelLabel } from '../lib/distance.js';
 import { mapsLink } from '../lib/links.js';
 import { Avatar } from './Avatar.js';
 
-const CENTERS: { id: string; emoji: string; short: string }[] = [
-  { id: 'item-hfxterminal', emoji: '⛴', short: 'Ferry' },
-  { id: 'item-hotel', emoji: '🏨', short: 'Hotel' },
-  { id: 'item-airbnb', emoji: '🏠', short: 'Airbnb' },
+const COMMIT = 110; // px past which a swipe commits
+
+type Deck = {
+  id: string;
+  label: string;
+  centerId: string; // reference point distances are shown from
+  blurb: string;
+  filter: (i: Item, center: { lat: number; lng: number } | null) => boolean;
+};
+
+const has = (i: Item, ...t: string[]): boolean => t.some((x) => i.tags.includes(x));
+const coords = (i: Item): boolean => i.lat != null && i.lng != null;
+
+// Curated, targeted swipe decks.
+const DECKS: Deck[] = [
+  {
+    id: 'ferrywalk',
+    label: '🚶 Walk from ferry',
+    centerId: 'item-hfxterminal',
+    blurb: 'Things to do within a ~20-min walk of the Halifax ferry',
+    filter: (i, c) => !!c && coords(i) && travelMinutes(c.lat, c.lng, i.lat!, i.lng!, 'walk') <= 20,
+  },
+  {
+    id: 'indoor',
+    label: '🏛️ Indoor',
+    centerId: 'item-hotel',
+    blurb: 'Museums, shops and rainy-day spots',
+    filter: (i) => ['museum', 'shopping'].includes(i.category ?? '') || has(i, 'rainy-day'),
+  },
+  {
+    id: 'airbnb45',
+    label: '🚗 ≤45 min from Airbnb',
+    centerId: 'item-airbnb',
+    blurb: 'Anything within a 45-min drive of the Rose Bay Airbnb',
+    filter: (i, c) => !!c && coords(i) && travelMinutes(c.lat, c.lng, i.lat!, i.lng!, 'drive') <= 45,
+  },
+  {
+    id: 'kids',
+    label: '🧒 Kids',
+    centerId: 'item-hotel',
+    blurb: 'Kid-friendly places, playgrounds and beaches',
+    filter: (i) => has(i, 'kids', 'stroller-friendly') || ['playground', 'beach'].includes(i.category ?? ''),
+  },
+  {
+    id: 'food',
+    label: '🍴 Food',
+    centerId: 'item-hotel',
+    blurb: 'Restaurants, treats and meals',
+    filter: (i) => i.type === 'MEAL' || i.category === 'restaurant',
+  },
+  {
+    id: 'all',
+    label: '✨ Everything',
+    centerId: 'item-hotel',
+    blurb: 'Every place on the trip',
+    filter: () => true,
+  },
 ];
 
-const COMMIT = 110; // px drag past which a swipe commits
-
 /**
- * "Swipe to vote" deck — one place per card with a big photo, details, distance
- * from a central location, and links. Swipe right (or ✓) = your family votes;
- * swipe left (or ✕) = skip. Buttons mirror the gestures for accessibility.
+ * "Swipe to vote" deck. Pick a targeted deck, then swipe through cards: right
+ * (or ✓) casts your whole family's vote, left (or ✕) skips. Each card owns its
+ * own gesture so swipes can't bleed between cards.
  */
 export function SwipeDeck({ bundle }: { bundle: TripBundle }) {
   const { identity } = useApp();
   const vote = useVote();
+  const [deckId, setDeckId] = useState('ferrywalk');
   const [idx, setIdx] = useState(0);
-  const [drag, setDrag] = useState(0);
-  const [dragging, setDragging] = useState(false);
-  const [centerId, setCenterId] = useState('item-hotel');
-  const [voted, setVoted] = useState<Set<string>>(new Set());
-  const startX = useRef(0);
+  const [lastVoted, setLastVoted] = useState<string | null>(null);
 
   const family = useMemo(
     () => (identity ? familyVoters(identity.familyId, bundle.members, bundle.children) : []),
     [identity, bundle.members, bundle.children],
   );
 
+  const deck = DECKS.find((d) => d.id === deckId)!;
   const center = useMemo(() => {
-    const c = bundle.items.find((i) => i.itemId === centerId);
+    const c = bundle.items.find((i) => i.itemId === deck.centerId);
     return c && c.lat != null && c.lng != null ? { lat: c.lat, lng: c.lng } : null;
-  }, [bundle.items, centerId]);
+  }, [bundle.items, deck.centerId]);
 
-  // Things to triage: real places & meals (no anchors), least-voted first so
-  // under-loved spots surface for a decision.
-  const deck = useMemo(
+  const items = useMemo(
     () =>
       bundle.items
-        .filter((i) => !i.isAnchor)
+        .filter((i) => !i.isAnchor && deck.filter(i, center))
         .slice()
         .sort((a, b) => a.voteCount - b.voteCount || b.voteScore - a.voteScore || a.title.localeCompare(b.title)),
-    [bundle.items],
+    [bundle.items, deck, center],
   );
 
-  const current = deck[idx] ?? null;
-  const next = deck[idx + 1] ?? null;
+  function selectDeck(id: string) {
+    setDeckId(id);
+    setIdx(0);
+    setLastVoted(null);
+  }
 
-  function advance() {
-    setDrag(0);
-    setDragging(false);
+  const current = items[idx] ?? null;
+  const next = items[idx + 1] ?? null;
+
+  function handleVote(item: Item) {
+    family.forEach((f) => vote.mutate({ itemId: item.itemId, voterId: f.voterId, value: 1 }));
+    setLastVoted(item.title);
+    setIdx((i) => i + 1);
+  }
+  function handleSkip() {
     setIdx((i) => i + 1);
   }
 
-  function castFamily(item: Item) {
-    family.forEach((f) => vote.mutate({ itemId: item.itemId, voterId: f.voterId, value: 1 }));
-    setVoted((s) => new Set(s).add(item.itemId));
-    advance();
-  }
-
-  function onPointerDown(e: React.PointerEvent) {
-    startX.current = e.clientX;
-    setDragging(true);
-    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-  }
-  function onPointerMove(e: React.PointerEvent) {
-    if (!dragging) return;
-    setDrag(e.clientX - startX.current);
-  }
-  function onPointerUp() {
-    if (!dragging || !current) return;
-    if (drag > COMMIT) castFamily(current);
-    else if (drag < -COMMIT) advance();
-    else {
-      setDrag(0);
-      setDragging(false);
-    }
-  }
-
-  if (!current) {
-    return (
-      <div className="swipe">
-        <div className="swipe__done">
-          <p>🎉 That's everything!</p>
-          <p className="swipe__donesub">You've swiped through all {deck.length} places.</p>
-          <button type="button" className="btn btn--primary" onClick={() => { setIdx(0); setVoted(new Set()); }}>
-            Start over
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const hint = drag > 40 ? 'vote' : drag < -40 ? 'skip' : null;
-
   return (
     <div className="swipe">
-      <div className="swipe__centers" role="group" aria-label="Distance from">
-        <span className="board__centerslabel">📏 From</span>
-        {CENTERS.map((c) => (
+      <div className="swipe__decks" role="group" aria-label="Swipe deck">
+        {DECKS.map((d) => (
           <button
-            key={c.id}
+            key={d.id}
             type="button"
-            className={`fchip ${centerId === c.id ? 'fchip--on' : ''}`}
-            aria-pressed={centerId === c.id}
-            onClick={() => setCenterId(c.id)}
+            className={`fchip ${deckId === d.id ? 'fchip--on' : ''}`}
+            aria-pressed={deckId === d.id}
+            onClick={() => selectDeck(d.id)}
           >
-            {c.emoji} {c.short}
+            {d.label}
           </button>
         ))}
-        <span className="swipe__count">{idx + 1} / {deck.length}</span>
       </div>
+      <p className="swipe__blurb">
+        {deck.blurb}
+        {items.length > 0 && <span className="swipe__count"> · {Math.min(idx + 1, items.length)} / {items.length}</span>}
+      </p>
 
-      <div className="swipe__stack">
-        {next && <SwipeCard key={next.itemId} item={next} center={center} behind />}
-        <SwipeCard
-          key={current.itemId}
-          item={current}
-          center={center}
-          drag={drag}
-          dragging={dragging}
-          hint={hint}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-        />
-      </div>
-
-      <div className="swipe__actions">
-        <button type="button" className="swipe__btn swipe__btn--skip" onClick={advance} aria-label="Skip">
-          ✕ Skip
-        </button>
-        <button
-          type="button"
-          className="swipe__btn swipe__btn--vote"
-          onClick={() => castFamily(current)}
-          disabled={family.length === 0}
-          aria-label={`Vote for ${current.title} as your family`}
-        >
-          ✓ Vote ({family.length})
-        </button>
-      </div>
-      {voted.has(deck[idx - 1]?.itemId ?? '') && idx > 0 && (
-        <p className="swipe__just" aria-live="polite">👍 Voted for {deck[idx - 1]!.title}</p>
+      {!current ? (
+        <div className="swipe__done">
+          {items.length === 0 ? (
+            <>
+              <p>Nothing in this deck.</p>
+              <p className="swipe__donesub">Try another deck above.</p>
+            </>
+          ) : (
+            <>
+              <p>🎉 That's the whole deck!</p>
+              <p className="swipe__donesub">You swiped through all {items.length}.</p>
+              <button type="button" className="btn btn--primary" onClick={() => { setIdx(0); setLastVoted(null); }}>
+                Start over
+              </button>
+            </>
+          )}
+        </div>
+      ) : (
+        <>
+          <div className="swipe__stack">
+            {next && <SwipeCard key={`behind-${next.itemId}`} item={next} center={center} behind />}
+            <SwipeCard
+              key={`top-${current.itemId}`}
+              item={current}
+              center={center}
+              onVote={handleVote}
+              onSkip={handleSkip}
+            />
+          </div>
+          <div className="swipe__actions">
+            <button type="button" className="swipe__btn swipe__btn--skip" onClick={handleSkip} aria-label="Skip">
+              ✕ Skip
+            </button>
+            <button
+              type="button"
+              className="swipe__btn swipe__btn--vote"
+              onClick={() => handleVote(current)}
+              disabled={family.length === 0}
+              aria-label={`Vote for ${current.title} as your family`}
+            >
+              ✓ Vote ({family.length})
+            </button>
+          </div>
+          {lastVoted && <p className="swipe__just" aria-live="polite">👍 Voted for {lastVoted}</p>}
+        </>
       )}
     </div>
   );
@@ -157,47 +188,77 @@ export function SwipeDeck({ bundle }: { bundle: TripBundle }) {
 function SwipeCard({
   item,
   center,
-  drag = 0,
-  dragging = false,
-  hint = null,
   behind = false,
-  onPointerDown,
-  onPointerMove,
-  onPointerUp,
+  onVote,
+  onSkip,
 }: {
   item: Item;
   center: { lat: number; lng: number } | null;
-  drag?: number;
-  dragging?: boolean;
-  hint?: 'vote' | 'skip' | null;
   behind?: boolean;
-  onPointerDown?: (e: React.PointerEvent) => void;
-  onPointerMove?: (e: React.PointerEvent) => void;
-  onPointerUp?: (e: React.PointerEvent) => void;
+  onVote?: (i: Item) => void;
+  onSkip?: (i: Item) => void;
 }) {
   const wiki = useWikiImage(behind ? null : item.title);
   const detail = useItemDetail(behind ? null : item.itemId);
+  const [dx, setDx] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const [fly, setFly] = useState(0); // -1 / +1 once a decision is committing
+  const startX = useRef(0);
+  const decided = useRef(false);
+
   const votes = detail.data?.votes ?? [];
   const photo = wiki.data || item.imageUrl;
   const dist = travelLabel(center, item.lat ?? undefined, item.lng ?? undefined);
   const bucket = item.type === 'MEAL' ? item.mealType : item.category;
 
+  function decide(kind: 'vote' | 'skip') {
+    if (decided.current) return;
+    decided.current = true;
+    setFly(kind === 'vote' ? 1 : -1);
+    setDragging(false);
+    setTimeout(() => (kind === 'vote' ? onVote?.(item) : onSkip?.(item)), 200);
+  }
+
+  function onPointerDown(e: React.PointerEvent) {
+    if (behind || decided.current) return;
+    if ((e.target as HTMLElement).closest('a, button')) return; // let links/buttons work
+    startX.current = e.clientX;
+    setDragging(true);
+    (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+  }
+  function onPointerMove(e: React.PointerEvent) {
+    if (!dragging || decided.current) return;
+    setDx(e.clientX - startX.current);
+  }
+  function onPointerUp() {
+    if (!dragging || decided.current) return;
+    setDragging(false);
+    if (dx > COMMIT) decide('vote');
+    else if (dx < -COMMIT) decide('skip');
+    else setDx(0);
+  }
+
+  const offX = fly !== 0 ? fly * (typeof window !== 'undefined' ? window.innerWidth + 220 : 600) : dx;
+  const hint = !behind && (dx > 40 || fly > 0) ? 'vote' : !behind && (dx < -40 || fly < 0) ? 'skip' : null;
   const style = behind
     ? { transform: 'scale(0.95) translateY(10px)' }
     : {
-        transform: `translateX(${drag}px) rotate(${drag * 0.04}deg)`,
-        transition: dragging ? 'none' : 'transform 0.25s ease',
+        transform: `translateX(${offX}px) rotate(${offX * 0.03}deg)`,
+        transition: dragging ? 'none' : 'transform 0.22s ease',
       };
 
   return (
-    <article className={`swipe__card ${behind ? 'swipe__card--behind' : ''}`} style={style}
-      onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp}>
-      {!behind && hint && (
-        <span className={`swipe__stamp swipe__stamp--${hint}`}>{hint === 'vote' ? '👍 VOTE' : 'SKIP'}</span>
-      )}
+    <article
+      className={`swipe__card ${behind ? 'swipe__card--behind' : ''}`}
+      style={style}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={() => { setDragging(false); if (!decided.current) setDx(0); }}
+    >
+      {hint && <span className={`swipe__stamp swipe__stamp--${hint}`}>{hint === 'vote' ? '👍 VOTE' : 'SKIP'}</span>}
       <div className="swipe__photo">
-        {photo && <img src={photo} alt={item.title} draggable={false}
-          onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />}
+        {photo && <img src={photo} alt={item.title} draggable={false} onError={(e) => { e.currentTarget.style.visibility = 'hidden'; }} />}
         {dist && <span className="swipe__dist">{dist}</span>}
       </div>
       <div className="swipe__info">

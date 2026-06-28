@@ -30,6 +30,7 @@ export function VoteControl({ item, votes, family, onVote, onRemove, busy }: Vot
         <span className="vote__scoreCount">
           {item.voteCount} vote{item.voteCount === 1 ? '' : 's'}
         </span>
+        {busy && <span className="vote__saving" aria-live="polite">⏳ Saving…</span>}
       </div>
 
       {family.length > 0 && (
@@ -60,9 +61,10 @@ export function VoteControl({ item, votes, family, onVote, onRemove, busy }: Vot
             <button
               type="button"
               className="vote__all"
+              disabled={busy}
               onClick={() => familyUnvoted.forEach((f) => onVote(f.voterId, 1))}
             >
-              👍 Mark whole family ({familyUnvoted.length})
+              {busy ? '⏳ Saving…' : `👍 Mark whole family (${familyUnvoted.length})`}
             </button>
           )}
         </fieldset>
