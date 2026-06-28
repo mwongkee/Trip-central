@@ -454,6 +454,30 @@ export function seedItems(): Item[] {
     place('item-mappatura', 'Mappatura Bistro', 'restaurant', 44.6478, -63.5735, 'Fresh handmade pasta and Italian plates downtown.', { address: '5883 Spring Garden Rd, Halifax', tags: ['walkable'] }),
     place('item-auctionhouse', 'The Auction House', 'restaurant', 44.6483, -63.5728, 'Argyle St restaurant and live-music venue.', { address: '1726 Argyle St, Halifax', tags: ['walkable'] }),
 
+    // ---- From r/halifax recommendations ----
+    place('item-oxalis', 'Oxalis', 'restaurant', 44.6668, -63.5700, 'Natural-wine bar and seasonal small plates in downtown Dartmouth.', { address: 'Portland St, Dartmouth', tags: ['walkable'] }),
+    place('item-doraku', 'Doraku', 'restaurant', 44.6665, -63.5688, 'Sushi a short ferry ride + 5-min walk away in Dartmouth.', { address: 'Dartmouth', tags: ['walkable'] }),
+    place('item-tribute', 'Tribute', 'restaurant', 44.6625, -63.5665, "Refined à la carte fine dining — named to Canada's 100 Best, Dartmouth.", { address: "King's Wharf, Dartmouth", tags: ['walkable'] }),
+    place('item-mystic', 'Mystic', 'restaurant', 44.6552, -63.5905, "Multi-course tasting-menu fine dining — named to Canada's 100 Best.", { address: 'North End, Halifax' }),
+    place('item-evans', "Evan's Fresh Seafood", 'restaurant', 44.6658, -63.5674, 'Great fish & chips right off the Dartmouth ferry.', { address: 'Alderney Dr, Dartmouth', tags: ['walkable', 'kids'] }),
+    place('item-rudyolives', 'Rudy & Olives', 'restaurant', 44.7450, -63.6750, 'Clams, fish & chips and Newfoundland fries with dressing, Bedford-Sackville.', { address: 'Sackville, NS', tags: ['kids'] }),
+    place('item-turkuaz', 'Turkuaz Grill', 'restaurant', 44.7270, -63.6610, 'Turkish grill — kebabs and mezze, Bedford / Bayers Lake.', { address: 'Bedford, NS', tags: ['kids'] }),
+
+    // ---- From Tripadvisor family restaurants ----
+    place('item-fredies', "Fredie's Fantastic Fishhouse", 'restaurant', 44.6452, -63.5795, 'Quick-bite seafood spot famous for huge lobster rolls and chowder.', { address: 'Halifax', tags: ['kids'] }),
+    place('item-tomavinos', 'Tomavinos Ristorante', 'restaurant', 44.7150, -63.6600, 'Italian and pizza with a big wine list, Bedford.', { address: 'Bedford, NS', tags: ['kids'] }),
+    place('item-lebistro', 'Le Bistro By Liz', 'restaurant', 44.6470, -63.5722, 'French-European bistro downtown — flat-crust pizzas, lamb shank, weekend brunch.', { address: 'Halifax', tags: ['walkable'] }),
+    place('item-talaythai', 'Talay Thai', 'restaurant', 44.6470, -63.6000, 'Well-loved Thai curries and classics.', { address: 'Halifax', tags: ['kids'] }),
+    place('item-claytonpark', 'Clayton Park Bar & Grill', 'restaurant', 44.6530, -63.6450, 'Friendly neighbourhood bar & grill, Clayton Park.', { address: 'Halifax', tags: ['kids'] }),
+    place('item-batonrouge', 'Bâton Rouge Grillhouse & Bar', 'restaurant', 44.6486, -63.5760, 'Ribs, steak and big plates downtown.', { address: 'Halifax', tags: ['walkable', 'kids'] }),
+    place('item-piatto', 'Piatto Pizzeria', 'restaurant', 44.6456, -63.5742, 'Neapolitan wood-fired pizza downtown.', { address: 'Halifax', tags: ['walkable', 'kids'] }),
+    place('item-keg', 'The Keg Steakhouse + Bar', 'restaurant', 44.6480, -63.5720, 'Classic steakhouse downtown.', { address: 'Halifax', tags: ['walkable'] }),
+    place('item-orient', 'The Orient Chinese Cuisine', 'restaurant', 44.6470, -63.5990, 'Well-reviewed Chinese restaurant.', { address: 'Halifax', tags: ['kids'] }),
+    place('item-cora', 'Cora Breakfast & Lunch', 'restaurant', 44.6500, -63.6100, 'Big fruit-topped breakfasts and brunch — very kid-friendly.', { address: 'Halifax', tags: ['kids'] }),
+    place('item-tako', 'Tako Sushi & Ramen', 'restaurant', 44.6465, -63.5730, 'Japanese sushi and ramen downtown.', { address: 'Halifax', tags: ['walkable', 'kids'] }),
+    place('item-harbourstone', 'Harbourstone', 'restaurant', 44.6490, -63.5690, 'Waterfront hotel restaurant — chowder, lobster roll, nachos.', { address: 'Halifax Waterfront', tags: ['walkable', 'tonight'] }),
+    place('item-moxies', 'Moxies', 'restaurant', 44.6482, -63.5756, 'Family-friendly North American chain — broad menu.', { address: 'Halifax', tags: ['kids'] }),
+
     // ---- Meals ----
     meal('meal-lobster', 'Lobster rolls on the boardwalk', 'dinner', 'Fresh rolls on the Halifax waterfront — perfect after the ferry tonight.', {
       lat: 44.6476, lng: -63.5683, address: 'Halifax Waterfront', category: 'restaurant', tags: ['walkable', 'ferry', 'tonight'],
