@@ -3,12 +3,12 @@ import Fuse from 'fuse.js';
 import { familyVoters, travelMinutes, type Item, type ItemType, type TripBundle, type TravelMode } from '@tripboard/shared';
 import { useApp } from '../lib/context.js';
 import { ItemCard } from './ItemCard.js';
-import { MapView } from './MapView.js';
+import { MapView, CATEGORY_COLORS, legendEmoji } from './MapView.js';
 import { AddItemForm } from './AddItemForm.js';
 import { Itinerary } from './Itinerary.js';
 import { SwipeDeck } from './SwipeDeck.js';
 import { Photo } from './Photo.js';
-import { usePresence, useItemDetail } from '../hooks/queries.js';
+import { usePresence, useItemDetail, useVote } from '../hooks/queries.js';
 import { useLocationShare } from '../hooks/useLocationShare.js';
 import { mapsLink } from '../lib/links.js';
 import { Avatar } from './Avatar.js';
@@ -168,6 +168,15 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   const presences = presenceQ.data ?? [];
   const peekDetail = useItemDetail(selectedId);
   const peekVotes = peekDetail.data?.votes ?? [];
+  const vote = useVote();
+  const [legendOpen, setLegendOpen] = useState(false);
+
+  // One-tap "mark your family" from the peek card — casts for any household
+  // member who hasn't voted on this item yet.
+  function markFamily(itemId: string) {
+    const voted = new Set(peekVotes.filter((v) => v.value > 0).map((v) => v.voterId));
+    family.filter((f) => !voted.has(f.voterId)).forEach((f) => vote.mutate({ itemId, voterId: f.voterId, value: 1 }));
+  }
 
   const family = useMemo(
     () => (identity ? familyVoters(identity.familyId, bundle.members, bundle.children) : []),
@@ -399,6 +408,14 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         </button>
         <button
           type="button"
+          className={`fchip ${nearMe ? 'fchip--on' : ''}`}
+          aria-pressed={nearMe}
+          onClick={useMyLocation}
+        >
+          📍 Near me
+        </button>
+        <button
+          type="button"
           className="board__quicktoggle"
           aria-expanded={quickOpen}
           onClick={() => setQuickOpen((v) => !v)}
@@ -428,7 +445,6 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       </div>
 
       <div className="board__presets" role="group" aria-label="Quick filters">
-        <button type="button" className={`fchip ${foodMode ? 'fchip--on' : ''}`} aria-pressed={foodMode} onClick={() => setFoodMode((v) => !v)}>🍴 Food</button>
         <button type="button" className={`fchip ${kidMode ? 'fchip--on' : ''}`} aria-pressed={kidMode} onClick={() => setKidMode((v) => !v)}>🧒 Kids</button>
         <button type="button" className={`fchip ${tagFilter.has('tonight') ? 'fchip--on' : ''}`} aria-pressed={tagFilter.has('tonight')} onClick={() => toggle(tagFilter, setTagFilter, 'tonight')}>🌙 Tonight</button>
         <button type="button" className={`fchip ${tagFilter.has('walkable') ? 'fchip--on' : ''}`} aria-pressed={tagFilter.has('walkable')} onClick={() => toggle(tagFilter, setTagFilter, 'walkable')}>🚶 Walkable</button>
@@ -470,7 +486,22 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         <p className="board__maphint">
           {filtered.length} place{filtered.length === 1 ? '' : 's'} shown · tap a pin for details
           {presences.length > 0 && ` · ${presences.length} sharing location`}
+          <button type="button" className="linkbtn" aria-expanded={legendOpen} onClick={() => setLegendOpen((v) => !v)}>
+            {legendOpen ? 'hide legend' : 'legend'}
+          </button>
         </p>
+        {legendOpen && (
+          <div className="legend" aria-label="Map legend">
+            {categoryList.map((c) => (
+              <span key={c} className="legend__row">
+                <span className="legend__chip" style={{ borderColor: CATEGORY_COLORS[c] ?? '#868e96' }}>{legendEmoji(c)}</span>
+                {c}
+              </span>
+            ))}
+            <span className="legend__row"><span className="legend__chip legend__chip--voted">★</span> voted by us</span>
+            <span className="legend__row"><span className="legend__chip legend__chip--cluster">5</span> tap to zoom in</span>
+          </div>
+        )}
       </aside>
 
       <section className="board__list" aria-label="Trip items">
@@ -508,10 +539,21 @@ export function Board({ bundle }: { bundle: TripBundle }) {
                 <span className="peek__voternames">{peekVotes.map((v) => v.voterName).join(', ')}</span>
               </div>
             ) : (
-              <div className="peek__novotes">No votes yet — tap Details to vote</div>
+              <div className="peek__novotes">No votes yet</div>
             )}
             {centerItem.address && <div className="peek__addr">📌 {centerItem.address}</div>}
             <div className="peek__actions">
+              {family.length > 0 && centerItem.type !== 'MEAL' && (() => {
+                const votedSet = new Set(peekVotes.filter((v) => v.value > 0).map((v) => v.voterId));
+                const remaining = family.filter((f) => !votedSet.has(f.voterId)).length;
+                return remaining === 0 ? (
+                  <span className="peek__voted">✓ Family voted</span>
+                ) : (
+                  <button type="button" className="btn btn--vote" disabled={vote.isPending} onClick={() => markFamily(centerItem.itemId)}>
+                    {vote.isPending ? '⏳ Saving…' : `👍 Mark family (${remaining})`}
+                  </button>
+                );
+              })()}
               <a className="btn btn--link" href={mapsLink(centerItem)} target="_blank" rel="noreferrer noopener">🗺 Maps</a>
               {centerItem.website && (
                 <a className="btn btn--link" href={centerItem.website} target="_blank" rel="noreferrer noopener">🔗 Site</a>

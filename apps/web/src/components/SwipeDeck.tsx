@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { familyVoters, travelMinutes, type Item, type TripBundle } from '@tripboard/shared';
 import { useApp } from '../lib/context.js';
-import { useVote, useItemDetail } from '../hooks/queries.js';
+import { useVote, useRemoveVote, useItemDetail } from '../hooks/queries.js';
 import { travelLabel } from '../lib/distance.js';
 import { mapsLink } from '../lib/links.js';
 import { Avatar } from './Avatar.js';
@@ -74,9 +74,10 @@ const DECKS: Deck[] = [
 export function SwipeDeck({ bundle }: { bundle: TripBundle }) {
   const { identity } = useApp();
   const vote = useVote();
+  const removeVote = useRemoveVote();
   const [deckId, setDeckId] = useState('ferrywalk');
   const [idx, setIdx] = useState(0);
-  const [lastVoted, setLastVoted] = useState<string | null>(null);
+  const [lastVote, setLastVote] = useState<{ item: Item; voterIds: string[] } | null>(null);
 
   const family = useMemo(
     () => (identity ? familyVoters(identity.familyId, bundle.members, bundle.children) : []),
@@ -101,19 +102,27 @@ export function SwipeDeck({ bundle }: { bundle: TripBundle }) {
   function selectDeck(id: string) {
     setDeckId(id);
     setIdx(0);
-    setLastVoted(null);
+    setLastVote(null);
   }
 
   const current = items[idx] ?? null;
   const next = items[idx + 1] ?? null;
 
   function handleVote(item: Item) {
-    family.forEach((f) => vote.mutate({ itemId: item.itemId, voterId: f.voterId, value: 1 }));
-    setLastVoted(item.title);
+    const voterIds = family.map((f) => f.voterId);
+    voterIds.forEach((id) => vote.mutate({ itemId: item.itemId, voterId: id, value: 1 }));
+    setLastVote({ item, voterIds });
     setIdx((i) => i + 1);
   }
   function handleSkip() {
+    setLastVote(null);
     setIdx((i) => i + 1);
+  }
+  function undoVote() {
+    if (!lastVote) return;
+    lastVote.voterIds.forEach((id) => removeVote.mutate({ itemId: lastVote.item.itemId, voterId: id }));
+    setLastVote(null);
+    setIdx((i) => Math.max(0, i - 1));
   }
 
   return (
@@ -147,7 +156,7 @@ export function SwipeDeck({ bundle }: { bundle: TripBundle }) {
             <>
               <p>🎉 That's the whole deck!</p>
               <p className="swipe__donesub">You swiped through all {items.length}.</p>
-              <button type="button" className="btn btn--primary" onClick={() => { setIdx(0); setLastVoted(null); }}>
+              <button type="button" className="btn btn--primary" onClick={() => { setIdx(0); setLastVote(null); }}>
                 Start over
               </button>
             </>
@@ -179,7 +188,12 @@ export function SwipeDeck({ bundle }: { bundle: TripBundle }) {
               ✓ Vote ({family.length})
             </button>
           </div>
-          {lastVoted && <p className="swipe__just" aria-live="polite">👍 Voted for {lastVoted}</p>}
+          {lastVote && (
+            <p className="swipe__just" aria-live="polite">
+              👍 Voted for {lastVote.item.title}
+              <button type="button" className="linkbtn" onClick={undoVote}>Undo</button>
+            </p>
+          )}
         </>
       )}
     </div>

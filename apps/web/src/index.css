@@ -139,6 +139,17 @@ input, select, textarea {
 .board__quickchev { font-size: 0.8rem; }
 .board__quickbadge { background: var(--accent); color: #fff; border-radius: 999px; font-size: 0.72rem; font-weight: 700; min-width: 18px; height: 18px; display: inline-grid; place-items: center; padding: 0 5px; }
 
+/* Map legend */
+.legend { display: flex; flex-wrap: wrap; gap: 0.45rem 0.9rem; padding: 0.5rem 0.2rem 0.2rem; font-size: 0.8rem; color: var(--muted); text-transform: capitalize; }
+.legend__row { display: inline-flex; align-items: center; gap: 0.3rem; }
+.legend__chip { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 3px solid #868e96; display: grid; place-items: center; font-size: 12px; line-height: 1; flex: 0 0 auto; }
+.legend__chip--voted { border-color: #f0c000; box-shadow: 0 0 0 2px #f0c000; color: #1b1b1b; }
+.legend__chip--cluster { background: var(--accent); color: #fff; border-color: #fff; font-weight: 700; }
+
+/* One-tap vote on the peek card */
+.btn--vote { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+.peek__voted { color: var(--accent-2); font-weight: 600; font-size: 0.85rem; align-self: center; }
+
 /* "Distance from" central-location picker. */
 .board__centers { display: flex; align-items: center; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.35rem; -webkit-overflow-scrolling: touch; }
 .board__centerslabel { color: var(--muted); font-size: 0.82rem; white-space: nowrap; flex: 0 0 auto; }

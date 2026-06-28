@@ -20,7 +20,7 @@ interface MapViewProps {
 /** Free, no-key vector basemap. Override with VITE_MAP_STYLE (e.g. Amazon Location). */
 const DEFAULT_STYLE = 'https://tiles.openfreemap.org/styles/liberty';
 
-const CATEGORY_COLORS: Record<string, string> = {
+export const CATEGORY_COLORS: Record<string, string> = {
   outdoor: '#2f9e44',
   museum: '#1971c2',
   beach: '#0c8599',
@@ -33,6 +33,14 @@ const CATEGORY_COLORS: Record<string, string> = {
   shopping: '#c2255c',
   other: '#868e96',
 };
+
+/** One representative emoji per category, for the map legend. */
+export function legendEmoji(category: string): string {
+  return ({
+    outdoor: '🌲', museum: '🏛️', beach: '🏖️', playground: '🛝', viewpoint: '⛰️',
+    restaurant: '🍴', lodging: '🛏️', landmark: '🏰', activity: '🎟️', shopping: '🛍️', other: '📍',
+  } as Record<string, string>)[category] ?? '📍';
+}
 
 export function colorFor(item: Item): string {
   if (item.isAnchor) return '#f0b400';
