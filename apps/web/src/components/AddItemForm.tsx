@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { CreateItemInput, type ItemType, type MealType, type Category } from '@tripboard/shared';
+import { CreateItemInput, isShortMapLink, type ItemType, type MealType, type Category } from '@tripboard/shared';
 import { useCreateItem } from '../hooks/queries.js';
+import { useApp } from '../lib/context.js';
 import { parseGoogleMapsCoords, searchPlaces, type GeoResult } from '../lib/geocode.js';
 
 interface FormValues {
@@ -23,6 +24,7 @@ const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack'];
 /** Suggest a new place or meal — find it by name (OpenStreetMap) or paste a Maps link. */
 export function AddItemForm({ onDone }: { onDone: () => void }) {
   const create = useCreateItem();
+  const { api } = useApp();
   const { register, handleSubmit, watch, reset, setValue, getValues, formState } = useForm<FormValues>({
     defaultValues: { type: 'PLACE', title: '', description: '', category: '', mealType: '', address: '', lat: '', lng: '', website: '', imageUrl: '' },
   });
@@ -45,6 +47,27 @@ export function AddItemForm({ onDone }: { onDone: () => void }) {
       setValue('lng', String(coords.lng));
       setResults([]);
       setFindMsg('📍 Pinned from the link — give it a title and add it.');
+      return;
+    }
+    // Short share links (maps.app.goo.gl) carry no coordinates — resolve them server-side.
+    if (isShortMapLink(q)) {
+      setSearching(true);
+      setFindMsg('Resolving link…');
+      try {
+        const r = await api.resolveMapLink(q);
+        if (r) {
+          setValue('lat', String(r.lat));
+          setValue('lng', String(r.lng));
+          setResults([]);
+          setFindMsg('📍 Pinned from the link — give it a title and add it.');
+        } else {
+          setFindMsg('Could not read that short link. Open it, then paste the full URL from the address bar (or long-press the spot in Maps to copy lat, lng).');
+        }
+      } catch {
+        setFindMsg('Could not read that short link. Open it, then paste the full URL from the address bar (or long-press the spot in Maps to copy lat, lng).');
+      } finally {
+        setSearching(false);
+      }
       return;
     }
     setSearching(true);

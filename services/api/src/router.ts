@@ -12,6 +12,7 @@ import {
   Item as ItemSchema,
   allVoters,
   buildItinerary,
+  coordsFromMapUrl,
 } from '@tripboard/shared';
 import type { Item, Vote, Comment, ChildProfile, Expense, Member, Presence } from '@tripboard/shared';
 import { NotFoundError, type Repo } from './repo.js';
@@ -52,9 +53,17 @@ class HttpError extends Error {
 /** "morning" | "afternoon" | "evening" + meal types — used to slot scheduled items. */
 const ALL_SLOTS = ['morning', 'afternoon', 'evening', 'breakfast', 'lunch', 'dinner', 'snack'];
 
-export async function handleRequest(repo: Repo, req: ApiRequest): Promise<ApiResponse> {
+/** Injectable side-effects so routes stay unit-testable (network is stubbed in tests). */
+export interface RouteDeps {
+  /** Follow a Maps short link and pull coordinates out of the resolved URL. */
+  resolveMapLink: (url: string) => Promise<{ lat: number; lng: number } | null>;
+}
+
+const defaultDeps: RouteDeps = { resolveMapLink: resolveMapLinkViaFetch };
+
+export async function handleRequest(repo: Repo, req: ApiRequest, deps: RouteDeps = defaultDeps): Promise<ApiResponse> {
   try {
-    return await route(repo, req);
+    return await route(repo, req, deps);
   } catch (err) {
     if (err instanceof HttpError) return json(err.statusCode, errorBody(err.code, err.message));
     if (err instanceof NotFoundError) return json(404, errorBody('NOT_FOUND', err.message));
@@ -82,12 +91,54 @@ async function requireMember(repo: Repo, tripId: string, identity: Identity): Pr
   return member;
 }
 
-async function route(repo: Repo, req: ApiRequest): Promise<ApiResponse> {
+/** Hosts we're willing to dereference for the Maps-link resolver (anti-SSRF allowlist). */
+const MAP_LINK_HOSTS = /^(?:[a-z0-9-]+\.)*(?:goo\.gl|google\.[a-z.]+|g\.co|apple\.com)$/i;
+
+/**
+ * Follow a Google/Apple Maps short link and extract coordinates from the resolved
+ * URL. Only dereferences known map hosts. Best-effort: returns null on any failure.
+ */
+export async function resolveMapLinkViaFetch(url: string): Promise<{ lat: number; lng: number } | null> {
+  let host: string;
+  try {
+    host = new URL(url).host;
+  } catch {
+    return null;
+  }
+  if (!MAP_LINK_HOSTS.test(host)) return null;
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 6000);
+    const res = await fetch(url, { redirect: 'follow', signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 (TripBoard map resolver)' } });
+    clearTimeout(timer);
+    // Coordinates usually live in the final redirected URL; fall back to the body.
+    const fromUrl = coordsFromMapUrl(res.url);
+    if (fromUrl) return fromUrl;
+    const text = await res.text();
+    return coordsFromMapUrl(text);
+  } catch {
+    return null;
+  }
+}
+
+async function route(repo: Repo, req: ApiRequest, deps: RouteDeps): Promise<ApiResponse> {
   const seg = segments(req.path);
   const { method } = req;
 
   // GET /health
   if (seg.length === 1 && seg[0] === 'health') return json(200, { ok: true });
+
+  // GET /resolve-map?url=...  — dereference a Maps short link → { lat, lng }
+  if (seg.length === 1 && seg[0] === 'resolve-map') {
+    if (method !== 'GET') throw new HttpError(405, 'METHOD_NOT_ALLOWED', `${method} not allowed`);
+    const url = req.query['url'];
+    if (!url) throw new HttpError(400, 'VALIDATION', 'url query param is required');
+    // A full URL may already carry coordinates — try that before any network call.
+    const direct = coordsFromMapUrl(url);
+    const coords = direct ?? (await deps.resolveMapLink(url));
+    if (!coords) throw new HttpError(422, 'UNRESOLVED', 'could not extract coordinates from that link');
+    return json(200, coords);
+  }
 
   // /trips/...
   if (seg[0] !== 'trips' || seg.length < 2) {

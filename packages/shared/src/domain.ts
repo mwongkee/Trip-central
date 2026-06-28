@@ -182,3 +182,35 @@ export function totalsByCategory(expenses: Expense[]): Record<string, number> {
   }
   return out;
 }
+
+/**
+ * Extract `{ lat, lng }` from a Google/Apple Maps URL or a bare "lat, lng" string.
+ * Handles the full-URL forms (@lat,lng · !3d..!4d.. · ?q=/ll=/destination=lat,lng).
+ * Returns null for short share links (maps.app.goo.gl) — those carry no coordinates
+ * and must be redirect-resolved server-side first. Pure + shared by web and api.
+ */
+export function coordsFromMapUrl(input: string): { lat: number; lng: number } | null {
+  if (!input) return null;
+  const valid = (lat: number, lng: number): boolean =>
+    Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180;
+  const pats = [
+    /@(-?\d{1,3}\.\d+),(-?\d{1,3}\.\d+)/, // /place/.../@44.64,-63.56,17z
+    /!3d(-?\d{1,3}\.\d+)!4d(-?\d{1,3}\.\d+)/, // data=...!3d44.64!4d-63.56
+    /[?&](?:q|query|ll|sll|daddr|destination|center)=(-?\d{1,3}\.\d+)(?:,|%2C)(-?\d{1,3}\.\d+)/i,
+    /^\s*(-?\d{1,3}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)\s*$/, // bare "44.64, -63.56"
+  ];
+  for (const p of pats) {
+    const m = input.match(p);
+    if (m) {
+      const lat = Number(m[1]);
+      const lng = Number(m[2]);
+      if (valid(lat, lng)) return { lat, lng };
+    }
+  }
+  return null;
+}
+
+/** A Google/Apple Maps short share link whose target must be resolved server-side. */
+export function isShortMapLink(input: string): boolean {
+  return /\b(?:maps\.app\.goo\.gl|goo\.gl\/maps|g\.co\/kgs|maps\.apple\.com)\b/i.test(input.trim());
+}

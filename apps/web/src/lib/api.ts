@@ -28,6 +28,8 @@ export interface Api {
   sharePresence(lat: number, lng: number): Promise<void>;
   stopPresence(): Promise<void>;
   getPresence(): Promise<Presence[]>;
+  /** Resolve a Maps short link (maps.app.goo.gl) to coordinates, or null. */
+  resolveMapLink(url: string): Promise<{ lat: number; lng: number } | null>;
   reset?(): void;
 }
 
@@ -113,6 +115,10 @@ class HttpApi implements Api {
   async getPresence(): Promise<Presence[]> {
     const r = await this.req<{ presences: Presence[] }>('GET', this.t('/presence'));
     return r.presences;
+  }
+  async resolveMapLink(url: string): Promise<{ lat: number; lng: number } | null> {
+    // Top-level route (not trip-scoped); returns 422 when no coords can be found.
+    return this.req<{ lat: number; lng: number }>('GET', `/resolve-map?url=${encodeURIComponent(url)}`).catch(() => null);
   }
 }
 

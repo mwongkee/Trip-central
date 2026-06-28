@@ -8,6 +8,8 @@ import {
   familyVoters,
   haversineKm,
   travelMinutes,
+  coordsFromMapUrl,
+  isShortMapLink,
 } from './domain.js';
 import type { Expense, Item, Member, ChildProfile, Vote } from './schemas.js';
 
@@ -182,5 +184,27 @@ describe('buildItinerary', () => {
     );
     expect(out.map((d) => d.date)).toEqual(['2026-07-01', '2026-07-02']);
     expect(out[1]!.slots.map((s) => s.slot)).toEqual(['dinner', 'morning']);
+  });
+});
+
+describe('coordsFromMapUrl / isShortMapLink', () => {
+  it('reads @lat,lng, !3d!4d, q=, and bare coords', () => {
+    expect(coordsFromMapUrl('https://www.google.com/maps/place/X/@44.65,-63.57,17z')).toEqual({ lat: 44.65, lng: -63.57 });
+    expect(coordsFromMapUrl('https://maps.google.com/?q=44.6488,-63.5752')).toEqual({ lat: 44.6488, lng: -63.5752 });
+    expect(coordsFromMapUrl('data=...!3d44.7218!4d-63.5846')).toEqual({ lat: 44.7218, lng: -63.5846 });
+    expect(coordsFromMapUrl('44.65, -63.57')).toEqual({ lat: 44.65, lng: -63.57 });
+  });
+
+  it('returns null for short links and junk', () => {
+    expect(coordsFromMapUrl('https://maps.app.goo.gl/abc123')).toBeNull();
+    expect(coordsFromMapUrl('Bar Kismet')).toBeNull();
+    expect(coordsFromMapUrl('')).toBeNull();
+  });
+
+  it('flags short share links that need server resolution', () => {
+    expect(isShortMapLink('https://maps.app.goo.gl/abc')).toBe(true);
+    expect(isShortMapLink('https://goo.gl/maps/abc')).toBe(true);
+    expect(isShortMapLink('https://www.google.com/maps/place/X/@44.65,-63.57,17z')).toBe(false);
+    expect(isShortMapLink('Bar Kismet')).toBe(false);
   });
 });

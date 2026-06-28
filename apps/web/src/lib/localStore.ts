@@ -1,5 +1,6 @@
 import {
   allVoters,
+  coordsFromMapUrl,
   type Trip,
   type Member,
   type ChildProfile,
@@ -232,6 +233,11 @@ export class LocalStore {
 
   async getPresence(): Promise<Presence[]> {
     return this.presence ? [this.presence] : [];
+  }
+
+  async resolveMapLink(url: string): Promise<{ lat: number; lng: number } | null> {
+    // No server to follow redirects in local mode — only full URLs/coords work here.
+    return coordsFromMapUrl(url);
   }
 
   async join(input: JoinInput): Promise<Member> {

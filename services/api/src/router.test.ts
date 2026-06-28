@@ -184,6 +184,47 @@ describe('presence (shared location)', () => {
   });
 });
 
+describe('resolve-map (Maps short-link → coords)', () => {
+  it('extracts coords from a full URL without any network call', async () => {
+    let called = false;
+    const deps = { resolveMapLink: async () => { called = true; return null; } };
+    const res = await handleRequest(
+      makeRepo(),
+      req({ path: '/resolve-map', query: { url: 'https://www.google.com/maps/place/X/@44.65,-63.57,17z' } }),
+      deps,
+    );
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toEqual({ lat: 44.65, lng: -63.57 });
+    expect(called).toBe(false);
+  });
+
+  it('falls back to the resolver for a short link', async () => {
+    const deps = { resolveMapLink: async () => ({ lat: 44.7218, lng: -63.5846 }) };
+    const res = await handleRequest(
+      makeRepo(),
+      req({ path: '/resolve-map', query: { url: 'https://maps.app.goo.gl/abc123' } }),
+      deps,
+    );
+    expect(res.statusCode).toBe(200);
+    expect(res.body).toEqual({ lat: 44.7218, lng: -63.5846 });
+  });
+
+  it('422 when nothing can be resolved', async () => {
+    const deps = { resolveMapLink: async () => null };
+    const res = await handleRequest(
+      makeRepo(),
+      req({ path: '/resolve-map', query: { url: 'https://maps.app.goo.gl/nope' } }),
+      deps,
+    );
+    expect(res.statusCode).toBe(422);
+  });
+
+  it('400 without a url param', async () => {
+    const res = await handleRequest(makeRepo(), req({ path: '/resolve-map' }), { resolveMapLink: async () => null });
+    expect(res.statusCode).toBe(400);
+  });
+});
+
 describe('applyItemUpdate', () => {
   const meal: Item = {
     entity: 'item',
