@@ -14,6 +14,34 @@ import { Avatar } from './Avatar.js';
 type StatusFilter = 'all' | 'suggested' | 'scheduled' | 'done';
 type TypeFilter = 'all' | ItemType;
 
+// Coarse "lens" — a one-tap view mode that flips the whole board between
+// high-level groupings. Single-select; ANDed with every other filter.
+type LensId = 'all' | 'attractions' | 'food' | 'indoor' | 'outdoor' | 'stay';
+
+const LENSES: { id: LensId; label: string; match: (i: Item) => boolean }[] = [
+  { id: 'all', label: '🧭 All', match: () => true },
+  {
+    id: 'attractions',
+    label: '🎟️ See & do',
+    match: (i) => ['museum', 'viewpoint', 'landmark', 'activity', 'playground', 'beach', 'outdoor'].includes(i.category ?? ''),
+  },
+  { id: 'food', label: '🍴 Food', match: (i) => i.type === 'MEAL' || i.category === 'restaurant' },
+  {
+    id: 'indoor',
+    label: '🏛️ Indoor',
+    match: (i) => ['museum', 'shopping'].includes(i.category ?? '') || i.tags.includes('rainy-day'),
+  },
+  {
+    id: 'outdoor',
+    label: '🌲 Outdoor',
+    match: (i) =>
+      ['outdoor', 'beach', 'viewpoint', 'playground'].includes(i.category ?? '') ||
+      i.tags.includes('trails') ||
+      i.tags.includes('beach'),
+  },
+  { id: 'stay', label: '🛏️ Stay', match: (i) => i.category === 'lodging' || i.isAnchor },
+];
+
 export function Board({ bundle }: { bundle: TripBundle }) {
   const { identity } = useApp();
   const [query, setQuery] = useState('');
@@ -27,6 +55,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   const [kidMode, setKidMode] = useState(false);
   const [foodMode, setFoodMode] = useState(false);
   const [votedOnly, setVotedOnly] = useState(false);
+  const [lens, setLens] = useState<LensId>('all');
   const [maxPrice, setMaxPrice] = useState<number | null>(null); // cents; null = any
   const [cats, setCats] = useState<Set<string>>(new Set());
   const [tagFilter, setTagFilter] = useState<Set<string>>(new Set());
@@ -129,6 +158,10 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       );
     if (foodMode) items = items.filter((i) => i.type === 'MEAL' || i.category === 'restaurant');
     if (votedOnly) items = items.filter((i) => i.voteCount > 0);
+    if (lens !== 'all') {
+      const def = LENSES.find((l) => l.id === lens)!;
+      items = items.filter((i) => def.match(i));
+    }
     if (maxPrice != null) items = items.filter((i) => (i.estCost ?? 0) <= maxPrice);
     if (radiusMin && center) {
       items = items.filter(
@@ -140,7 +173,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       if (a.isAnchor !== b.isAnchor) return a.isAnchor ? -1 : 1;
       return b.voteScore - a.voteScore;
     });
-  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, kidMode, foodMode, votedOnly, maxPrice, radiusMin, travelMode, center]);
+  }, [query, fuse, bundle.items, typeFilter, statusFilter, cats, tagFilter, kidMode, foodMode, votedOnly, lens, maxPrice, radiusMin, travelMode, center]);
 
   const activeFilterCount =
     (typeFilter !== 'all' ? 1 : 0) +
@@ -150,6 +183,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     (kidMode ? 1 : 0) +
     (foodMode ? 1 : 0) +
     (votedOnly ? 1 : 0) +
+    (lens !== 'all' ? 1 : 0) +
     (maxPrice != null ? 1 : 0) +
     (radiusMin ? 1 : 0);
 
@@ -161,6 +195,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     setKidMode(false);
     setFoodMode(false);
     setVotedOnly(false);
+    setLens('all');
     setMaxPrice(null);
     setRadiusMin(null);
     setNearMe(false);
@@ -245,7 +280,8 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       {(query.trim() || activeFilterCount > 0) && (
         <p className="board__results" aria-live="polite">
           <strong>{filtered.length}</strong> result{filtered.length === 1 ? '' : 's'}
-          {query.trim() ? ` for “${query.trim()}”` : ''} · shown on the map
+          {query.trim() ? ` for “${query.trim()}”` : ''}
+          {lens !== 'all' ? ` · ${LENSES.find((l) => l.id === lens)!.label}` : ''} · shown on the map
           {filtered.length > 0 && filtered.filter((i) => i.lat != null).length < filtered.length &&
             ` (${filtered.filter((i) => i.lat != null).length} on map)`}
           {query.trim() && (
@@ -277,6 +313,20 @@ export function Board({ bundle }: { bundle: TripBundle }) {
           {filtered.length > 8 && <li className="searchresults__more">+{filtered.length - 8} more in the list below</li>}
         </ul>
       )}
+
+      <div className="board__lenses" role="group" aria-label="View lens">
+        {LENSES.map((l) => (
+          <button
+            key={l.id}
+            type="button"
+            className={`fchip lens ${lens === l.id ? 'fchip--on lens--on' : ''}`}
+            aria-pressed={lens === l.id}
+            onClick={() => setLens(l.id)}
+          >
+            {l.label}
+          </button>
+        ))}
+      </div>
 
       <div className="board__presets" role="group" aria-label="Quick filters">
         <button type="button" className={`fchip ${nearMe ? 'fchip--on' : ''}`} aria-pressed={nearMe} onClick={useMyLocation}>📍 Near me</button>
