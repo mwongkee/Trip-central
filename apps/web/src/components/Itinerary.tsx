@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { buildItinerary, type Item } from '@tripboard/shared';
 import { MapView } from './MapView.js';
 
-/** Home base switches from the Dartmouth hotel to the Rose Bay Airbnb on this date. */
-const AIRBNB_FROM = '2026-06-30';
+/** Cutover day: hotel through June 30, Airbnb from June 30 — and BOTH shown on June 30. */
+const CUTOVER = '2026-06-30';
 
 function fmtDay(date: string): string {
   return new Date(`${date}T00:00:00`).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
@@ -16,7 +16,16 @@ export function Itinerary({ items, onSelect }: { items: Item[]; onSelect: (itemI
 
   const hotel = items.find((i) => i.isAnchor && i.anchorRole === 'hotel') ?? null;
   const airbnb = items.find((i) => i.isAnchor && i.anchorRole === 'airbnb') ?? null;
-  const lodgingFor = (date: string): Item | null => (date >= AIRBNB_FROM ? airbnb : hotel) ?? hotel ?? airbnb;
+  /** Home base(s) for a date: hotel through June 30, Airbnb from June 30, both on June 30. */
+  const lodgingsFor = (date: string): Item[] => {
+    const out: Item[] = [];
+    if (date <= CUTOVER && hotel) out.push(hotel);
+    if (date >= CUTOVER && airbnb) out.push(airbnb);
+    if (out.length === 0) out.push(...([hotel, airbnb].filter((x): x is Item => !!x)));
+    return out;
+  };
+  const baseLabel = (ls: Item[]): string =>
+    ls.map((l) => (l.anchorRole === 'airbnb' ? '🏠 Airbnb' : '🏨 Hotel')).join(' + ');
 
   const todayISO = new Date().toISOString().slice(0, 10);
   const [selDate, setSelDate] = useState<string | null>(null);
@@ -31,18 +40,19 @@ export function Itinerary({ items, onSelect }: { items: Item[]; onSelect: (itemI
     return d ? d.slots.flatMap((s) => s.items) : [];
   }, [days, active]);
 
-  const lodging = lodgingFor(active ?? todayISO);
+  const lodgings = lodgingsFor(active ?? todayISO);
 
   const mapItems = useMemo(() => {
     const arr = dayItems.filter((i) => i.lat != null && i.lng != null);
-    if (lodging && !arr.some((i) => i.itemId === lodging.itemId)) arr.push(lodging);
+    for (const l of lodgings) if (!arr.some((i) => i.itemId === l.itemId)) arr.push(l);
     return arr;
-  }, [dayItems, lodging]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dayItems, active]);
 
   // Recenter the map on the day's home base whenever the selected day changes.
   const [focus, setFocus] = useState<{ lat: number; lng: number; nonce: number } | null>(null);
   useEffect(() => {
-    const target = mapItems.find((i) => i.itemId === lodging?.itemId) ?? mapItems[0];
+    const target = lodgings[0] ?? mapItems[0];
     if (target && target.lat != null && target.lng != null) {
       setFocus({ lat: target.lat, lng: target.lng, nonce: Date.now() });
     }
@@ -55,7 +65,7 @@ export function Itinerary({ items, onSelect }: { items: Item[]; onSelect: (itemI
         <MapView items={mapItems} selectedId={null} onSelect={onSelect} focus={focus} />
         <p className="board__maphint">
           {active ? `${fmtDay(active)} · ${dayItems.length} stop${dayItems.length === 1 ? '' : 's'}` : 'Your plan'}
-          {lodging ? ` · base: ${lodging.anchorRole === 'airbnb' ? '🏠 Airbnb' : '🏨 Hotel'}` : ''}
+          {lodgings.length ? ` · base: ${baseLabel(lodgings)}` : ''}
         </p>
       </aside>
 
@@ -87,7 +97,7 @@ export function Itinerary({ items, onSelect }: { items: Item[]; onSelect: (itemI
             <h3 className="itin__date">
               <button type="button" className="itin__datebtn" onClick={() => setSelDate(day.date)}>
                 {fmtDay(day.date)}
-                <span className="itin__base">{(lodgingFor(day.date)?.anchorRole === 'airbnb') ? ' 🏠' : ' 🏨'}</span>
+                <span className="itin__base"> {lodgingsFor(day.date).map((l) => (l.anchorRole === 'airbnb' ? '🏠' : '🏨')).join('')}</span>
               </button>
             </h3>
             {day.slots.map((slot) => (
