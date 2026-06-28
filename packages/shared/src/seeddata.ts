@@ -133,10 +133,11 @@ export function seedItems(): Item[] {
       anchorRole: 'airbnb',
       address: 'Rose Bay, NS',
     }),
-    place('item-hotel', 'The Hotel (Dartmouth)', 'lodging', 44.6655, -63.5669, 'Second base in Dartmouth, by the Alderney ferry.', {
+    place('item-hotel', 'Staybridge Suites Halifax - Dartmouth', 'lodging', 44.7218, -63.5846, 'Dartmouth home base — Staybridge Suites by IHG in Burnside, minutes from Dartmouth Crossing and Shubie Park.', {
       isAnchor: true,
       anchorRole: 'hotel',
-      address: 'Downtown Dartmouth, NS',
+      address: '335 John Savage Ave, Dartmouth, NS B3B 0J3',
+      website: 'https://www.ihg.com/staybridge/hotels/us/en/halifax/yhzfx/hoteldetail',
     }),
 
     // ---- Tonight: ferry Dartmouth → Halifax, then walk the waterfront ----
