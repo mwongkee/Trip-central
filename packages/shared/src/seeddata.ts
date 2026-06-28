@@ -438,6 +438,22 @@ export function seedItems(): Item[] {
     // ---- Best family beach (drive) ----
     place('item-hubbards', 'Hubbards Beach', 'beach', 44.6320, -64.0820, 'Sandy beach with a floating dock and nearby canteen, ~45 min from Halifax.', { address: 'Hubbards, NS', tags: ['beach', 'kids', 'daytrip'] }),
 
+    // ---- Kid nature adventures (Halifax Public Libraries) ----
+    place('item-frogpond', 'Frog Pond', 'outdoor', 44.6288, -63.6100, 'Easy, mostly-flat loop around a pond in Sir Sandford Fleming Park — rock formations to clamber and ducks to watch; ~20 min for adults, up to an hour for toddlers.', { address: 'Dingle Rd, Halifax', tags: ['trails', 'kids', 'stroller-friendly'] }),
+    place('item-hemlockravine', 'Hemlock Ravine Park', 'outdoor', 44.7058, -63.6510, 'Shady mature-forest trails off the Bedford Highway leading to the heart-shaped pond built by Prince Edward — cool on hot days, easy gravel paths.', { address: 'Kent Ave, Halifax', tags: ['trails', 'kids'] }),
+    place('item-saltmarsh', 'Salt Marsh Trail', 'outdoor', 44.6520, -63.4470, 'Flat former-rail trail across the Cole Harbour salt marsh — birds, water views and turtles; part of the Trans Canada Trail.', { address: 'Bissett Rd, Cole Harbour', tags: ['trails', 'kids', 'stroller-friendly'] }),
+
+    // ---- More Halifax restaurants (community favourites) ----
+    place('item-studioeast', 'Studio East Food + Drink', 'restaurant', 44.6470, -63.5990, 'Inventive pan-Asian small plates on Quinpool — a local favourite.', { address: '6021 Cunard St, Halifax', tags: ['kids'] }),
+    place('item-coastalcafe', 'The Coastal Café', 'restaurant', 44.6585, -63.5965, 'Beloved all-day brunch institution in the North End.', { address: '2731 Robie St, Halifax', tags: ['kids'] }),
+    place('item-cardinal', 'Cardinal', 'restaurant', 44.6600, -63.6000, 'Creative brunch and dinner spot in the North End.', { address: '5670 Cornwallis St, Halifax' }),
+    place('item-ostrichclub', 'Ostrich Club', 'restaurant', 44.6555, -63.5900, 'Acclaimed wood-fired North-End restaurant and natural-wine bar.', { address: '2454 Agricola St, Halifax' }),
+    place('item-lionbright', 'Lion & Bright', 'restaurant', 44.6575, -63.5930, 'Café by day, wine bar by night on Agricola St.', { address: '2534 Agricola St, Halifax', tags: ['kids'] }),
+    place('item-glitterbean', 'Glitter Bean Café', 'restaurant', 44.6440, -63.5800, 'Worker-owned coffee bar just off Spring Garden Rd.', { address: '5896 Spring Garden Rd, Halifax', tags: ['walkable', 'kids'] }),
+    place('item-elagreek', 'Ela! Greek Taverna', 'restaurant', 44.6472, -63.5720, 'Modern Greek small plates downtown.', { address: '1565 Argyle St, Halifax', tags: ['walkable'] }),
+    place('item-mappatura', 'Mappatura Bistro', 'restaurant', 44.6478, -63.5735, 'Fresh handmade pasta and Italian plates downtown.', { address: '5883 Spring Garden Rd, Halifax', tags: ['walkable'] }),
+    place('item-auctionhouse', 'The Auction House', 'restaurant', 44.6483, -63.5728, 'Argyle St restaurant and live-music venue.', { address: '1726 Argyle St, Halifax', tags: ['walkable'] }),
+
     // ---- Meals ----
     meal('meal-lobster', 'Lobster rolls on the boardwalk', 'dinner', 'Fresh rolls on the Halifax waterfront — perfect after the ferry tonight.', {
       lat: 44.6476, lng: -63.5683, address: 'Halifax Waterfront', category: 'restaurant', tags: ['walkable', 'ferry', 'tonight'],

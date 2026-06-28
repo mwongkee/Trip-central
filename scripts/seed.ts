@@ -54,31 +54,45 @@ async function main(): Promise<void> {
     marshallOptions: { removeUndefinedValues: true },
   });
 
-  // 1. Clear the trip partition, and each item's vote/comment partition.
-  const tripKeys = await queryKeys(ddb, tripPk(DEMO_TRIP_ID));
-  const itemIds = tripKeys
-    .filter((k) => k.SK.startsWith('ITEM#'))
-    .map((k) => k.SK.slice('ITEM#'.length));
-  const childKeys: Key[] = [];
-  for (const itemId of itemIds) childKeys.push(...(await queryKeys(ddb, itemPk(itemId))));
-  const toDelete = [...tripKeys, ...childKeys];
-  if (toDelete.length > 0) {
-    await batch(ddb, toDelete.map((Key) => ({ DeleteRequest: { Key } })));
-    // eslint-disable-next-line no-console
-    console.log(`Cleared ${toDelete.length} existing records.`);
+  // Additive by default: only insert items that don't exist yet, so existing
+  // items keep their votes/comments and denormalized scores. Set SEED_RESET=1
+  // to fully clear and rewrite the trip (wipes votes — use intentionally).
+  const reset = process.env.SEED_RESET === '1';
+
+  const existingKeys = await queryKeys(ddb, tripPk(DEMO_TRIP_ID));
+  const existingItemIds = new Set(
+    existingKeys.filter((k) => k.SK.startsWith('ITEM#')).map((k) => k.SK.slice('ITEM#'.length)),
+  );
+
+  if (reset) {
+    const childKeys: Key[] = [];
+    for (const itemId of existingItemIds) childKeys.push(...(await queryKeys(ddb, itemPk(itemId))));
+    const toDelete = [...existingKeys, ...childKeys];
+    if (toDelete.length > 0) {
+      await batch(ddb, toDelete.map((Key) => ({ DeleteRequest: { Key } })));
+      // eslint-disable-next-line no-console
+      console.log(`RESET: cleared ${toDelete.length} existing records.`);
+    }
+    existingItemIds.clear();
   }
 
-  // 2. Write fresh seed.
+  // Trip meta + roster are safe to upsert (no votes attached). Items: insert
+  // only the ones not already present so we never reset a voted item's score.
+  const newItems = seedItems().filter((i) => !existingItemIds.has(i.itemId));
   const records: Record<string, unknown>[] = [
     tripRecord(seedTrip()),
     ...seedMembers().map(memberRecord),
     ...seedChildren().map(childRecord),
-    ...seedItems().map(itemRecord),
+    ...newItems.map(itemRecord),
   ];
   await batch(ddb, records.map((Item) => ({ PutRequest: { Item } })));
 
   // eslint-disable-next-line no-console
-  console.log(`Seeded ${records.length} records into ${TABLE_NAME}.`);
+  console.log(
+    reset
+      ? `Seeded ${records.length} records into ${TABLE_NAME}.`
+      : `Additive seed: upserted trip/roster + ${newItems.length} new item(s) into ${TABLE_NAME} (existing items & votes preserved).`,
+  );
 }
 
 main().catch((err) => {
