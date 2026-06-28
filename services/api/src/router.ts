@@ -202,6 +202,11 @@ async function routeItems(
 
   // /items/{itemId}
   if (rest.length === 1) {
+    if (method === 'GET') {
+      const detail = await repo.getItemDetail(tripId, itemId);
+      if (!detail) throw new NotFoundError('item not found');
+      return json(200, detail);
+    }
     if (method === 'PATCH') {
       const identity = requireIdentity(req);
       await requireMember(repo, tripId, identity);

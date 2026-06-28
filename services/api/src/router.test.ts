@@ -95,6 +95,21 @@ describe('items + family voting (M2)', () => {
     expect(detail!.votes.find((v) => v.voterId === 'child-emmett')!.castByUserId).toBe('user-lewis');
   });
 
+  it('GET /items/{id} returns the detail with the full voter list', async () => {
+    const item = await createPlace();
+    for (const voterId of ['user-lewis', 'child-emmett']) {
+      await handleRequest(
+        repo,
+        req({ method: 'POST', path: `/trips/${TRIP}/items/${item.itemId}/votes`, identity: lewis, body: { voterId, value: 1 } }),
+      );
+    }
+    const res = await handleRequest(repo, req({ method: 'GET', path: `/trips/${TRIP}/items/${item.itemId}` }));
+    expect(res.statusCode).toBe(200);
+    const detail = res.body as { item: { voteScore: number }; votes: { voterId: string }[] };
+    expect(detail.item.voteScore).toBe(2);
+    expect(detail.votes.map((v) => v.voterId).sort()).toEqual(['child-emmett', 'user-lewis']);
+  });
+
   it('re-voting the same voter is idempotent on the count', async () => {
     const item = await createPlace();
     const cast = (value: number) =>
