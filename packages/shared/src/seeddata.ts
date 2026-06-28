@@ -601,6 +601,19 @@ export function seedItems(): Item[] {
     place('item-sweetjanes', "Sweet Jane's", 'restaurant', 44.6460, -63.5705, 'Vintage candy, retro toys and gourmet treats on Queen St — a kid magnet.', { address: 'Queen St, Halifax', tags: ['walkable', 'kids'] }),
     place('item-amospewter', 'Amos Pewter', 'shopping', 44.6470, -63.5686, 'Waterfront pewter workshop — watch pieces being hand-cast.', { address: 'Halifax Waterfront', tags: ['walkable', 'kids'] }),
 
+    // ---- South Shore: Lunenburg (novascotia.com) ----
+    place('item-bluenoselunenburg', 'Bluenose II (Lunenburg)', 'activity', 44.3760, -64.3140, "Tour or sail the famous Bluenose II from its Lunenburg home port (when she's in).", { address: 'Bluenose Dr, Lunenburg', tags: ['photos', 'daytrip', 'walkable'] }),
+    place('item-ironworks', 'Ironworks Distillery', 'restaurant', 44.3758, -64.3082, 'Small-batch spirits in a historic blacksmith shop — tastings and a 45-min tour.', { address: '2 Kempt St, Lunenburg', tags: ['walkable'] }),
+    place('item-bluerocks', 'Blue Rocks', 'viewpoint', 44.3570, -64.2700, 'Tiny working fishing village with blue-slate shores — classic Nova Scotia scenery and great kayaking.', { address: 'Blue Rocks, NS', tags: ['photos', 'daytrip'] }),
+    place('item-pleasantpaddling', 'Pleasant Paddling', 'activity', 44.3575, -64.2710, 'Guided kayak & paddleboard tours and rentals around the Blue Rocks islands.', { address: 'Blue Rocks, NS', tags: ['kids', 'daytrip'] }),
+    place('item-trotntime', 'Trot in Time', 'activity', 44.3762, -64.3110, 'Horse-and-buggy tour of Old Town Lunenburg from the waterfront — a kid favourite.', { address: 'Lunenburg Waterfront', tags: ['walkable', 'kids'] }),
+    place('item-lunenburgocean', 'Lunenburg Ocean Adventures', 'activity', 44.3758, -64.3100, 'Scenic and lobster-fishing boat tours from the Lunenburg waterfront.', { address: 'Lunenburg Waterfront', tags: ['kids', 'photos', 'daytrip'] }),
+    place('item-shipwright', 'Shipwright Brewing Co.', 'restaurant', 44.3770, -64.3072, 'Lunenburg craft brewery and taproom.', { address: 'Lunenburg', tags: ['walkable'] }),
+    place('item-tinroof', 'Tin Roof Distillery', 'restaurant', 44.3765, -64.3076, 'Small-batch distillery on the Good Cheer Trail, Lunenburg.', { address: 'Lunenburg', tags: ['walkable'] }),
+    place('item-lightship', 'Lightship Brewery', 'restaurant', 44.3768, -64.3060, 'Lunenburg microbrewery taproom.', { address: 'Lunenburg', tags: ['walkable'] }),
+    place('item-grandbanker', 'The Grand Banker Bar & Grill', 'restaurant', 44.3760, -64.3090, 'Waterfront seafood — chowder, lobster and live music, Lunenburg.', { address: '82 Montague St, Lunenburg', tags: ['walkable', 'kids'] }),
+    place('item-knotpub', 'The Knot Pub', 'restaurant', 44.3772, -64.3066, 'Cozy local pub — fish & chips and pints, Lunenburg.', { address: '4 Dufferin St, Lunenburg', tags: ['walkable'] }),
+
     // ---- Meals ----
     meal('meal-lobster', 'Lobster rolls on the boardwalk', 'dinner', 'Fresh rolls on the Halifax waterfront — perfect after the ferry tonight.', {
       lat: 44.6476, lng: -63.5683, address: 'Halifax Waterfront', category: 'restaurant', tags: ['walkable', 'ferry', 'tonight'],
