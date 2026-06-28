@@ -4,6 +4,38 @@ import { useApp } from '../lib/context.js';
 
 const BUNDLE_KEY = ['bundle'];
 
+/**
+ * Best-effort real photo from Wikipedia's public API (runs in the browser, no key,
+ * CORS via origin=*). Returns a thumbnail URL when the place has a Wikipedia page,
+ * else null so callers fall back to the placeholder. Cached forever per query.
+ */
+export function useWikiImage(title: string | null) {
+  return useQuery({
+    queryKey: ['wikiimg', title],
+    enabled: !!title,
+    staleTime: Infinity,
+    gcTime: Infinity,
+    retry: false,
+    queryFn: async (): Promise<string | null> => {
+      const url =
+        'https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*' +
+        '&prop=pageimages&piprop=thumbnail&pithumbsize=900&redirects=1&titles=' +
+        encodeURIComponent(title!);
+      const res = await fetch(url);
+      if (!res.ok) return null;
+      const data = (await res.json()) as {
+        query?: { pages?: Record<string, { thumbnail?: { source?: string } }> };
+      };
+      const pages = data.query?.pages ?? {};
+      for (const key of Object.keys(pages)) {
+        const src = pages[key]?.thumbnail?.source;
+        if (src) return src;
+      }
+      return null;
+    },
+  });
+}
+
 export function useBundle() {
   const { api } = useApp();
   return useQuery({ queryKey: BUNDLE_KEY, queryFn: () => api.getBundle() });

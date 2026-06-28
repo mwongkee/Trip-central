@@ -6,6 +6,7 @@ import { ItemCard } from './ItemCard.js';
 import { MapView } from './MapView.js';
 import { AddItemForm } from './AddItemForm.js';
 import { Itinerary } from './Itinerary.js';
+import { SwipeDeck } from './SwipeDeck.js';
 import { usePresence, useItemDetail } from '../hooks/queries.js';
 import { useLocationShare } from '../hooks/useLocationShare.js';
 import { mapsLink } from '../lib/links.js';
@@ -57,7 +58,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
-  const [view, setView] = useState<'board' | 'itinerary'>('board');
+  const [view, setView] = useState<'board' | 'swipe' | 'itinerary'>('board');
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [kidMode, setKidMode] = useState(false);
   const [foodMode, setFoodMode] = useState(false);
@@ -288,6 +289,15 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         <button
           type="button"
           role="tab"
+          aria-selected={view === 'swipe'}
+          className={`tab ${view === 'swipe' ? 'tab--on' : ''}`}
+          onClick={() => setView('swipe')}
+        >
+          🔥 Swipe
+        </button>
+        <button
+          type="button"
+          role="tab"
           aria-selected={view === 'itinerary'}
           className={`tab ${view === 'itinerary' ? 'tab--on' : ''}`}
           onClick={() => setView('itinerary')}
@@ -298,6 +308,8 @@ export function Board({ bundle }: { bundle: TripBundle }) {
 
       {view === 'itinerary' ? (
         <Itinerary items={bundle.items} onSelect={(id) => { setView('board'); select(id); }} />
+      ) : view === 'swipe' ? (
+        <SwipeDeck bundle={bundle} />
       ) : (
         boardMain()
       )}

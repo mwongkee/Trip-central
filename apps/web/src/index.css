@@ -141,6 +141,37 @@ input, select, textarea {
 .board__centers { display: flex; align-items: center; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.35rem; -webkit-overflow-scrolling: touch; }
 .board__centerslabel { color: var(--muted); font-size: 0.82rem; white-space: nowrap; flex: 0 0 auto; }
 
+/* ---- Swipe ("tinder") deck ---- */
+.swipe { display: flex; flex-direction: column; gap: 0.6rem; }
+.swipe__centers { display: flex; align-items: center; gap: 0.4rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.swipe__count { margin-left: auto; color: var(--muted); font-size: 0.82rem; white-space: nowrap; }
+.swipe__stack { position: relative; height: 64vh; min-height: 420px; }
+.swipe__card { position: absolute; inset: 0; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); touch-action: pan-y; user-select: none; }
+.swipe__card--behind { pointer-events: none; opacity: 0.6; }
+.swipe__photo { position: relative; height: 46%; min-height: 180px; background: var(--panel-2); }
+.swipe__photo img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.swipe__dist { position: absolute; bottom: 8px; left: 8px; background: rgba(0, 0, 0, 0.66); color: #fff; border-radius: 999px; padding: 0.2rem 0.6rem; font-size: 0.82rem; font-weight: 600; }
+.swipe__info { padding: 0.7rem 0.9rem; display: flex; flex-direction: column; gap: 0.4rem; overflow-y: auto; }
+.swipe__title { margin: 0; font-size: 1.2rem; }
+.swipe__meta { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; }
+.swipe__desc { margin: 0; color: var(--text); font-size: 0.92rem; }
+.swipe__addr { margin: 0; color: var(--muted); font-size: 0.82rem; }
+.swipe__voters { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem; }
+.swipe__voternames { color: var(--muted); font-size: 0.8rem; margin-left: 0.3rem; }
+.swipe__links { display: flex; gap: 0.5rem; margin-top: 0.2rem; }
+.swipe__stamp { position: absolute; top: 18px; z-index: 2; font-weight: 800; font-size: 1.4rem; letter-spacing: 1px; padding: 0.2rem 0.7rem; border-radius: 10px; border: 3px solid; }
+.swipe__stamp--vote { right: 18px; transform: rotate(12deg); color: var(--accent-2); border-color: var(--accent-2); }
+.swipe__stamp--skip { left: 18px; transform: rotate(-12deg); color: var(--danger); border-color: var(--danger); }
+.swipe__actions { display: flex; gap: 0.8rem; }
+.swipe__btn { flex: 1; min-height: 52px; border-radius: 999px; font-size: 1.05rem; font-weight: 700; border: 2px solid var(--border); background: var(--panel-2); color: var(--text); cursor: pointer; }
+.swipe__btn--skip { color: var(--danger); border-color: var(--danger); }
+.swipe__btn--vote { color: #fff; background: var(--accent-2); border-color: var(--accent-2); }
+.swipe__btn:disabled { opacity: 0.5; }
+.swipe__just { text-align: center; color: var(--accent-2); font-size: 0.85rem; margin: 0; }
+.swipe__done { text-align: center; padding: 3rem 1rem; display: grid; gap: 0.6rem; place-items: center; }
+.swipe__done p { margin: 0; font-size: 1.2rem; }
+.swipe__donesub { color: var(--muted); font-size: 0.9rem !important; }
+
 /* ---- Filter bottom-sheet ---- */
 .sheet { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55); display: flex; align-items: flex-end; justify-content: center; z-index: 1000; }
 .sheet__card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px 16px 0 0; padding: 1rem 1rem 1.4rem; width: 100%; max-width: 560px; max-height: 85vh; overflow: auto; display: grid; gap: 0.5rem; }
