@@ -42,6 +42,13 @@ const LENSES: { id: LensId; label: string; match: (i: Item) => boolean }[] = [
   { id: 'stay', label: '🛏️ Stay', match: (i) => i.category === 'lodging' || i.isAnchor },
 ];
 
+// Short chip labels for the "distance from" reference points.
+const CENTER_META: Record<string, { emoji: string; short: string }> = {
+  'item-hfxterminal': { emoji: '⛴', short: 'Ferry' },
+  'item-hotel': { emoji: '🏨', short: 'Hotel' },
+  'item-airbnb': { emoji: '🏠', short: 'Airbnb' },
+};
+
 export function Board({ bundle }: { bundle: TripBundle }) {
   const { identity } = useApp();
   const [query, setQuery] = useState('');
@@ -69,23 +76,50 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   const [travelMode, setTravelMode] = useState<TravelMode>('walk');
   const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
   const [nearMe, setNearMe] = useState(false);
+  // Central reference point for "distance from" — defaults to the Dartmouth hotel.
+  const [centerId, setCenterId] = useState<string | null>('item-hotel');
   const [geoError, setGeoError] = useState<string | null>(null);
   const [focus, setFocus] = useState<{ lat: number; lng: number; nonce: number } | null>(null);
   const focusOn = (lat: number, lng: number) => setFocus({ lat, lng, nonce: Date.now() });
 
-  // The distance-search centre is either your location ("Near me") or the selected pin.
+  // The item shown in the bottom "peek" detail card (whatever pin you tapped).
   const centerItem = useMemo(
     () => bundle.items.find((i) => i.itemId === selectedId) ?? null,
     [bundle.items, selectedId],
   );
+  // The distance reference point: your location ("Near me") or a chosen central place.
+  const pinnedCenter = useMemo(
+    () => (centerId ? bundle.items.find((i) => i.itemId === centerId) ?? null : null),
+    [bundle.items, centerId],
+  );
   const center = useMemo<{ lat: number; lng: number; label: string } | null>(() => {
     if (nearMe && userLoc) return { lat: userLoc.lat, lng: userLoc.lng, label: 'you' };
-    if (centerItem && typeof centerItem.lat === 'number' && typeof centerItem.lng === 'number') {
-      return { lat: centerItem.lat, lng: centerItem.lng, label: centerItem.title };
+    if (pinnedCenter && typeof pinnedCenter.lat === 'number' && typeof pinnedCenter.lng === 'number') {
+      return { lat: pinnedCenter.lat, lng: pinnedCenter.lng, label: pinnedCenter.title };
     }
     return null;
-  }, [nearMe, userLoc, centerItem]);
+  }, [nearMe, userLoc, pinnedCenter]);
   const canRadius = !!center;
+
+  /** Adaptive travel-time from the active centre: walk for near, drive for far. */
+  function distanceFrom(item: Item): string | null {
+    if (!center || item.lat == null || item.lng == null) return null;
+    if (centerId && item.itemId === centerId && !nearMe) return null; // it's the centre itself
+    const walk = travelMinutes(center.lat, center.lng, item.lat, item.lng, 'walk');
+    if (walk < 1) return null;
+    if (walk <= 30) return `~${Math.round(walk)} min 🚶`;
+    const drive = travelMinutes(center.lat, center.lng, item.lat, item.lng, 'drive');
+    return `~${Math.max(1, Math.round(drive))} min 🚗`;
+  }
+
+  // Quick-pick reference points for the "distance from" selector (ferry + the two stays).
+  const centerChoices = useMemo(
+    () =>
+      ['item-hfxterminal', 'item-hotel', 'item-airbnb']
+        .map((id) => bundle.items.find((i) => i.itemId === id))
+        .filter((i): i is Item => !!i),
+    [bundle.items],
+  );
 
   function useMyLocation() {
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
@@ -216,18 +250,14 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     setMaxPrice(null);
     setRadiusMin(null);
     setNearMe(false);
+    setCenterId('item-hotel');
   }
 
-  // "Near the ferry": centre the distance search on the Halifax ferry terminal.
-  function nearFerry() {
-    const ferry =
-      bundle.items.find((i) => i.itemId === 'item-hfxterminal') ??
-      bundle.items.find((i) => i.tags.includes('ferry') && i.lat != null);
-    if (!ferry) return;
+  // Pick a central reference point to measure distances from (ferry / hotel / airbnb).
+  function pickCenter(item: Item) {
     setNearMe(false);
-    setSelectedId(ferry.itemId);
-    setRadiusMin((r) => r ?? 15);
-    if (ferry.lat != null && ferry.lng != null) focusOn(ferry.lat, ferry.lng);
+    setCenterId(item.itemId);
+    if (item.lat != null && item.lng != null) focusOn(item.lat, item.lng);
   }
 
   // Tapping a pin just highlights it (and sets the distance centre) — stays on the map.
@@ -358,9 +388,23 @@ export function Board({ bundle }: { bundle: TripBundle }) {
 
       {quickOpen && (
         <>
+      <div className="board__centers" role="group" aria-label="Distance from">
+        <span className="board__centerslabel">📏 From</span>
+        <button type="button" className={`fchip ${nearMe ? 'fchip--on' : ''}`} aria-pressed={nearMe} onClick={useMyLocation}>📍 Me</button>
+        {centerChoices.map((c) => (
+          <button
+            key={c.itemId}
+            type="button"
+            className={`fchip ${!nearMe && centerId === c.itemId ? 'fchip--on' : ''}`}
+            aria-pressed={!nearMe && centerId === c.itemId}
+            onClick={() => pickCenter(c)}
+          >
+            {CENTER_META[c.itemId]?.emoji ?? '📍'} {CENTER_META[c.itemId]?.short ?? c.title}
+          </button>
+        ))}
+      </div>
+
       <div className="board__presets" role="group" aria-label="Quick filters">
-        <button type="button" className={`fchip ${nearMe ? 'fchip--on' : ''}`} aria-pressed={nearMe} onClick={useMyLocation}>📍 Near me</button>
-        <button type="button" className="fchip" onClick={nearFerry}>⛴ Near ferry</button>
         <button type="button" className={`fchip ${foodMode ? 'fchip--on' : ''}`} aria-pressed={foodMode} onClick={() => setFoodMode((v) => !v)}>🍴 Food</button>
         <button type="button" className={`fchip ${kidMode ? 'fchip--on' : ''}`} aria-pressed={kidMode} onClick={() => setKidMode((v) => !v)}>🧒 Kids</button>
         <button type="button" className={`fchip ${votedOnly ? 'fchip--on' : ''}`} aria-pressed={votedOnly} onClick={() => setVotedOnly((v) => !v)}>⭐ Voted</button>
@@ -409,10 +453,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
 
       <section className="board__list" aria-label="Trip items">
         {filtered.map((item) => {
-          const distanceLabel =
-            radiusMin && center && item.lat != null && item.lng != null
-              ? `~${Math.max(1, Math.round(travelMinutes(center.lat, center.lng, item.lat, item.lng, travelMode)))} min ${travelMode === 'walk' ? '🚶' : '🚗'}`
-              : null;
+          const distanceLabel = distanceFrom(item);
           return (
             <ItemCard
               key={item.itemId}
@@ -437,6 +478,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
             <strong className="peek__title">{centerItem.title}</strong>
             <div className="peek__meta">
               {centerItem.isAnchor ? centerItem.anchorRole : centerItem.type === 'MEAL' ? centerItem.mealType : centerItem.category} · ★ {peekDetail.data?.item.voteScore ?? centerItem.voteScore}
+              {center && distanceFrom(centerItem) ? ` · ${distanceFrom(centerItem)} from ${center.label}` : ''}
             </div>
             {peekVotes.length > 0 ? (
               <div className="peek__voters" aria-label="Who voted">

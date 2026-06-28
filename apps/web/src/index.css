@@ -137,6 +137,10 @@ input, select, textarea {
 .board__quickchev { font-size: 0.8rem; }
 .board__quickbadge { background: var(--accent); color: #fff; border-radius: 999px; font-size: 0.72rem; font-weight: 700; min-width: 18px; height: 18px; display: inline-grid; place-items: center; padding: 0 5px; }
 
+/* "Distance from" central-location picker. */
+.board__centers { display: flex; align-items: center; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.35rem; -webkit-overflow-scrolling: touch; }
+.board__centerslabel { color: var(--muted); font-size: 0.82rem; white-space: nowrap; flex: 0 0 auto; }
+
 /* ---- Filter bottom-sheet ---- */
 .sheet { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55); display: flex; align-items: flex-end; justify-content: center; z-index: 1000; }
 .sheet__card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px 16px 0 0; padding: 1rem 1rem 1.4rem; width: 100%; max-width: 560px; max-height: 85vh; overflow: auto; display: grid; gap: 0.5rem; }
