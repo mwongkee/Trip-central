@@ -184,7 +184,16 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences, 
       e.stopPropagation();
       const b = new maplibregl.LngLatBounds();
       group.forEach((i) => b.extend([i.lng!, i.lat!]));
-      map.fitBounds(b, { padding: 80, maxZoom: 17, duration: 400 });
+      // If the group is co-located (degenerate bounds), just zoom in a few levels
+      // on the centre; otherwise fit the group. Deep maxZoom so rings separate.
+      const ne = b.getNorthEast();
+      const sw = b.getSouthWest();
+      const degenerate = Math.abs(ne.lat - sw.lat) < 1e-4 && Math.abs(ne.lng - sw.lng) < 1e-4;
+      if (degenerate) {
+        map.easeTo({ center: b.getCenter(), zoom: Math.min(19, map.getZoom() + 3), duration: 400 });
+      } else {
+        map.fitBounds(b, { padding: 70, maxZoom: 19, duration: 400 });
+      }
     });
     return new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map);
   }
