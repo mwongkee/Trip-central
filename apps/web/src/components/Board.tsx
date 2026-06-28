@@ -56,6 +56,12 @@ export function Board({ bundle }: { bundle: TripBundle }) {
   const [foodMode, setFoodMode] = useState(false);
   const [votedOnly, setVotedOnly] = useState(false);
   const [lens, setLens] = useState<LensId>('all');
+  const [quickOpen, setQuickOpen] = useState(() => {
+    try { return localStorage.getItem('tb_quickopen') === '1'; } catch { return false; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem('tb_quickopen', quickOpen ? '1' : '0'); } catch { /* ignore */ }
+  }, [quickOpen]);
   const [maxPrice, setMaxPrice] = useState<number | null>(null); // cents; null = any
   const [cats, setCats] = useState<Set<string>>(new Set());
   const [tagFilter, setTagFilter] = useState<Set<string>>(new Set());
@@ -186,6 +192,17 @@ export function Board({ bundle }: { bundle: TripBundle }) {
     (lens !== 'all' ? 1 : 0) +
     (maxPrice != null ? 1 : 0) +
     (radiusMin ? 1 : 0);
+
+  // Active filters living in the collapsible "quick filters" rows (presets + radius).
+  const quickActiveCount =
+    (nearMe ? 1 : 0) +
+    (foodMode ? 1 : 0) +
+    (kidMode ? 1 : 0) +
+    (votedOnly ? 1 : 0) +
+    (tagFilter.has('tonight') ? 1 : 0) +
+    (tagFilter.has('walkable') ? 1 : 0) +
+    (radiusMin ? 1 : 0) +
+    (share.sharing ? 1 : 0);
 
   function clearAllFilters() {
     setTypeFilter('all');
@@ -328,6 +345,19 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         ))}
       </div>
 
+      <button
+        type="button"
+        className="board__quicktoggle"
+        aria-expanded={quickOpen}
+        onClick={() => setQuickOpen((v) => !v)}
+      >
+        <span aria-hidden="true" className="board__quickchev">{quickOpen ? '▴' : '▾'}</span>
+        {quickOpen ? 'Hide quick filters' : 'Quick filters'}
+        {!quickOpen && quickActiveCount > 0 && <span className="board__quickbadge">{quickActiveCount}</span>}
+      </button>
+
+      {quickOpen && (
+        <>
       <div className="board__presets" role="group" aria-label="Quick filters">
         <button type="button" className={`fchip ${nearMe ? 'fchip--on' : ''}`} aria-pressed={nearMe} onClick={useMyLocation}>📍 Near me</button>
         <button type="button" className="fchip" onClick={nearFerry}>⛴ Near ferry</button>
@@ -364,6 +394,8 @@ export function Board({ bundle }: { bundle: TripBundle }) {
         </div>
       )}
       {(geoError || share.error) && <p className="join__error" role="alert">{geoError || share.error}</p>}
+        </>
+      )}
 
       {adding && <AddItemForm onDone={() => setAdding(false)} />}
 

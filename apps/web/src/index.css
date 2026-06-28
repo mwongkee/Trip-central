@@ -131,6 +131,12 @@ input, select, textarea {
 .lens { padding: 0.45rem 0.9rem; font-weight: 600; white-space: nowrap; scroll-snap-align: start; }
 .lens--on { box-shadow: inset 0 -3px 0 0 rgba(255, 255, 255, 0.4); }
 
+/* Collapse/expand toggle for the quick-filter (presets + radius) rows. */
+.board__quicktoggle { display: flex; align-items: center; gap: 0.4rem; width: 100%; background: transparent; border: 0; color: var(--muted); font-size: 0.85rem; padding: 0.25rem 0.1rem 0.4rem; cursor: pointer; text-align: left; }
+.board__quicktoggle:hover { color: var(--text); }
+.board__quickchev { font-size: 0.8rem; }
+.board__quickbadge { background: var(--accent); color: #fff; border-radius: 999px; font-size: 0.72rem; font-weight: 700; min-width: 18px; height: 18px; display: inline-grid; place-items: center; padding: 0 5px; }
+
 /* ---- Filter bottom-sheet ---- */
 .sheet { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55); display: flex; align-items: flex-end; justify-content: center; z-index: 1000; }
 .sheet__card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px 16px 0 0; padding: 1rem 1rem 1.4rem; width: 100%; max-width: 560px; max-height: 85vh; overflow: auto; display: grid; gap: 0.5rem; }
@@ -199,13 +205,13 @@ input, select, textarea {
 .vote__family { border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.7rem; }
 .vote__family legend { color: var(--muted); font-size: 0.85rem; padding: 0 0.3rem; }
 .vote__chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.vote__all { margin-top: 0.5rem; background: var(--accent-2); border: 0; color: #fff; padding: 0.4rem 0.7rem; border-radius: 8px; }
+.vote__all { margin-top: 0.5rem; background: var(--panel-2); border: 1px solid var(--border); color: var(--text); padding: 0.4rem 0.7rem; border-radius: 8px; }
 .vote__voters { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .vote__voter { font-size: 0.85rem; color: var(--muted); }
 .vote__none { color: var(--muted); font-size: 0.85rem; }
 
 .chip { background: var(--panel-2); border: 1px solid var(--border); border-radius: 999px; padding: 0.35rem 0.7rem; color: var(--text); }
-.chip--on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.chip--on { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
 .chip__tag { color: var(--muted); font-size: 0.8em; }
 
 /* ---- Comments ---- */
