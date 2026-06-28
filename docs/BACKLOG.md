@@ -7,6 +7,12 @@ Running list of content sources and ideas to fold into the trip board later.
 - [ ] **Lunenburg / South Shore region** — https://novascotia.com/explore-by-region/south-shore/lunenburg/
   Pull Lunenburg + South Shore spots near the Rose Bay Airbnb (attractions,
   restaurants, beaches, day trips). Added 2026-06-28.
+- [ ] **Hubbards / South Shore region** — https://novascotia.com/explore-by-region/south-shore/hubbards/
+  South Shore spots around Hubbards (beach, market, dining) ~45 min from Halifax.
+  Added 2026-06-28.
+- [ ] **Mahone Bay / South Shore region** — https://novascotia.com/explore-by-region/south-shore/mahone-bay/
+  Mahone Bay spots (three churches, shops, kayaking, dining) near the Airbnb.
+  Added 2026-06-28.
 
 ## Feature ideas (offered, not yet built)
 
