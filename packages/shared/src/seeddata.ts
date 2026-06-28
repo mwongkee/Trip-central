@@ -613,6 +613,20 @@ export function seedItems(): Item[] {
     place('item-grandbanker', 'The Grand Banker Bar & Grill', 'restaurant', 44.3760, -64.3090, 'Waterfront seafood — chowder, lobster and live music, Lunenburg.', { address: '82 Montague St, Lunenburg', tags: ['walkable', 'kids'] }),
     place('item-knotpub', 'The Knot Pub', 'restaurant', 44.3772, -64.3066, 'Cozy local pub — fish & chips and pints, Lunenburg.', { address: '4 Dufferin St, Lunenburg', tags: ['walkable'] }),
 
+    // ---- South Shore: Hubbards (novascotia.com) ----
+    place('item-shoreclub', 'The Shore Club', 'restaurant', 44.6330, -64.0850, "Nova Scotia's original lobster supper and a legendary Saturday-night dance hall (since 1946), Hubbards.", { address: '250 Shore Club Rd, Hubbards', tags: ['daytrip', 'kids'], website: 'https://shoreclub.ca' }),
+    place('item-hubbardsmarket', "Hubbards Barn Farmers' Market", 'shopping', 44.6340, -64.0820, 'Saturday-morning market (May–Oct) of local food and makers in the historic barn.', { address: '57 Highway 3, Hubbards', tags: ['daytrip', 'kids'] }),
+    place('item-aspotogan', 'Aspotogan Rail Trail', 'outdoor', 44.6100, -64.1200, '13 km rail-trail for biking, hiking and birding on the Aspotogan Peninsula.', { address: 'Aspotogan, NS', tags: ['trails', 'daytrip'] }),
+
+    // ---- South Shore: Mahone Bay (novascotia.com) ----
+    place('item-mahonebaymuseum', 'Mahone Bay Museum', 'museum', 44.4490, -64.3815, 'Free community museum — town history, the Three Churches and Mi’kmaw heritage.', { address: '578 Main St, Mahone Bay', tags: ['walkable', 'rainy-day', 'daytrip'] }),
+    place('item-mahonekayak', 'Mahone Bay Sea Kayaking', 'activity', 44.4480, -64.3830, 'Guided half- and full-day kayak tours among the sheltered islands — great for beginners.', { address: 'Mahone Bay, NS', tags: ['kids', 'daytrip'] }),
+    place('item-biscuiteater', 'Biscuit Eater Books & Café', 'restaurant', 44.4485, -64.3820, 'Bookshop café — coffee, scones and good reads, Mahone Bay.', { address: 'Main St, Mahone Bay', tags: ['walkable', 'kids', 'daytrip'] }),
+    place('item-ohmycod', 'Oh My Cod', 'restaurant', 44.4486, -64.3819, 'Seafood crowd-pleasers — scallops, Digby clams and lobster mac, Mahone Bay.', { address: 'Main St, Mahone Bay', tags: ['walkable', 'kids', 'daytrip'] }),
+    place('item-mateus', 'Mateus Bistro', 'restaurant', 44.4484, -64.3822, 'Atlantic dishes with an Eastern-European twist, Mahone Bay.', { address: 'Main St, Mahone Bay', tags: ['walkable', 'daytrip'] }),
+    place('item-teabrewery', 'The Tea Brewery', 'shopping', 44.4488, -64.3818, 'Loose-leaf tea blends shop on Main St, Mahone Bay.', { address: 'Main St, Mahone Bay', tags: ['walkable', 'daytrip'] }),
+    place('item-suttles', 'Suttles & Seawinds', 'shopping', 44.4487, -64.3817, 'Hand-knit Maritime wool and clothing, Mahone Bay.', { address: 'Main St, Mahone Bay', tags: ['walkable', 'daytrip'] }),
+
     // ---- Meals ----
     meal('meal-lobster', 'Lobster rolls on the boardwalk', 'dinner', 'Fresh rolls on the Halifax waterfront — perfect after the ferry tonight.', {
       lat: 44.6476, lng: -63.5683, address: 'Halifax Waterfront', category: 'restaurant', tags: ['walkable', 'ferry', 'tonight'],

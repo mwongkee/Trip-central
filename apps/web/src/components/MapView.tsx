@@ -121,6 +121,7 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences, 
   const personMarkersRef = useRef<Marker[]>([]);
   const loadedRef = useRef(false);
   const didFitRef = useRef(false);
+  const renderRef = useRef<(() => void) | null>(null);
 
   const located = items.filter((i) => typeof i.lat === 'number' && typeof i.lng === 'number');
   // Two stable signatures (located is a fresh array each render):
@@ -144,6 +145,7 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences, 
     map.on('load', () => {
       loadedRef.current = true;
     });
+    map.on('moveend', () => renderRef.current?.()); // re-cluster after pan/zoom
     mapRef.current = map;
     return () => {
       map.remove();
@@ -152,25 +154,86 @@ export function MapView({ items, selectedId, onSelect, userLocation, presences, 
     };
   }, [styleUrl]);
 
-  // Render markers (rebuilds on selection to update the highlight; does NOT move the map).
+  // One emoji marker for a single place.
+  function makeItemMarker(map: MlMap, item: Item): Marker {
+    const voted = item.voteCount > 0;
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = `marker ${item.isAnchor ? 'marker--anchor' : ''} ${voted ? 'marker--voted' : ''} ${item.itemId === selectedId ? 'marker--sel' : ''}`;
+    el.style.setProperty('--marker-color', colorFor(item));
+    el.setAttribute('aria-label', voted ? `${item.title} — ${item.voteScore} votes` : item.title);
+    el.textContent = iconFor(item);
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      onSelect(item.itemId);
+    });
+    return new maplibregl.Marker({ element: el }).setLngLat([item.lng!, item.lat!]).addTo(map);
+  }
+
+  // A count bubble for a group of nearby places; tap zooms in to split them apart.
+  function makeClusterMarker(map: MlMap, group: Item[]): Marker {
+    const lng = group.reduce((s, i) => s + i.lng!, 0) / group.length;
+    const lat = group.reduce((s, i) => s + i.lat!, 0) / group.length;
+    const voted = group.some((i) => i.voteCount > 0);
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = `marker marker--cluster ${voted ? 'marker--cluster-voted' : ''}`;
+    el.setAttribute('aria-label', `${group.length} places here — tap to zoom in`);
+    el.textContent = String(group.length);
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const b = new maplibregl.LngLatBounds();
+      group.forEach((i) => b.extend([i.lng!, i.lat!]));
+      map.fitBounds(b, { padding: 80, maxZoom: 17, duration: 400 });
+    });
+    return new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map);
+  }
+
+  // Render markers with simple screen-space clustering so 370 pins stay legible.
+  // Re-runs on selection/data change AND on every pan/zoom (via renderRef + moveend).
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current = located.map((item) => {
-      const voted = item.voteCount > 0;
-      const el = document.createElement('button');
-      el.type = 'button';
-      el.className = `marker ${item.isAnchor ? 'marker--anchor' : ''} ${voted ? 'marker--voted' : ''} ${item.itemId === selectedId ? 'marker--sel' : ''}`;
-      el.style.setProperty('--marker-color', colorFor(item));
-      el.setAttribute('aria-label', voted ? `${item.title} — ${item.voteScore} votes` : item.title);
-      el.textContent = iconFor(item);
-      el.addEventListener('click', (e) => {
-        e.stopPropagation();
-        onSelect(item.itemId); // highlight + Board shows a bottom detail card — map stays put
-      });
-      return new maplibregl.Marker({ element: el }).setLngLat([item.lng!, item.lat!]).addTo(map);
-    });
+    const CLUSTER_PX = 46;
+    const render = (): void => {
+      markersRef.current.forEach((m) => m.remove());
+      if (located.length === 0) {
+        markersRef.current = [];
+        return;
+      }
+      const pts = located.map((item) => ({ item, p: map.project([item.lng!, item.lat!]) }));
+      const used = new Array(pts.length).fill(false);
+      const markers: Marker[] = [];
+      for (let i = 0; i < pts.length; i += 1) {
+        if (used[i]) continue;
+        const group = [pts[i]!.item];
+        used[i] = true;
+        for (let j = i + 1; j < pts.length; j += 1) {
+          if (used[j]) continue;
+          const dx = pts[i]!.p.x - pts[j]!.p.x;
+          const dy = pts[i]!.p.y - pts[j]!.p.y;
+          if (dx * dx + dy * dy <= CLUSTER_PX * CLUSTER_PX) {
+            group.push(pts[j]!.item);
+            used[j] = true;
+          }
+        }
+        // Keep the selected pin always shown as its own marker.
+        const sel = group.find((g) => g.itemId === selectedId);
+        if (group.length === 1) {
+          markers.push(makeItemMarker(map, group[0]!));
+        } else if (sel) {
+          markers.push(makeItemMarker(map, sel));
+          const rest = group.filter((g) => g.itemId !== selectedId);
+          if (rest.length === 1) markers.push(makeItemMarker(map, rest[0]!));
+          else if (rest.length > 1) markers.push(makeClusterMarker(map, rest));
+        } else {
+          markers.push(makeClusterMarker(map, group));
+        }
+      }
+      markersRef.current = markers;
+    };
+    renderRef.current = render;
+    render();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markersKey, selectedId, onSelect]);
 

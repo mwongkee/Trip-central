@@ -81,12 +81,28 @@ npm run -w @tripboard/shared test
 npm run seed       # additive seed (needs TABLE_NAME, AWS creds); SEED_RESET=1 to wipe
 ```
 
+## How to add a place (follow every step)
+
+1. **Unique id:** `item-<slug>` that never changes (votes/comments key off it).
+   Check it isn't already present (`grep "place('item-"` / dedupe before pushing).
+2. **Accurate coordinates — do NOT drop pins in the water.** Verify lat/lng on a
+   real map (Google/OSM), not a guess. Nova Scotia is lat ~43.4–47, lng ~−66 to
+   −59.5 (negative!). Halifax ≈ 44.65, −63.57. The downtown **boardwalk is ≈ lng
+   −63.570**; anything east of ~−63.568 lands in the harbour. If unsure, use the
+   in-app Add form (OpenStreetMap search / paste a Maps link) to get exact coords.
+3. **No fake/stock photos.** Leave `imageUrl` unset — the UI shows a real
+   Wikipedia photo when one matches, else a category emoji tile. Only set
+   `imageUrl` to a genuine, place-specific photo URL. Never picsum/stock.
+4. **Proper categorization:** pick the right `category` (outdoor, museum, beach,
+   playground, viewpoint, restaurant, lodging, landmark, activity, shopping,
+   other) and add `tags` from: `kids`, `walkable`, `tonight`, `trails`, `beach`,
+   `daytrip`, `rainy-day`, `stroller-friendly`. Add a `website` when known.
+   Keep `apps/web` `CATEGORY_COLORS`, `iconFor`, and the Add-form list in sync if
+   you add a category.
+5. **Ship:** `npm run build` + `npm test` → push to main → run the `seed.yml`
+   workflow (additive sync; preserves votes). To remove a mistake, add its id to
+   `RETIRED_ITEM_IDS` in `scripts/seed.ts`.
+
 ## Conventions
 
-- Categories (`packages/shared/src/schemas.ts`): outdoor, museum, beach,
-  playground, viewpoint, restaurant, lodging, landmark, activity, shopping, other.
-  Keep `apps/web` `CATEGORY_COLORS`, `iconFor`, and the Add form list in sync.
-- Adding places: give each a unique `item-<slug>` id, a category, lat/lng, tags
-  (`kids`, `walkable`, `tonight`, `trails`, `beach`, `daytrip`, `rainy-day`,
-  `stroller-friendly`), and a `website` when known.
 - See `docs/BACKLOG.md` for queued content sources and feature ideas.
