@@ -64,6 +64,9 @@ input, select, textarea {
 /* Schedule picker: day chips scroll horizontally; slot chips read title-case. */
 .sched__days { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .sched__slot { text-transform: capitalize; }
+.sched__pick { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+.sched__pick span { color: var(--muted); font-size: 0.8rem; white-space: nowrap; }
+.sched__pick input { flex: 1; }
 .btn--ghost { background: transparent; }
 .btn--danger { color: #ff7b72; border-color: #5d2120; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }

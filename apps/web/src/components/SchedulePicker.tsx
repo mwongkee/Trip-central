@@ -37,18 +37,20 @@ export function SchedulePicker({
   const slots = isMeal ? MEAL_SLOTS : PLACE_SLOTS;
   const scheduled = item.status === 'scheduled';
 
-  const days = useMemo(() => {
-    const base = tripDays(tripStart, tripEnd);
-    // Keep an already-scheduled date selectable even if it falls outside the range.
-    if (item.scheduledDate && !base.includes(item.scheduledDate)) return [item.scheduledDate, ...base];
-    return base;
-  }, [tripStart, tripEnd, item.scheduledDate]);
-  const noDates = days.length === 0;
-
+  const today = todayISO();
   const defaultSlot = (item.slot ?? item.mealType ?? (isMeal ? 'lunch' : 'morning')) as Slot;
-  const [day, setDay] = useState<string>(item.scheduledDate ?? (days.includes(todayISO()) ? todayISO() : days[0] ?? ''));
+  const [day, setDay] = useState<string>(item.scheduledDate ?? today);
   const [slot, setSlot] = useState<Slot>(slots.includes(defaultSlot) ? defaultSlot : slots[0]!);
-  const [customDay, setCustomDay] = useState<string>(item.scheduledDate ?? '');
+
+  // Trip days, always plus today and the current selection (so today and any
+  // hand-picked date are selectable, not just the trip range).
+  const days = useMemo(() => {
+    const set = new Set<string>(tripDays(tripStart, tripEnd));
+    set.add(today);
+    if (item.scheduledDate) set.add(item.scheduledDate);
+    if (day) set.add(day);
+    return [...set].sort();
+  }, [tripStart, tripEnd, today, item.scheduledDate, day]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -57,7 +59,7 @@ export function SchedulePicker({
   }, [onClose]);
 
   const prior: SchedulePrior = { status: item.status, scheduledDate: item.scheduledDate, slot: item.slot };
-  const chosenDay = noDates ? customDay : day;
+  const chosenDay = day;
 
   function save() {
     if (!chosenDay) return;
@@ -82,26 +84,23 @@ export function SchedulePicker({
         </div>
 
         <p className="sheet__label">Which day?</p>
-        {noDates ? (
-          <>
-            <input type="date" value={customDay} onChange={(e) => setCustomDay(e.target.value)} aria-label="Date" />
-            <p className="sheet__label">Trip dates aren’t set — pick any date.</p>
-          </>
-        ) : (
-          <div className="sheet__chips sched__days">
-            {days.map((d) => (
-              <button
-                key={d}
-                type="button"
-                className={`fchip ${day === d ? 'fchip--on' : ''}`}
-                aria-pressed={day === d}
-                onClick={() => setDay(d)}
-              >
-                {fmtDay(d)}{d === todayISO() ? ' • today' : ''}
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="sheet__chips sched__days">
+          {days.map((d) => (
+            <button
+              key={d}
+              type="button"
+              className={`fchip ${day === d ? 'fchip--on' : ''}`}
+              aria-pressed={day === d}
+              onClick={() => setDay(d)}
+            >
+              {fmtDay(d)}{d === today ? ' • today' : ''}
+            </button>
+          ))}
+        </div>
+        <label className="sched__pick">
+          <span>Or pick any date</span>
+          <input type="date" value={day} onChange={(e) => { if (e.target.value) setDay(e.target.value); }} aria-label="Pick a date" />
+        </label>
 
         <p className="sheet__label">When that day?</p>
         <div className="sheet__chips">
