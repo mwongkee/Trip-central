@@ -16,7 +16,7 @@ function legLabel(a: Item, b: Item): string | null {
   const km = haversineKm(a.lat, a.lng, b.lat, b.lng);
   if (km < 0.03) return null;
   const mode = km <= 2 ? 'walk' : 'drive';
-  const min = travelMinutes(a.lat, a.lng, b.lat, b.lng, mode);
+  const min = Math.max(1, Math.round(travelMinutes(a.lat, a.lng, b.lat, b.lng, mode)));
   const dist = km < 10 ? `${km.toFixed(1)} km` : `${Math.round(km)} km`;
   return `${mode === 'walk' ? '🚶' : '🚗'} ${min} min · ${dist}`;
 }
