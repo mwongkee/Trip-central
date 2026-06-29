@@ -444,7 +444,10 @@ input, select, textarea {
 .itin__datebtn { background: none; border: 0; color: var(--text); font: inherit; font-weight: 700; cursor: pointer; padding: 0; }
 .itin__base { color: var(--muted); font-weight: 400; }
 .itin__day { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem 1rem; }
-.itin__date { font-size: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+.itin__date { font-size: 1rem; padding-bottom: 0.4rem; margin: 0; text-align: center; flex: 1; }
+.itin__nav { display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid var(--border); margin-bottom: 0.4rem; }
+.itin__navbtn { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); border-radius: 999px; width: 40px; min-height: 40px; font-size: 1.4rem; line-height: 1; cursor: pointer; flex: 0 0 auto; }
+.itin__navbtn:disabled { opacity: 0.35; }
 .itin__slot { display: grid; grid-template-columns: 90px 1fr; gap: 0.5rem; padding: 0.4rem 0; }
 .itin__slotName { color: var(--muted); text-transform: capitalize; font-size: 0.85rem; padding-top: 0.3rem; }
 .itin__slot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.25rem; }

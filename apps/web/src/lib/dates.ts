@@ -19,9 +19,10 @@ export function shortSlot(slot?: string): string {
   return slot ? (SHORT_SLOT[slot] ?? slot) : '';
 }
 
-/** Today as yyyy-mm-dd (UTC-stable enough for trip-day comparisons). */
+/** Today as yyyy-mm-dd in the device's LOCAL timezone (not UTC — avoids off-by-one). */
 export function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
 /** Inclusive list of yyyy-mm-dd between start and end (UTC math, DST-safe). Empty if unset. */

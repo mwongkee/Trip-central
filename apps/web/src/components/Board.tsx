@@ -347,7 +347,7 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       </div>
 
       {view === 'itinerary' ? (
-        <Itinerary items={bundle.items} onSelect={(id) => { setView('board'); select(id); }} />
+        <Itinerary items={bundle.items} tripStart={bundle.trip.startDate} tripEnd={bundle.trip.endDate} onSelect={(id) => { setView('board'); select(id); }} />
       ) : view === 'swipe' ? (
         <SwipeDeck bundle={bundle} />
       ) : (
