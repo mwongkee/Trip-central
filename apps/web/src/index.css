@@ -451,6 +451,10 @@ input, select, textarea {
 .itin__nav { display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid var(--border); margin-bottom: 0.4rem; }
 .itin__navbtn { background: var(--panel-2); border: 1px solid var(--border); color: var(--text); border-radius: 999px; width: 40px; min-height: 40px; font-size: 1.4rem; line-height: 1; cursor: pointer; flex: 0 0 auto; }
 .itin__navbtn:disabled { opacity: 0.35; }
+.itin__stops { display: grid; gap: 0.5rem; }
+.itin__slotHead { text-transform: capitalize; color: var(--muted); font-weight: 600; font-size: 0.85rem; margin: 0.5rem 0 0; }
+.itin__leg { text-align: center; color: var(--muted); font-size: 0.78rem; margin: 0.1rem 0; }
+.itin__leg::before { content: '┊ '; }
 .itin__slot { display: grid; grid-template-columns: 90px 1fr; gap: 0.5rem; padding: 0.4rem 0; }
 .itin__slotName { color: var(--muted); text-transform: capitalize; font-size: 0.85rem; padding-top: 0.3rem; }
 .itin__slot ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.25rem; }
