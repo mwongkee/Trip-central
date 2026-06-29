@@ -70,12 +70,17 @@ export type TravelMode = 'walk' | 'drive';
 /**
  * Estimated travel time (minutes) between two points. We don't have a routing
  * engine, so this approximates road distance as straight-line × 1.3 and divides
- * by a typical speed (walk 4.8 km/h, city drive 38 km/h). Good enough to filter
- * "within ~15 min walk"; label it as approximate in the UI.
+ * by a typical speed. Driving speed scales with distance — short trips are city
+ * speed, longer trips approach highway speed — so a day-trip doesn't read like a
+ * crawl at one flat city speed. Still approximate; label it as such in the UI.
  */
 export function travelMinutes(lat1: number, lng1: number, lat2: number, lng2: number, mode: TravelMode): number {
   const roadKm = haversineKm(lat1, lng1, lat2, lng2) * 1.3;
-  const kmh = mode === 'walk' ? 4.8 : 38;
+  let kmh: number;
+  if (mode === 'walk') kmh = 4.8;
+  else if (roadKm <= 5) kmh = 30; // dense city, lights
+  else if (roadKm <= 20) kmh = 55; // urban arterials / suburbs
+  else kmh = 72; // highway-dominated longer drives
   return (roadKm / kmh) * 60;
 }
 
