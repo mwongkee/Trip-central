@@ -10,6 +10,14 @@ const CUTOVER = '2026-06-30';
 /** Chronological order of slots within a day (buildItinerary sorts alphabetically). */
 const SLOT_ORDER = ['breakfast', 'morning', 'lunch', 'afternoon', 'snack', 'dinner', 'evening'];
 
+/** "13 min" or "1 h 18 min" for longer hauls. */
+function fmtMin(min: number): string {
+  if (min < 60) return `${min} min`;
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return m ? `${h} h ${m} min` : `${h} h`;
+}
+
 /** Walking (short) or driving (longer) hop between two stops, or null if no coords. */
 function legLabel(a: Item, b: Item): string | null {
   if (a.lat == null || a.lng == null || b.lat == null || b.lng == null) return null;
@@ -18,7 +26,7 @@ function legLabel(a: Item, b: Item): string | null {
   const mode = km <= 2 ? 'walk' : 'drive';
   const min = Math.max(1, Math.round(travelMinutes(a.lat, a.lng, b.lat, b.lng, mode)));
   const dist = km < 10 ? `${km.toFixed(1)} km` : `${Math.round(km)} km`;
-  return `${mode === 'walk' ? '🚶' : '🚗'} ${min} min · ${dist}`;
+  return `${mode === 'walk' ? '🚶' : '🚗'} ${fmtMin(min)} · ${dist}`;
 }
 
 /**
@@ -169,6 +177,13 @@ export function Itinerary({
           </p>
         ) : (
           <div className="itin__stops">
+            {(() => {
+              const base = lodgings.find((l) => l.lat != null && l.lng != null);
+              if (!base) return null;
+              const leg = legLabel(base, stops[0]!.item);
+              const label = base.anchorRole === 'airbnb' ? '🏠 Airbnb' : '🏨 Hotel';
+              return leg ? <p className="itin__leg itin__leg--base">From {label} · {leg}</p> : null;
+            })()}
             {stops.map((stop, i) => {
               const leg = i > 0 ? legLabel(stops[i - 1]!.item, stop.item) : null;
               const showSlot = i === 0 || stops[i - 1]!.slot !== stop.slot;
@@ -191,6 +206,13 @@ export function Itinerary({
                 </Fragment>
               );
             })}
+            {(() => {
+              const base = lodgings.find((l) => l.lat != null && l.lng != null);
+              if (!base) return null;
+              const leg = legLabel(stops[stops.length - 1]!.item, base);
+              const label = base.anchorRole === 'airbnb' ? '🏠 Airbnb' : '🏨 Hotel';
+              return leg ? <p className="itin__leg itin__leg--base">Back to {label} · {leg}</p> : null;
+            })()}
           </div>
         )}
       </section>
