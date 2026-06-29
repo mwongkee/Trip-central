@@ -664,6 +664,13 @@ export function Board({ bundle }: { bundle: TripBundle }) {
               <option value="10000">Up to $100</option>
             </select>
 
+            <span className="sheet__label">Show only</span>
+            <div className="sheet__chips">
+              <button type="button" className={`fchip ${votedOnly ? 'fchip--on' : ''}`} aria-pressed={votedOnly} onClick={() => setVotedOnly((v) => !v)}>
+                ⭐ Voted by us
+              </button>
+            </div>
+
             <span className="sheet__label">Category</span>
             <div className="sheet__chips">
               {categoryList.map((c) => (
