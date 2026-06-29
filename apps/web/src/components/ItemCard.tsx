@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import type { Item, Slot, Voter } from '@tripboard/shared';
+import type { Item, Voter } from '@tripboard/shared';
 import { VoteControl } from './VoteControl.js';
 import { Comments } from './Comments.js';
 import { Photo } from './Photo.js';
+import { SchedulePicker } from './SchedulePicker.js';
 import { mapsLink } from '../lib/links.js';
+import { shortDay, shortSlot } from '../lib/dates.js';
 import {
   useItemDetail,
   useVote,
@@ -21,15 +23,16 @@ interface ItemCardProps {
   onToggle: () => void;
   /** Travel-time label from the active distance centre (null when not filtering by distance). */
   distanceLabel?: string | null;
+  /** Trip date range → drives the schedule picker's day chips. */
+  tripStart?: string;
+  tripEnd?: string;
   /** Per-device hide state + handlers (a "noped" place stays off the map until unhidden). */
   hidden?: boolean;
   onHide?: () => void;
   onUnhide?: () => void;
 }
 
-const SLOTS: Slot[] = ['morning', 'afternoon', 'evening', 'breakfast', 'lunch', 'dinner', 'snack'];
-
-export function ItemCard({ item, family, expanded, selected, onToggle, distanceLabel, hidden, onHide, onUnhide }: ItemCardProps) {
+export function ItemCard({ item, family, expanded, selected, onToggle, distanceLabel, tripStart, tripEnd, hidden, onHide, onUnhide }: ItemCardProps) {
   const detail = useItemDetail(expanded ? item.itemId : null);
   const vote = useVote();
   const removeVote = useRemoveVote();
@@ -37,8 +40,7 @@ export function ItemCard({ item, family, expanded, selected, onToggle, distanceL
   const update = useUpdateItem();
   const del = useDeleteItem();
 
-  const [schedDate, setSchedDate] = useState(item.scheduledDate ?? '');
-  const [schedSlot, setSchedSlot] = useState<Slot>(item.slot ?? (item.mealType ?? 'morning'));
+  const [planning, setPlanning] = useState(false);
 
   const votes = detail.data?.votes ?? [];
   const comments = detail.data?.comments ?? [];
@@ -71,7 +73,9 @@ export function ItemCard({ item, family, expanded, selected, onToggle, distanceL
           </span>
           <span className="card__meta">
             <span className={`badge badge--${item.type.toLowerCase()}`}>{item.type === 'MEAL' ? '🍽' : '📍'} {bucket}</span>
-            {item.status !== 'suggested' && <span className="badge badge--status">{item.status}</span>}
+            {item.status === 'scheduled' && item.scheduledDate
+              ? <span className="badge badge--status">🗓 {shortDay(item.scheduledDate)}{item.slot ? ` · ${shortSlot(item.slot)}` : ''}</span>
+              : item.status === 'done' && <span className="badge badge--status">done</span>}
             <span className="card__score" aria-label={`Score ${liveItem.voteScore}`}>★ {liveItem.voteScore}</span>
             {liveItem.voteCount > 0 && <span className="badge badge--voted">✓ voted</span>}
             {distanceLabel && <span className="badge badge--dist">{distanceLabel}</span>}
@@ -115,26 +119,17 @@ export function ItemCard({ item, family, expanded, selected, onToggle, distanceL
               <div className="card__schedule">
                 <h4>Schedule</h4>
                 <div className="card__schedRow">
-                  <label className="sr-only" htmlFor={`date-${item.itemId}`}>Date</label>
-                  <input id={`date-${item.itemId}`} type="date" value={schedDate} onChange={(e) => setSchedDate(e.target.value)} />
-                  <label className="sr-only" htmlFor={`slot-${item.itemId}`}>Slot</label>
-                  <select id={`slot-${item.itemId}`} value={schedSlot} onChange={(e) => setSchedSlot(e.target.value as Slot)}>
-                    {SLOTS.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    type="button"
-                    className="btn"
-                    disabled={!schedDate || update.isPending}
-                    onClick={() => update.mutate({ itemId: item.itemId, input: { status: 'scheduled', scheduledDate: schedDate, slot: schedSlot } })}
-                  >
-                    Schedule
-                  </button>
-                </div>
-                <div className="card__schedRow">
+                  {!item.isAnchor && (
+                    <button
+                      type="button"
+                      className={`btn ${item.status === 'scheduled' ? 'btn--scheduled' : ''}`}
+                      onClick={() => setPlanning(true)}
+                    >
+                      {item.status === 'scheduled' && item.scheduledDate
+                        ? `🗓 ${shortDay(item.scheduledDate)}${item.slot ? ` · ${shortSlot(item.slot)}` : ''}`
+                        : '🗓 Plan a day'}
+                    </button>
+                  )}
                   {item.status === 'scheduled' && (
                     <button type="button" className="btn" onClick={() => update.mutate({ itemId: item.itemId, input: { status: 'done' } })}>
                       ✓ Mark done
@@ -168,6 +163,15 @@ export function ItemCard({ item, family, expanded, selected, onToggle, distanceL
             </>
           )}
         </div>
+      )}
+
+      {planning && (
+        <SchedulePicker
+          item={item}
+          tripStart={tripStart}
+          tripEnd={tripEnd}
+          onClose={() => setPlanning(false)}
+        />
       )}
     </article>
   );

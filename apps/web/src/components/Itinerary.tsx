@@ -1,13 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { buildItinerary, type Item } from '@tripboard/shared';
 import { MapView } from './MapView.js';
+import { fmtDay } from '../lib/dates.js';
 
 /** Cutover day: hotel through June 30, Airbnb from June 30 — and BOTH shown on June 30. */
 const CUTOVER = '2026-06-30';
-
-function fmtDay(date: string): string {
-  return new Date(`${date}T00:00:00`).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-}
 
 /** Day-by-day itinerary of scheduled items with a per-day map that always includes the home base. */
 export function Itinerary({ items, onSelect }: { items: Item[]; onSelect: (itemId: string) => void }) {

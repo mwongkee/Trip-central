@@ -59,6 +59,11 @@ input, select, textarea {
 }
 .btn:hover { border-color: #444c56; }
 .btn--primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+/* A place already on the plan — filled "active" look on its Plan button. */
+.btn--scheduled { background: var(--accent-2); border-color: var(--accent-2); color: #fff; }
+/* Schedule picker: day chips scroll horizontally; slot chips read title-case. */
+.sched__days { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.sched__slot { text-transform: capitalize; }
 .btn--ghost { background: transparent; }
 .btn--danger { color: #ff7b72; border-color: #5d2120; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }

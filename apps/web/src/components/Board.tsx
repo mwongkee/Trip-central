@@ -7,10 +7,12 @@ import { MapView, CATEGORY_COLORS, legendEmoji } from './MapView.js';
 import { AddItemForm } from './AddItemForm.js';
 import { Itinerary } from './Itinerary.js';
 import { SwipeDeck } from './SwipeDeck.js';
+import { SchedulePicker, type SchedulePrior } from './SchedulePicker.js';
 import { Photo } from './Photo.js';
-import { usePresence, useItemDetail, useVote } from '../hooks/queries.js';
+import { usePresence, useItemDetail, useVote, useUpdateItem } from '../hooks/queries.js';
 import { useLocationShare } from '../hooks/useLocationShare.js';
 import { mapsLink } from '../lib/links.js';
+import { shortDay, shortSlot } from '../lib/dates.js';
 import { Avatar } from './Avatar.js';
 
 type StatusFilter = 'all' | 'suggested' | 'scheduled' | 'done';
@@ -53,12 +55,25 @@ const CENTER_META: Record<string, { emoji: string; short: string }> = {
 
 export function Board({ bundle }: { bundle: TripBundle }) {
   const { identity, hidden, hide, unhide } = useApp();
-  const [toast, setToast] = useState<{ msg: string; itemId: string } | null>(null);
+  const updateItem = useUpdateItem();
+  const [toast, setToast] = useState<{ msg: string; undo: () => void } | null>(null);
+  const [planning, setPlanning] = useState<Item | null>(null);
   function hidePlace(item: Item) {
     if (item.isAnchor) return;
     hide(item.itemId);
     if (selectedId === item.itemId) setSelectedId(null);
-    setToast({ msg: `Hidden “${item.title}”`, itemId: item.itemId });
+    setToast({ msg: `Hidden “${item.title}”`, undo: () => unhide(item.itemId) });
+  }
+  /** Re-apply a pre-change schedule snapshot (used by the schedule undo toast). */
+  function applyPrior(itemId: string, prior: SchedulePrior) {
+    updateItem.mutate(
+      prior.status === 'scheduled' && prior.scheduledDate
+        ? { itemId, input: { status: 'scheduled', scheduledDate: prior.scheduledDate, slot: prior.slot } }
+        : { itemId, input: { status: 'suggested' } },
+    );
+  }
+  function onScheduleResult(msg: string, prior: SchedulePrior, itemId: string) {
+    setToast({ msg, undo: () => applyPrior(itemId, prior) });
   }
   const [query, setQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
@@ -531,6 +546,8 @@ export function Board({ bundle }: { bundle: TripBundle }) {
               hidden={hidden.has(item.itemId)}
               onHide={() => hidePlace(item)}
               onUnhide={() => unhide(item.itemId)}
+              tripStart={bundle.trip.startDate}
+              tripEnd={bundle.trip.endDate}
               expanded={expandedId === item.itemId}
               selected={selectedId === item.itemId}
               onToggle={() => setExpandedId((cur) => (cur === item.itemId ? null : item.itemId))}
@@ -577,9 +594,20 @@ export function Board({ bundle }: { bundle: TripBundle }) {
                 <a className="btn btn--link" href={centerItem.website} target="_blank" rel="noreferrer noopener">🔗 Site</a>
               )}
               {!centerItem.isAnchor && (
+                <button
+                  type="button"
+                  className={`btn ${centerItem.status === 'scheduled' ? 'btn--scheduled' : 'btn--primary'}`}
+                  onClick={() => setPlanning(centerItem)}
+                >
+                  {centerItem.status === 'scheduled' && centerItem.scheduledDate
+                    ? `🗓 ${shortDay(centerItem.scheduledDate)} · ${shortSlot(centerItem.slot)}`
+                    : '🗓 Plan'}
+                </button>
+              )}
+              {!centerItem.isAnchor && (
                 <button type="button" className="btn btn--ghost" aria-label={`Hide ${centerItem.title} from your map`} onClick={() => hidePlace(centerItem)}>🙅 Hide</button>
               )}
-              <button type="button" className="btn btn--primary" onClick={() => select(centerItem.itemId)}>Details ›</button>
+              <button type="button" className="btn btn--ghost" onClick={() => select(centerItem.itemId)}>Details ›</button>
             </div>
           </div>
           <button type="button" className="peek__close" aria-label="Close" onClick={() => setSelectedId(null)}>✕</button>
@@ -589,8 +617,18 @@ export function Board({ bundle }: { bundle: TripBundle }) {
       {toast && (
         <div className="toast" role="status" aria-live="polite">
           <span>{toast.msg}</span>
-          <button type="button" className="btn btn--ghost" onClick={() => { unhide(toast.itemId); setToast(null); }}>Undo</button>
+          <button type="button" className="btn btn--ghost" onClick={() => { toast.undo(); setToast(null); }}>Undo</button>
         </div>
+      )}
+
+      {planning && (
+        <SchedulePicker
+          item={planning}
+          tripStart={bundle.trip.startDate}
+          tripEnd={bundle.trip.endDate}
+          onClose={() => setPlanning(null)}
+          onResult={onScheduleResult}
+        />
       )}
 
       {filtersOpen && (
