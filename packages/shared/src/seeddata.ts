@@ -128,10 +128,10 @@ function meal(
 export function seedItems(): Item[] {
   return [
     // ---- Anchors ----
-    place('item-airbnb', 'The Airbnb (Rose Bay)', 'lodging', 44.3462, -64.2668, 'Home base on the South Shore, near Lunenburg.', {
+    place('item-airbnb', 'The Airbnb (Kingsburg)', 'lodging', 44.2720, -64.2250, "Home base on the Kingsburg peninsula — minutes from Hirtle's Beach, south of Lunenburg.", {
       isAnchor: true,
       anchorRole: 'airbnb',
-      address: 'Rose Bay, NS',
+      address: '233 Kingsburg Road, Kingsburg, NS',
     }),
     place('item-hotel', 'Staybridge Suites Halifax - Dartmouth', 'lodging', 44.7218, -63.5846, 'Dartmouth home base — Staybridge Suites by IHG in Burnside, minutes from Dartmouth Crossing and Shubie Park.', {
       isAnchor: true,
@@ -627,6 +627,18 @@ export function seedItems(): Item[] {
     place('item-mateus', 'Mateus Bistro', 'restaurant', 44.4484, -64.3822, 'Atlantic dishes with an Eastern-European twist, Mahone Bay.', { address: 'Main St, Mahone Bay', tags: ['walkable', 'daytrip'] }),
     place('item-teabrewery', 'The Tea Brewery', 'shopping', 44.4488, -64.3818, 'Loose-leaf tea blends shop on Main St, Mahone Bay.', { address: 'Main St, Mahone Bay', tags: ['walkable', 'daytrip'] }),
     place('item-suttles', 'Suttles & Seawinds', 'shopping', 44.4487, -64.3817, 'Hand-knit Maritime wool and clothing, Mahone Bay.', { address: 'Main St, Mahone Bay', tags: ['walkable', 'daytrip'] }),
+
+    // ---- South Shore: beaches, hikes & the Ovens (near the Airbnb → Halifax) ----
+    place('item-ovens', 'The Ovens Natural Park', 'outdoor', 44.3180, -64.2710, "Sea caves and a dramatic cliff-top trail (hear the “Cannon” cave boom) with gold-panning and a café, south of Lunenburg.", { address: '326 Ovens Park Rd, Riverport', tags: ['trails', 'daytrip', 'photos'], website: 'https://www.ovenspark.com' }),
+    place('item-hirtles', "Hirtle's Beach", 'beach', 44.2670, -64.2760, 'Wild 1.5 km crescent of sand and cobble near Kingsburg — and the trailhead for Gaff Point.', { address: 'Hirtle Beach Rd, Kingsburg', tags: ['beach', 'daytrip', 'photos'] }),
+    place('item-gaffpoint', 'Gaff Point Trail', 'outdoor', 44.2560, -64.2720, "A ~6 km coastal headland loop from the south end of Hirtle's Beach — cliffs, spruce forest and ocean views.", { address: 'Hirtle Beach Rd, Kingsburg', tags: ['trails', 'daytrip', 'photos'] }),
+    place('item-crescentbeach', 'Crescent Beach', 'beach', 44.2380, -64.4020, 'Long drive-on sandy beach by the LaHave Islands causeway.', { address: 'Crescent Beach Rd, Petite Riviere', tags: ['beach', 'daytrip'] }),
+    place('item-rissers', "Risser's Beach Provincial Park", 'beach', 44.2410, -64.3940, 'Supervised sandy beach with a salt-marsh boardwalk trail and campground, Petite Riviere.', { address: '5366 Hwy 331, Petite Riviere', tags: ['beach', 'kids', 'daytrip'], website: 'https://parks.novascotia.ca/park/rissers-beach' }),
+    place('item-secondpeninsula', 'Second Peninsula Provincial Park', 'outdoor', 44.4050, -64.2920, 'Quiet day-use park with easy shoreline trails just east of Lunenburg.', { address: '781 Second Peninsula Rd, Lunenburg', tags: ['trails', 'daytrip', 'kids'], website: 'https://parks.novascotia.ca/park/second-peninsula' }),
+    place('item-gravesisland', 'Graves Island Provincial Park', 'outdoor', 44.5463, -64.1928, 'Island park joined by a causeway near Chester — picnic grounds, playground and shoreline trails.', { address: '230 Graves Island Rd, East Chester', tags: ['trails', 'kids', 'daytrip'], website: 'https://parks.novascotia.ca/park/graves-island' }),
+    place('item-clevelandbeach', 'Cleveland Beach', 'beach', 44.6163, -64.0273, "Sandy St Margaret's Bay beach between Queensland and Black Point, east of Hubbards.", { address: 'Hwy 3, Black Point', tags: ['beach', 'daytrip'], website: 'https://parks.novascotia.ca/park/cleveland-beach' }),
+    place('item-pollyscove', "Polly's Cove Trail", 'outdoor', 44.4941, -63.8925, "Short coastal-barrens hike with granite, bog and ocean views, just east of Peggy's Cove.", { address: "Peggy's Cove Rd, West Dover", tags: ['trails', 'daytrip', 'photos'] }),
+    place('item-bluffwilderness', 'The Bluff Wilderness Trail', 'outdoor', 44.6666, -63.7629, "HRM's biggest backcountry hiking network — four stacked loops (5–25 km) off Hwy 103, Timberlea.", { address: "2890 St. Margaret's Bay Rd, Timberlea", tags: ['trails', 'daytrip'] }),
 
     // ---- North End Halifax (visitor map) ----
     place('item-creativecrossing', 'Creative Crossing', 'shopping', 44.6574, -63.5944, 'Local grocer, dining and yoga hub on Agricola Street.', { address: '2526 Agricola St, Halifax', tags: ['walkable'] }),
