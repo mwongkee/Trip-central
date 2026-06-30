@@ -20,49 +20,33 @@ type Deck = {
 const has = (i: Item, ...t: string[]): boolean => t.some((x) => i.tags.includes(x));
 const coords = (i: Item): boolean => i.lat != null && i.lng != null;
 
-// Curated, targeted swipe decks.
+// Within a ~60-min drive of the deck's centre (keeps the swipe to where we are now;
+// Halifax/Dartmouth are >1 h from the Kingsburg Airbnb so they drop out).
+const NEAR = (i: Item, c: { lat: number; lng: number } | null): boolean =>
+  !!c && coords(i) && travelMinutes(c.lat, c.lng, i.lat!, i.lng!, 'drive') <= 60;
+
+// Three fast categories, all near the Airbnb (South Shore) for now.
 const DECKS: Deck[] = [
   {
-    id: 'ferrywalk',
-    label: '🚶 Walk from ferry',
-    centerId: 'item-hfxterminal',
-    blurb: 'Things to do within a ~20-min walk of the Halifax ferry',
-    filter: (i, c) => !!c && coords(i) && travelMinutes(c.lat, c.lng, i.lat!, i.lng!, 'walk') <= 20,
-  },
-  {
-    id: 'indoor',
-    label: '🏛️ Indoor',
-    centerId: 'item-hotel',
-    blurb: 'Museums, shops and rainy-day spots',
-    filter: (i) => ['museum', 'shopping'].includes(i.category ?? '') || has(i, 'rainy-day'),
-  },
-  {
-    id: 'airbnb45',
-    label: '🚗 ≤45 min from Airbnb',
+    id: 'outdoors',
+    label: '🏖️ Outdoors',
     centerId: 'item-airbnb',
-    blurb: 'Anything within a 45-min drive of the Rose Bay Airbnb',
-    filter: (i, c) => !!c && coords(i) && travelMinutes(c.lat, c.lng, i.lat!, i.lng!, 'drive') <= 45,
+    blurb: 'Beaches, parks, trails & viewpoints near the Airbnb',
+    filter: (i, c) => NEAR(i, c) && (['beach', 'outdoor', 'viewpoint', 'playground'].includes(i.category ?? '') || has(i, 'trails', 'beach')),
+  },
+  {
+    id: 'eat',
+    label: '🍴 Eat & drink',
+    centerId: 'item-airbnb',
+    blurb: 'Restaurants & treats near the Airbnb',
+    filter: (i, c) => NEAR(i, c) && (i.type === 'MEAL' || i.category === 'restaurant'),
   },
   {
     id: 'kids',
     label: '🧒 Kids',
-    centerId: 'item-hotel',
-    blurb: 'Kid-friendly places, playgrounds and beaches',
-    filter: (i) => has(i, 'kids', 'stroller-friendly') || ['playground', 'beach'].includes(i.category ?? ''),
-  },
-  {
-    id: 'food',
-    label: '🍴 Food',
-    centerId: 'item-hotel',
-    blurb: 'Restaurants, treats and meals',
-    filter: (i) => i.type === 'MEAL' || i.category === 'restaurant',
-  },
-  {
-    id: 'all',
-    label: '✨ Everything',
-    centerId: 'item-hotel',
-    blurb: 'Every place on the trip',
-    filter: () => true,
+    centerId: 'item-airbnb',
+    blurb: 'Kid-friendly spots near the Airbnb',
+    filter: (i, c) => NEAR(i, c) && (has(i, 'kids', 'stroller-friendly') || ['playground', 'beach'].includes(i.category ?? '')),
   },
 ];
 
@@ -75,7 +59,7 @@ export function SwipeDeck({ bundle }: { bundle: TripBundle }) {
   const { identity } = useApp();
   const vote = useVote();
   const removeVote = useRemoveVote();
-  const [deckId, setDeckId] = useState('ferrywalk');
+  const [deckId, setDeckId] = useState('outdoors');
   const [idx, setIdx] = useState(0);
   const [lastVote, setLastVote] = useState<{ item: Item; voterIds: string[] } | null>(null);
 
