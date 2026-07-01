@@ -128,7 +128,7 @@ function meal(
 export function seedItems(): Item[] {
   return [
     // ---- Anchors ----
-    place('item-airbnb', 'The Airbnb (Kingsburg)', 'lodging', 44.2720, -64.2250, "Home base on the Kingsburg peninsula — minutes from Hirtle's Beach, south of Lunenburg.", {
+    place('item-airbnb', 'The Airbnb (Kingsburg)', 'lodging', 44.2930, -64.2940, "Home base on Kingsburg Road (Lower Rose Bay) — minutes from Hirtle's Beach, south of Lunenburg.", {
       isAnchor: true,
       anchorRole: 'airbnb',
       address: '233 Kingsburg Road, Kingsburg, NS',
