@@ -94,7 +94,12 @@ export function SwipeDeck({ bundle }: { bundle: TripBundle }) {
 
   function handleVote(item: Item) {
     const voterIds = family.map((f) => f.voterId);
-    voterIds.forEach((id) => vote.mutate({ itemId: item.itemId, voterId: id, value: 1 }));
+    // Cast sequentially so the family's votes don't collide on the item counters.
+    void (async () => {
+      for (const id of voterIds) {
+        try { await vote.mutateAsync({ itemId: item.itemId, voterId: id, value: 1 }); } catch { /* keep going */ }
+      }
+    })();
     setLastVote({ item, voterIds });
     setIdx((i) => i + 1);
   }

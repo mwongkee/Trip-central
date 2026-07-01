@@ -201,9 +201,13 @@ export function Board({ bundle }: { bundle: TripBundle }) {
 
   // One-tap "mark your family" from the peek card — casts for any household
   // member who hasn't voted on this item yet.
-  function markFamily(itemId: string) {
+  async function markFamily(itemId: string) {
     const voted = new Set(peekVotes.filter((v) => v.value > 0).map((v) => v.voterId));
-    family.filter((f) => !voted.has(f.voterId)).forEach((f) => vote.mutate({ itemId, voterId: f.voterId, value: 1 }));
+    // Cast sequentially — parallel writes collide on the item's denormalized counts
+    // and some get dropped ("voted 5, got 4").
+    for (const f of family.filter((f) => !voted.has(f.voterId))) {
+      try { await vote.mutateAsync({ itemId, voterId: f.voterId, value: 1 }); } catch { /* keep going */ }
+    }
   }
 
   const family = useMemo(

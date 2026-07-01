@@ -69,11 +69,20 @@ export interface Repo {
   deletePresence(tripId: string, userId: string): Promise<void>;
 }
 
-const MAX_TX_RETRIES = 3;
+// Optimistic-lock retries for the denormalized vote counters. Needs to comfortably
+// exceed the number of voters that might hit one item at once (a whole family +
+// other devices) so no vote is dropped under contention.
+const MAX_TX_RETRIES = 12;
 
 function isConditionalFailure(err: unknown): boolean {
   const name = (err as { name?: string })?.name ?? '';
   return name === 'ConditionalCheckFailedException' || name === 'TransactionCanceledException';
+}
+
+/** Small randomized backoff so colliding writers don't re-collide in lockstep. */
+function backoff(attempt: number): Promise<void> {
+  const ms = Math.min(200, 15 * (attempt + 1)) + Math.floor(Math.random() * 25);
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export class DynamoRepo implements Repo {
@@ -206,7 +215,7 @@ export class DynamoRepo implements Repo {
           },
         };
       } catch (err) {
-        if (isConditionalFailure(err) && attempt < MAX_TX_RETRIES - 1) continue;
+        if (isConditionalFailure(err) && attempt < MAX_TX_RETRIES - 1) { await backoff(attempt); continue; }
         throw err;
       }
     }
@@ -229,7 +238,7 @@ export class DynamoRepo implements Repo {
           updatedAt: now,
         };
       } catch (err) {
-        if (isConditionalFailure(err) && attempt < MAX_TX_RETRIES - 1) continue;
+        if (isConditionalFailure(err) && attempt < MAX_TX_RETRIES - 1) { await backoff(attempt); continue; }
         throw err;
       }
     }
